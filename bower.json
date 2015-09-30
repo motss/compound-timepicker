@@ -1,0 +1,36 @@
+{
+  "name": "compound-timepicker",
+  "version": "0.0.1",
+  "authors": [
+    "motss <wes_ngrongsen@hotmail.com>"
+  ],
+  "description": "A compound that constitutes a variety of elements to provide a solution to great timepicker for developers in building web apps.",
+  "keywords": [
+    "web-component",
+    "webcomponents",
+    "polymer",
+    "seed",
+    "timepicker",
+    "time",
+    "compound",
+    "motss"
+  ],
+  "main": "compound-timepicker.html",
+  "license": "MIT",
+  "homepage": "https://github.com/motss/compound-timepicker",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "LICENSE",
+    "README"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.1.0",
+    "paper-dialog": "PolymerElements/paper-dialog#~1.0.2",
+    "neon-animation": "PolymerElements/neon-animation#~1.0.6"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  }
+}

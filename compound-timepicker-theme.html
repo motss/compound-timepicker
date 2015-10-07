@@ -1,42 +1,68 @@
-<style is="custom-style">
-  :host {
-    display: block;
-    box-sizing: border-box;
-  }
+<<dom-module id="compound-timepicker-theme">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
 
-  *, *:before, *:after {
-    box-sizing: inherit;
-  }
+      *, *:before, *:after {
+        box-sizing: inherit;
+      }
 
-  /* mobile-small */
-  @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) { }
-  /* mobile-large */
-  @media all and (min-width: 361px) and (orientation: portrait) { }
-  /* tablet and above*/
-  @media all and (min-width: 600px) and (orientation: portrait) {
-    paper-dialog {
-      width: 360px;
-      height: 640px;
-      /*min-width: 360px;
-      min-height: 640px;*/
-      /*max-width: 360px;
-      max-height: 640px;*/
-    }
-  }
-  /* mobile-small-landscape */
-  @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
-  /* mobile-large-landscape */
-  @media all and (min-width: 481px) and (orientation: landscape) { }
-  /* tablet-landscape */
-  @media all and (min-width: 960px) and (orientation: landscape) {
-    paper-dialog {
-      width: 640px;
-      height: 360px;
-      /*min-width: 640px;
-      max-width: 640px;
-      min-height: 360px;
-      max-height: 360px;*/
-    }
-  }
+      .content {
+        margin: 0;
+        padding: 0;
+      }
 
-</style>
+      .day-night {
+        background: #e0e0e0;
+      }
+
+      .clock {
+        background: #f5f5f5;
+        padding: 0 24px;
+        margin-top: 24px;
+      }
+
+      .number {
+        pointer-events: none;
+        dominant-baseline: central;
+        text-anchor: middle;
+        /*text-align: center;*/
+      }
+
+      /* mobile-small */
+      @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) { }
+      /* mobile-large */
+      @media all and (min-width: 361px) and (orientation: portrait) { }
+      /* tablet and above*/
+      @media all and (min-width: 600px) and (orientation: portrait) {
+        paper-dialog {
+          width: 360px;
+          height: 640px;
+          /*min-width: 360px;
+          min-height: 640px;*/
+          /*max-width: 360px;
+          max-height: 640px;*/
+        }
+      }
+      /* mobile-small-landscape */
+      @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
+      /* mobile-large-landscape */
+      @media all and (min-width: 481px) and (orientation: landscape) { }
+      /* tablet-landscape */
+      @media all and (min-width: 960px) and (orientation: landscape) {
+        paper-dialog {
+          width: 640px;
+          height: 360px;
+          /*min-width: 640px;
+          max-width: 640px;
+          min-height: 360px;
+          max-height: 360px;*/
+        }
+      }
+
+    </style>
+  </template>
+</dom-module>

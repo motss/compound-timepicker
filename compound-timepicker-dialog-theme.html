@@ -4,6 +4,9 @@
   <template>
     <style include="paper-dialog-theme">
       :host {
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
         display: block;
         box-sizing: border-box;
         @apply(--layout-vertical);
@@ -11,6 +14,11 @@
 
       *, *:before, *:after {
         box-sizing: inherit;
+      }
+
+      .content {
+        margin: 0;
+        padding: 0;
       }
 
       /* mobile-small */

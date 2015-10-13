@@ -29,13 +29,13 @@ Example:
         <div class="clock flex-2 layout vertical center-center">
           <svg width="200" height="200" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
             <g style="fill:#7d7d7d;">
-              <circle id="hourRing" cx="100" cy="100" r="100"/>
-              <circle id="minuteRing" cx="100" cy="100" r="76" style="fill:#f5f5f5;"/>
+              <circle id="hourRing" cx="100" cy="100" r="100" style="cursor:pointer;"/>
+              <circle id="minuteRing" cx="100" cy="100" r="76" style="fill:#f5f5f5;cursor:pointer;"/>
               <circle id="secondRing" cx="100" cy="100" r="52" style="fill:#bdbdbd;"/>
             </g>
             <circle id="centroid" cx="100" cy="100" r="2" style="stroke:rgb(0,0,0);stroke-width:1"/>
-            <circle id="hour" cx="100" cy="12" r="10" style="fill:#64ffda;fill-opactiy:.25;"/>
-            <circle id="minute" cx="100" cy="36" r="10" style="fill:#009688;fill-opactiy:.25;"/>
+            <circle id="hour" cx="100" cy="12" r="10" style="fill:#64ffda;fill-opactiy:.25;cursor:pointer;"/>
+            <circle id="minute" cx="100" cy="36" r="10" style="fill:#009688;fill-opactiy:.25;cursor:pointer;"/>
             <!-- <circle cx="100" cy="12" r="1" style="stroke:#009688;stroke-width:2;"/> -->
 
             <!-- <line x1="100" y1="100" x2="100" y2="5" style="stroke:rgb(255,0,0);stroke-width:2" />
@@ -128,11 +128,30 @@ Example:
         type: Number,
         computed: '_angleify(_mappedClockXY.y, _mappedClockXY.x)'
       },
+      _dragStep: {
+        type: Number,
+        computed: '_computeDragStep(step)'
+      },
       // hourOuterRadius: Number,
       // hourInnerRadius: Number
 
-      _tracking: Boolean,
+      _tracking: {
+        type: Boolean,
+        value: false
+      },
       _startRing: String,
+
+      step: {
+        type: Number,
+        value: 1,
+        observer: '_validateStep',
+        notify: true
+      },
+      _stepAngle: {
+        type: Number,
+        computed: '_angleify(_mappedClockXY.x, _mappedClockXY.y);'
+      },
+
 
     },
 
@@ -146,8 +165,15 @@ Example:
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
       this._createClockNumber();
-      this._updateClockHand.bind(this.$.hourHand)(this._outerDragY, this._outerDragX, this._computePosy, this._computePosx);
-      this._updateClockHand.bind(this.$.minuteHand)(this._innerDragY, this._innerDragX, this._computePosy, this._computePosx);
+      this._updateClockHand(this._outerDragY, this._outerDragX, this.$.hourHand);
+      this._updateClockHand(this._innerDragY, this._innerDragX, this.$.minuteHand);
+      // console.log('after-0: ' + this.step);
+      // this.step = -2;
+      // console.log('after-2: ' + this.step);
+      // this.step = 1;
+      // console.log('after+1: ' + this.step);
+      // this.step = 'aa';
+      // console.log('after-aa: ' + this.step);
     },
 
     attached: function() {
@@ -274,9 +300,9 @@ Example:
       this.cx.baseVal.value = dragX;
     },
 
-    _updateClockHand: function(y, x, cb_y, cb_x) {
-      cb_y.bind(this)(y);
-      cb_x.bind(this)(x);
+    _updateClockHand: function(y, x, node) {
+      this._computePosy.bind(node)(y);
+      this._computePosx.bind(node)(x);
     },
 
     _selectHand: function(ev) {
@@ -295,6 +321,7 @@ Example:
         this._mappedClockXY = this._mapClockXY(this.$.hourRing.getBoundingClientRect(), ev.detail, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
         this._centroid = this._getCentroid();
 
+        requestAnimationFrame(this._draggingClockHand);
         this._draggingClockHand(ev.detail, this.$.hourRing.getBoundingClientRect());
         // console.log('mappedXY @ angle:' + this._mappedClockXY, this._dragAngle);
       }
@@ -306,11 +333,14 @@ Example:
 
       switch (ev.detail.state) {
         case 'start':
+          this.set('_tracking', true);
           requestAnimationFrame(this._draggingClockHand);
           break;
         case 'track':
-          this._draggingClockHand(currentXY, hourRingParam);
-          requestAnimationFrame(this._draggingClockHand);
+          // if (this._tracking) {
+            this._draggingClockHand(currentXY, hourRingParam);
+            requestAnimationFrame(this._draggingClockHand);
+          // }
           break;
         case 'end':
           cancelAnimationFrame(this._draggingClockHand);
@@ -320,6 +350,10 @@ Example:
 
     _releaseHand: function(ev) {
       // console.log('hand-up');
+      if (this._tracking) {
+        // console.log('falseTrack');
+        this.set('_tracking', false);
+      }
       delete this._startRing;
     },
 
@@ -329,18 +363,26 @@ Example:
       if (this._startRing ===  'hourRing' || this._startRing === 'hour') {
         if (this._isInner(xy, this._centroid, HOUR_INNER_RADIUS) &&
             this._isOuter(xy, this._centroid, HOUR_OUTER_RADIUS)) {
-          this._mappedClockXY = this._mapClockXY(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-          _rotatedHandXY = this._computeNumberTextClockwise(this._dragAngle, 100, 178, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-          _rotatedCenter = this._computeNumberTextClockwise(this._dragAngle, 100, 188, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-          // console.log('current mouse pos: ', this._mappedClockXY.y+100, this._mappedClockXY.x+100);
-          // console.log('current hourHand pos: ', _rotatedHandXY.y, _rotatedHandXY.x);
-          this._computePosy.bind(this.$.hourHand)(_rotatedHandXY.y);
-          this._computePosx.bind(this.$.hourHand)(_rotatedHandXY.x);
-          this._translateCentroid(_rotatedCenter.y, _rotatedCenter.x, this.$.hour);
+            this._mappedClockXY = this._mapClockXY(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            console.log(this._dragAngle);
+            console.log(this._stepAngle);
+          if (this._stepAngle%this._dragStep === 0) {
+            _rotatedHandXY = this._computeNumberTextClockwise(this._dragAngle, 100, 178, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            _rotatedCenter = this._computeNumberTextClockwise(this._dragAngle, 100, 188, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            // console.log('current mouse pos: ', this._mappedClockXY.y+100, this._mappedClockXY.x+100);
+            // console.log('current hourHand pos: ', _rotatedHandXY.y, _rotatedHandXY.x);
+            this._computePosy.bind(this.$.hourHand)(_rotatedHandXY.y);
+            this._computePosx.bind(this.$.hourHand)(_rotatedHandXY.x);
+            this._translateCentroid(_rotatedCenter.y, _rotatedCenter.x, this.$.hour);
 
-          // console.log('moving inside HOUR ring: ' + '{' + xy.x + ', ' + xy.y + '}');
-          // console.log('at angle: ' + this._dragAngle);
+            // console.log('moving inside HOUR ring: ' + '{' + xy.x + ', ' + xy.y + '}');
+            // console.log('at angle: ' + this._dragAngle);
+          }
         }else {
+          if (this._tracking) {
+            this.set('_tracking', false);
+            cancelAnimationFrame(this._draggingClockHand);
+          }
           console.log('outside-HOUR-ring');
         }
       }
@@ -359,6 +401,10 @@ Example:
           // console.log('moving inside MINUTE ring: ' + '{' + xy.x + ', ' + xy.y + '}');
           // console.log('at angle: ' + this._angleify(this._mappedClockXY.y, this._mappedClockXY.x));
         }else {
+          if (this._tracking) {
+            this.set('_tracking', false);
+            cancelAnimationFrame(this._draggingClockHand);
+          }
           console.log('outside-MINUTE-ring');
         }
       }
@@ -370,7 +416,21 @@ Example:
     },
 
     _angleify: function(y, x) {
-      return Math.round(Math.atan2(y, x)/Math.PI*180);
+      var _degree = Math.round(Math.atan2(y, x)/Math.PI*180);
+
+      function _findN(_degree, _step) {
+        return Math.ceil(_degree/ _step) * _step;
+      }
+      // console.log(_degree);
+      // console.log(_findN(_degree, this.step));
+      // console.log(Math.max(_degree, _findN(_degree, this.step*6)));
+      // console.log(Math.min(_degree, _findN(_degree, this.step*6)));
+
+      // if (_degree < 0) {
+      //   return Math.min(_degree, _findN(_degree, this.step*6));
+      // }else {
+        return Math.max(_degree, _findN(_degree, this.step*6));
+      // }
     },
 
     _radiusify: function(y, x, cy, cx) {
@@ -409,6 +469,19 @@ Example:
 
       return _xy;
     },
+
+    _validateStep: function(newVal, oldVal) {
+      // console.log(this.step);
+      // console.log(oldVal);
+      // console.log(newVal);
+      if (isNaN(newVal) || newVal < 1) {
+        this.step = oldVal;
+      }
+    },
+
+    _computeDragStep: function(step) {
+      return step * 6;
+    }
 
   });
 

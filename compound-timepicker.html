@@ -27,7 +27,13 @@ Example:
         </div>
 
         <div class="clock flex-2 layout vertical center-center">
-          <svg width="200" height="200" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
+            <!-- <circle cx="100" cy="12" r="1" style="stroke:#009688;stroke-width:2;"/> -->
+
+            <!-- <line x1="100" y1="100" x2="100" y2="5" style="stroke:rgb(255,0,0);stroke-width:2" />
+            <line x1="100" y1="0" x2="100" y2="200" stroke-dasharray="2,1" style="stroke:rgb(0,0,0);stroke-width:1" />
+            <line x1="0" y1="100" x2="200" y2="100" stroke-dasharray="3, 2" style="stroke:rgb(0,0,0);stroke-width:1" /> -->
+
+          <!-- <svg width="200" height="200" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
             <g style="fill:#7d7d7d;">
               <circle id="hourRing" cx="100" cy="100" r="100" style="cursor:pointer;"/>
               <circle id="minuteRing" cx="100" cy="100" r="76" style="fill:#f5f5f5;cursor:pointer;"/>
@@ -36,13 +42,26 @@ Example:
             <circle id="centroid" cx="100" cy="100" r="2" style="stroke:rgb(0,0,0);stroke-width:1"/>
             <circle id="hour" cx="100" cy="12" r="10" style="fill:#64ffda;fill-opactiy:.25;cursor:pointer;"/>
             <circle id="minute" cx="100" cy="36" r="10" style="fill:#009688;fill-opactiy:.25;cursor:pointer;"/>
+            <line id="hourHand" x1="100" y1="100" x2="100" y2="22" style="stroke:#64ffda;stroke-width:.5;"/>
+            <line id="minuteHand" x1="100" y1="100" x2="100" y2="46" style="stroke:#009688;stroke-width:.5;"/>
+            <g id="numbers"></g>
+          </svg> -->
+          <svg width="800" height="800" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
+            <g style="fill:#7d7d7d;">
+              <circle id="hourRing" cx="400" cy="400" r="400" style="cursor:pointer;"/>
+              <circle id="minuteRing" cx="400" cy="400" r="376" style="fill:#f5f5f5;cursor:pointer;"/>
+              <circle id="secondRing" cx="400" cy="400" r="352" style="fill:#bdbdbd;"/>
+            </g>
+            <circle id="centroid" cx="400" cy="400" r="2" style="stroke:rgb(0,0,0);stroke-width:1"/>
+            <circle id="hour" cx="400" cy="12" r="10" style="fill:#64ffda;fill-opactiy:.25;cursor:pointer;"/>
+            <circle id="minute" cx="400" cy="36" r="10" style="fill:#009688;fill-opactiy:.25;cursor:pointer;"/>
             <!-- <circle cx="100" cy="12" r="1" style="stroke:#009688;stroke-width:2;"/> -->
 
             <!-- <line x1="100" y1="100" x2="100" y2="5" style="stroke:rgb(255,0,0);stroke-width:2" />
             <line x1="100" y1="0" x2="100" y2="200" stroke-dasharray="2,1" style="stroke:rgb(0,0,0);stroke-width:1" />
             <line x1="0" y1="100" x2="200" y2="100" stroke-dasharray="3, 2" style="stroke:rgb(0,0,0);stroke-width:1" /> -->
-            <line id="hourHand" x1="100" y1="100" x2="100" y2="22" style="stroke:#64ffda;stroke-width:.5;"/>
-            <line id="minuteHand" x1="100" y1="100" x2="100" y2="46" style="stroke:#009688;stroke-width:.5;"/>
+            <line id="hourHand" x1="400" y1="400" x2="400" y2="22" style="stroke:#64ffda;stroke-width:.5;"/>
+            <line id="minuteHand" x1="400" y1="400" x2="400" y2="46" style="stroke:#009688;stroke-width:.5;"/>
             <g id="numbers"></g>
           </svg>
         </div>
@@ -57,9 +76,13 @@ Example:
       HOUR_INNER_RADIUS = 76,
       MINUTE_OUTER_RADIUS = 76,
       MINUTE_INNER_RADIUS = 52,
-      CENTER_OF_CIRCLE_X = 100,
-      CENTER_OF_CIRCLE_Y = 100,
-      STARTING_POS_OF_FIRST_NUMBER_X = 100,
+      // CENTER_OF_CIRCLE_X = 100,
+      // CENTER_OF_CIRCLE_Y = 100,
+      // STARTING_POS_OF_FIRST_NUMBER_X = 100,
+      // STARTING_POS_OF_FIRST_NUMBER_Y = 12,
+      CENTER_OF_CIRCLE_X = 400,
+      CENTER_OF_CIRCLE_Y = 400,
+      STARTING_POS_OF_FIRST_NUMBER_X = 400,
       STARTING_POS_OF_FIRST_NUMBER_Y = 12,
       THETA_BETWEEN_HOURS = 30,
       THETA_BETWEEN_MINUTES = 6;
@@ -149,7 +172,7 @@ Example:
       },
       _stepAngle: {
         type: Number,
-        computed: '_angleify(_mappedClockXY.x, _mappedClockXY.y);'
+        computed: '_angleify(_mappedClockXY.y, _mappedClockXY.x);'
       },
 
 
@@ -165,8 +188,9 @@ Example:
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
       this._createClockNumber();
-      this._updateClockHand(this._outerDragY, this._outerDragX, this.$.hourHand);
-      this._updateClockHand(this._innerDragY, this._innerDragX, this.$.minuteHand);
+      // this._updateClockHand(this._outerDragY, this._outerDragX, this.$.hourHand);
+      // this._updateClockHand(this._innerDragY, this._innerDragX, this.$.minuteHand);
+
       // console.log('after-0: ' + this.step);
       // this.step = -2;
       // console.log('after-2: ' + this.step);
@@ -229,11 +253,18 @@ Example:
           cx = CENTER_OF_CIRCLE_X,
           cy = CENTER_OF_CIRCLE_Y,
           theta = THETA_BETWEEN_HOURS;
-      for(var i = 3; i < 15; i++) {
+      // for(var i = 3; i < 15; i++) {
+      for(var i = 0; i < 60; i++) {
         var _theta = theta * i;
-        var _i = i > 12? i - 12 : i;
+        var _i = i == 0? 12: i;
+        _theta = i * 6;
+        // var _i = i > 12? i - 12 : i;
         // console.log(Polymer.Settings.useNativeShadow);
         var _xy = this._computeNumberTextClockwise(_theta, y, x, cy, cx);
+        var _angle = Math.round(Math.atan2((_xy.x - cx), -(_xy.y - cy))/Math.PI*180);
+        _angle = _angle <= 0? (360+_angle): _angle;
+        _i = _angle;
+        console.log(_i, _xy, _angle);
         // console.log(_i + ' - ' + this._angleify(_xy.y-cy, _xy.x-cx));
         numberParent.appendChild(this._computeNumberText(_i.toString(), _xy.x, _xy.y));
       }
@@ -249,6 +280,11 @@ Example:
       if (!Polymer.Settings.useNativeShadow) {
         text.classList.add('style-scope');
         text.classList.add('compound-timepicker');
+      }
+
+      this.step = 12;
+      if (number%this.step===0) {
+        text.classList.add('number-selectable');
       }
 
       return text;
@@ -322,7 +358,23 @@ Example:
         this._centroid = this._getCentroid();
 
         requestAnimationFrame(this._draggingClockHand);
-        this._draggingClockHand(ev.detail, this.$.hourRing.getBoundingClientRect());
+        // this._draggingClockHand(ev.detail, this.$.hourRing.getBoundingClientRect());
+        console.log(ev.detail.x, ev.detail.y);
+        console.log(this.$.hourRing.getBoundingClientRect());
+        console.log('exact pos inside the clock is: ', ev.detail.x - this.$.hourRing.getBoundingClientRect().left, ev.detail.y - this.$.hourRing.getBoundingClientRect().top);
+        var _angle = Math.ceil((Math.atan2( ev.detail.x - this.$.hourRing.getBoundingClientRect().left - 400, -(ev.detail.y - this.$.hourRing.getBoundingClientRect().top - 400))/Math.PI*180)/this.step)*this.step;
+        _angle = _angle <= 0? (360+_angle): _angle;
+        console.log(_angle);
+        var _xy2 = {}, _ctr2 = {}, currentXY = ev.detail, hourRingParam = this.$.hourRing.getBoundingClientRect();
+        // _xy2 = this._computeNumberTextClockwise(_angle, 400, 22, 400, 400);
+        // _ctr2 = this._computeNumberTextClockwise(300, STARTING_POS_OF_FIRST_NUMBER_Y, STARTING_POS_OF_FIRST_NUMBER_X, 400, 400);
+        _ctr2 = this._computeNumberTextClockwise(_angle, 12, 400, 400, 400);
+        // console.log(_xy2.x, _xy2.y);
+        console.log(_ctr2);
+        // this._computePosy.bind(this.$.hourHand)(_xy2.y);
+        // this._computePosx.bind(this.$.hourHand)(_xy2.x);
+        this._translateCentroid(_ctr2.y, _ctr2.x, this.$.hour);
+
         // console.log('mappedXY @ angle:' + this._mappedClockXY, this._dragAngle);
       }
     },
@@ -337,9 +389,20 @@ Example:
           requestAnimationFrame(this._draggingClockHand);
           break;
         case 'track':
+
           // if (this._tracking) {
-            this._draggingClockHand(currentXY, hourRingParam);
-            requestAnimationFrame(this._draggingClockHand);
+          // console.log(currentXY.x - hourRingParam.left, currentXY.y - hourRingParam.top);
+          // console.log(Math.atan2( currentXY.x - hourRingParam.left - 400, -(currentXY.y - hourRingParam.top - 400))/Math.PI*180);
+          // console.log('corrected angle with step: ', Math.ceil((Math.atan2( currentXY.x - hourRingParam.left - 400, -(currentXY.y - hourRingParam.top - 400))/Math.PI*180)/this.step)*this.step);
+          // var _xy2 = {}, _ctr2 = {};
+          // _xy2 = this._computeNumberTextClockwise(Math.ceil((Math.atan2( currentXY.x - hourRingParam.left - 400, -(currentXY.y - hourRingParam.top - 400))/Math.PI*180)/this.step)*this.step, 400, 22, 400, 400);
+          // _ctr2 = this._computeNumberTextClockwise(Math.ceil((Math.atan2( currentXY.x - hourRingParam.left - 400, -(currentXY.y - hourRingParam.top - 400))/Math.PI*180)/this.step)*this.step, 400, 12, 400, 400);
+          // this._computePosy.bind(this.$.hourHand)(_xy2.y);
+          // this._computePosx.bind(this.$.hourHand)(_xy2.x);
+          // this._translateCentroid(_xy2.y, _xy2.x, this.$.hour);
+          //
+          //   this._draggingClockHand(currentXY, hourRingParam);
+          //   requestAnimationFrame(this._draggingClockHand);
           // }
           break;
         case 'end':
@@ -361,19 +424,22 @@ Example:
       var _rotatedHandXY = {},
           _rotatedCenter = {};
       if (this._startRing ===  'hourRing' || this._startRing === 'hour') {
-        if (this._isInner(xy, this._centroid, HOUR_INNER_RADIUS) &&
-            this._isOuter(xy, this._centroid, HOUR_OUTER_RADIUS)) {
+        // if (this._isInner(xy, this._centroid, HOUR_INNER_RADIUS) &&
+        //     this._isOuter(xy, this._centroid, HOUR_OUTER_RADIUS)) {
+        if (this._isInner(xy, this._centroid, 376) &&
+            this._isOuter(xy, this._centroid, 400)) {
             this._mappedClockXY = this._mapClockXY(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-            console.log(this._dragAngle);
-            console.log(this._stepAngle);
+            // console.log(this._dragAngle);
+            // console.log(this._stepAngle);
           if (this._stepAngle%this._dragStep === 0) {
-            _rotatedHandXY = this._computeNumberTextClockwise(this._dragAngle, 100, 178, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-            _rotatedCenter = this._computeNumberTextClockwise(this._dragAngle, 100, 188, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
             // console.log('current mouse pos: ', this._mappedClockXY.y+100, this._mappedClockXY.x+100);
             // console.log('current hourHand pos: ', _rotatedHandXY.y, _rotatedHandXY.x);
-            this._computePosy.bind(this.$.hourHand)(_rotatedHandXY.y);
-            this._computePosx.bind(this.$.hourHand)(_rotatedHandXY.x);
-            this._translateCentroid(_rotatedCenter.y, _rotatedCenter.x, this.$.hour);
+
+            // _rotatedHandXY = this._computeNumberTextClockwise(this._dragAngle, 100, 178, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            // _rotatedCenter = this._computeNumberTextClockwise(this._dragAngle, 100, 188, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            // this._computePosy.bind(this.$.hourHand)(_rotatedHandXY.y);
+            // this._computePosx.bind(this.$.hourHand)(_rotatedHandXY.x);
+            // this._translateCentroid(_rotatedCenter.y, _rotatedCenter.x, this.$.hour);
 
             // console.log('moving inside HOUR ring: ' + '{' + xy.x + ', ' + xy.y + '}');
             // console.log('at angle: ' + this._dragAngle);
@@ -417,6 +483,7 @@ Example:
 
     _angleify: function(y, x) {
       var _degree = Math.round(Math.atan2(y, x)/Math.PI*180);
+      // var _degree = Math.round(90 - (Math.atan2(-y, -x)/Math.PI*180));
 
       function _findN(_degree, _step) {
         return Math.ceil(_degree/ _step) * _step;
@@ -481,6 +548,10 @@ Example:
 
     _computeDragStep: function(step) {
       return step * 6;
+    },
+
+    _displayAngle: function() {
+
     }
 
   });

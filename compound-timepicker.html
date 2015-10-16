@@ -75,6 +75,10 @@ Example:
       CENTER_OF_CIRCLE_Y = 100,
       STARTING_POS_OF_FIRST_NUMBER_X = 100,
       STARTING_POS_OF_FIRST_NUMBER_Y = 12,
+      HOUR_CIRCLE_X = 100,
+      HOUR_CIRCLE_Y = 12,
+      MINUTE_CIRCLE_X = 100,
+      MINUTE_CIRCLE_Y = 36,
       // CENTER_OF_CIRCLE_X = 400,
       // CENTER_OF_CIRCLE_Y = 400,
       // STARTING_POS_OF_FIRST_NUMBER_X = 400,
@@ -141,7 +145,7 @@ Example:
       },
 
       _centroid: Object,
-      _translatedToOriginXY: Object,
+      // _translatedToOriginXY: Object,
       _dragAngle: {
         type: Number,
         computed: '_angleify(_mappedClockXY.y, _mappedClockXY.x)'
@@ -165,10 +169,10 @@ Example:
         observer: '_validateStep',
         notify: true
       },
-      _stepAngle: {
-        type: Number,
-        computed: '_angleify(_mappedClockXY.y, _mappedClockXY.x);'
-      },
+      // _stepAngle: {
+      //   type: Number,
+      //   computed: '_angleify(_translatedToOriginXY.y, _translatedToOriginXY.x, _dragStep);'
+      // },
 
 
     },
@@ -314,22 +318,21 @@ Example:
       return rotXY;
     },
 
-    // _computePosx: function(dragX) {
-    //   console.log(this);
-    //   this.x2.baseVal.value = dragX;
-    // },
-    //
-    // _computePosy: function(dragY) {
-    //   this.y2.baseVal.value = dragY;
-    // },
-    //
-    // _computeCentery: function(dragY) {
-    //   this.cy.baseVal.value = dragY;
-    // },
-    //
-    // _computeCenterx: function(dragX) {
-    //   this.cx.baseVal.value = dragX;
-    // },
+    _computePosx: function(dragX) {
+      this.x2.baseVal.value = dragX;
+    },
+
+    _computePosy: function(dragY) {
+      this.y2.baseVal.value = dragY;
+    },
+
+    _computeCentery: function(dragY) {
+      this.cy.baseVal.value = dragY;
+    },
+
+    _computeCenterx: function(dragX) {
+      this.cx.baseVal.value = dragX;
+    },
 
     _rotatify: function() {
       return {
@@ -366,42 +369,43 @@ Example:
       }else {
         console.log('inside-ring');
         this._startRing = _id;
-        this._translatedToOriginXY = this._translateToOrigin(this.$.hourRing.getBoundingClientRect(), ev.detail, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+        // this._translatedToOriginXY = this._translateToOrigin(this.$.hourRing.getBoundingClientRect(), ev.detail, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
         this._centroid = this._getCentroid();
 
         requestAnimationFrame(this._draggingClockHand);
-        // this._draggingClockHand(ev.detail, this.$.hourRing.getBoundingClientRect());
-        console.log(ev.detail.x, ev.detail.y);
-        console.log(this.$.hourRing.getBoundingClientRect());
-        console.log('exact pos inside the clock is: ', ev.detail.x - this.$.hourRing.getBoundingClientRect().left, ev.detail.y - this.$.hourRing.getBoundingClientRect().top);
-        var _angle = Math.atan2( ev.detail.x - this.$.hourRing.getBoundingClientRect().left - 400, -(ev.detail.y - this.$.hourRing.getBoundingClientRect().top - 400))/Math.PI*180;
-        _angle = _angle <= 0? (360+_angle): _angle;
-        var _factor = Math.ceil(_angle/this.step)*this.step;
-        console.log(_angle);
-        console.log(_factor);
-        console.log(this.step);
-        var _xy2 = {}, _ctr2 = {}, currentXY = ev.detail, hourRingParam = this.$.hourRing.getBoundingClientRect();
-        // _xy2 = this._computeNumberTextClockwise(_angle, 400, 22, 400, 400);
-        // _ctr2 = this._computeNumberTextClockwise(300, STARTING_POS_OF_FIRST_NUMBER_Y, STARTING_POS_OF_FIRST_NUMBER_X, 400, 400);
-        if (_factor) {
-          if (_factor > 360) {
-            /**
-             * - Fallback to zero instead of to the 1st value
-             * which is 1*this.step*6;
-             * - If so, zero (00 @ 360 degree) can never be selected.
-             * - To avoid this from happening, 00 must be selectable.
-             *
-             */
-            _factor = 0;
-          }
+        this._draggingClockHand(ev.detail, this.$.hourRing.getBoundingClientRect());
 
-          _ctr2 = this._textNumberClockwisify(_factor, 12, 400, 400, 400);
-        // console.log(_xy2.x, _xy2.y);
-        console.log(_ctr2);
-        // this._computePosy.bind(this.$.hourHand)(_xy2.y);
-        // this._computePosx.bind(this.$.hourHand)(_xy2.x);
-        this._translateCentroid(_ctr2.y, _ctr2.x, this.$.hour);
-        }
+        // console.log(ev.detail.x, ev.detail.y);
+        // console.log(this.$.hourRing.getBoundingClientRect());
+        // console.log('exact pos inside the clock is: ', ev.detail.x - this.$.hourRing.getBoundingClientRect().left, ev.detail.y - this.$.hourRing.getBoundingClientRect().top);
+        // var _angle = Math.atan2( ev.detail.x - this.$.hourRing.getBoundingClientRect().left - 400, -(ev.detail.y - this.$.hourRing.getBoundingClientRect().top - 400))/Math.PI*180;
+        // _angle = _angle <= 0? (360+_angle): _angle;
+        // var _factor = Math.ceil(_angle/this.step)*this.step;
+        // // console.log(_angle);
+        // // console.log(_factor);
+        // // console.log(this.step);
+        // var _xy2 = {}, _ctr2 = {}, currentXY = ev.detail, hourRingParam = this.$.hourRing.getBoundingClientRect();
+        // // _xy2 = this._computeNumberTextClockwise(_angle, 400, 22, 400, 400);
+        // // _ctr2 = this._computeNumberTextClockwise(300, STARTING_POS_OF_FIRST_NUMBER_Y, STARTING_POS_OF_FIRST_NUMBER_X, 400, 400);
+        // if (_factor) {
+        //   if (_factor > 360) {
+        //     /**
+        //      * - Fallback to zero instead of to the 1st value
+        //      * which is 1*this.step*6;
+        //      * - If so, zero (00 @ 360 degree) can never be selected.
+        //      * - To avoid this from happening, 00 must be selectable.
+        //      *
+        //      */
+        //     _factor = 0;
+        //   }
+        //
+        //   _ctr2 = this._textNumberClockwisify(_factor, 12, 400, 400, 400);
+        // // console.log(_xy2.x, _xy2.y);
+        // console.log(_ctr2);
+        // // this._computePosy.bind(this.$.hourHand)(_xy2.y);
+        // // this._computePosx.bind(this.$.hourHand)(_xy2.x);
+        // this._translateCentroid(_ctr2.y, _ctr2.x, this.$.hour);
+        // }
 
         // console.log('mappedXY @ angle:' + this._mappedClockXY, this._dragAngle);
       }
@@ -413,11 +417,10 @@ Example:
 
       switch (ev.detail.state) {
         case 'start':
-          this.set('_tracking', true);
+          // this.set('_tracking', true);
           requestAnimationFrame(this._draggingClockHand);
           break;
         case 'track':
-
           // if (this._tracking) {
           // console.log(currentXY.x - hourRingParam.left, currentXY.y - hourRingParam.top);
           // console.log(Math.atan2( currentXY.x - hourRingParam.left - 400, -(currentXY.y - hourRingParam.top - 400))/Math.PI*180);
@@ -429,54 +432,60 @@ Example:
           // this._computePosx.bind(this.$.hourHand)(_xy2.x);
           // this._translateCentroid(_xy2.y, _xy2.x, this.$.hour);
           //
-          //   this._draggingClockHand(currentXY, hourRingParam);
-          //   requestAnimationFrame(this._draggingClockHand);
+          this._draggingClockHand(currentXY, hourRingParam);
+          requestAnimationFrame(this._draggingClockHand);
           // }
           break;
         case 'end':
-          cancelAnimationFrame(this._draggingClockHand);
           break;
       }
     },
 
     _releaseHand: function(ev) {
       // console.log('hand-up');
-      if (this._tracking) {
-        // console.log('falseTrack');
-        this.set('_tracking', false);
-      }
+      // if (this._tracking) {
+      //   // console.log('falseTrack');
+      //   this.set('_tracking', false);
+      // }
+      // cancelAnimationFrame(this._draggingClockHand);
       delete this._startRing;
     },
 
     _draggingClockHand: function(xy, hourRingParam) {
-      var _rotatedHandXY = {},
-          _rotatedCenter = {};
+      var _translatedXY = {}, _rotatedXY = {}, _angle;
       if (this._startRing ===  'hourRing' || this._startRing === 'hour') {
         // if (this._isInner(xy, this._centroid, HOUR_INNER_RADIUS) &&
         //     this._isOuter(xy, this._centroid, HOUR_OUTER_RADIUS)) {
-        if (this._isInner(xy, this._centroid, 376) &&
-            this._isOuter(xy, this._centroid, 400)) {
-            this._mappedClockXY = this._mapClockXY(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-            // console.log(this._dragAngle);
-            // console.log(this._stepAngle);
-          if (this._stepAngle%this._dragStep === 0) {
-            // console.log('current mouse pos: ', this._mappedClockXY.y+100, this._mappedClockXY.x+100);
-            // console.log('current hourHand pos: ', _rotatedHandXY.y, _rotatedHandXY.x);
+        if (this._isInner(xy, this._centroid, HOUR_INNER_RADIUS) &&
+            this._isOuter(xy, this._centroid, HOUR_OUTER_RADIUS)) {
+            // console.log('_dragging_inside_HOUR..');
 
-            // _rotatedHandXY = this._computeNumberTextClockwise(this._dragAngle, 100, 178, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-            // _rotatedCenter = this._computeNumberTextClockwise(this._dragAngle, 100, 188, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-            // this._computePosy.bind(this.$.hourHand)(_rotatedHandXY.y);
-            // this._computePosx.bind(this.$.hourHand)(_rotatedHandXY.x);
-            // this._translateCentroid(_rotatedCenter.y, _rotatedCenter.x, this.$.hour);
-
-            // console.log('moving inside HOUR ring: ' + '{' + xy.x + ', ' + xy.y + '}');
-            // console.log('at angle: ' + this._dragAngle);
-          }
+            _translatedXY = this._translateToOrigin(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            _angle = this._angleify(_translatedXY.y, _translatedXY.x, this._dragStep);
+            if (!isNaN(_angle) && _angle >= 0) {
+              if (_angle > 360) {
+                /**
+                 * - Fallback to zero instead of to the 1st value
+                 * which is 1*this.step*6;
+                 * - If so, zero (00 @ 360 degree) can never be selected.
+                 * - To avoid this from happening, 00 must be selectable.
+                 *
+                 */
+                _angle = 0;
+              }
+            }
+            _rotatedXY = this._textNumberClockwisify(_angle, HOUR_CIRCLE_Y, HOUR_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            // console.log(_rotatedXY);
+            // this._computePosy.bind(this.$.hourHand)(_rotatedXY.y);
+            // this._computePosx.bind(this.$.hourHand)(_rotatedXY.x);
+            this._rotatify().y2.bind(this.$.hourHand)(_rotatedXY.y);
+            this._rotatify().x2.bind(this.$.hourHand)(_rotatedXY.x);
+            this._translateCentroid(_rotatedXY.y, _rotatedXY.x, this.$.hour);
         }else {
-          if (this._tracking) {
-            this.set('_tracking', false);
-            cancelAnimationFrame(this._draggingClockHand);
-          }
+          // if (this._tracking) {
+          //   this.set('_tracking', false);
+          //   cancelAnimationFrame(this._draggingClockHand);
+          // }
           console.log('outside-HOUR-ring');
         }
       }
@@ -484,21 +493,32 @@ Example:
       if (this._startRing === 'minuteRing' || this._startRing === 'minute') {
         if (this._isInner(xy, this._centroid, MINUTE_INNER_RADIUS) &&
             this._isOuter(xy, this._centroid, MINUTE_OUTER_RADIUS)) {
-          this._mappedClockXY = this._mapClockXY(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-          _rotatedHandXY = this._computeNumberTextClockwise(this._dragAngle, 100, 154, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-          _rotatedCenter = this._computeNumberTextClockwise(this._dragAngle, 100, 164, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-          // console.log('current mouse pos: ', this._mappedClockXY.y+100, this._mappedClockXY.x+100);
-          // console.log('current minuteHand pos: ', _rotatedHandXY.y, _rotatedHandXY.x);
-          this._computePosy.bind(this.$.minuteHand)(_rotatedHandXY.y);
-          this._computePosx.bind(this.$.minuteHand)(_rotatedHandXY.x);
-          this._translateCentroid(_rotatedCenter.y, _rotatedCenter.x, this.$.minute);
-          // console.log('moving inside MINUTE ring: ' + '{' + xy.x + ', ' + xy.y + '}');
-          // console.log('at angle: ' + this._angleify(this._mappedClockXY.y, this._mappedClockXY.x));
+              _translatedXY = this._translateToOrigin(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+              _angle = this._angleify(_translatedXY.y, _translatedXY.x, 30);
+              if (!isNaN(_angle) && _angle >= 0) {
+                if (_angle > 360) {
+                  /**
+                   * - Fallback to zero instead of to the 1st value
+                   * which is 1*this.step*6;
+                   * - If so, zero (00 @ 360 degree) can never be selected.
+                   * - To avoid this from happening, 00 must be selectable.
+                   *
+                   */
+                  _angle = 0;
+                }
+              }
+              _rotatedXY = this._textNumberClockwisify(_angle, MINUTE_CIRCLE_Y, MINUTE_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+              // console.log(_rotatedXY);
+              // this._computePosy.bind(this.$.hourHand)(_rotatedXY.y);
+              // this._computePosx.bind(this.$.hourHand)(_rotatedXY.x);
+              this._rotatify().y2.bind(this.$.minuteHand)(_rotatedXY.y);
+              this._rotatify().x2.bind(this.$.minuteHand)(_rotatedXY.x);
+              this._translateCentroid(_rotatedXY.y, _rotatedXY.x, this.$.minute);
         }else {
-          if (this._tracking) {
-            this.set('_tracking', false);
-            cancelAnimationFrame(this._draggingClockHand);
-          }
+          // if (this._tracking) {
+          //   this.set('_tracking', false);
+          //   cancelAnimationFrame(this._draggingClockHand);
+          // }
           console.log('outside-MINUTE-ring');
         }
       }

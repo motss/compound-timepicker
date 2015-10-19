@@ -23,52 +23,36 @@ Example:
     <!-- Main codes starts here -->
     <div class="layout vertical flex-auto content">
         <div class="day-night flex-1">
-          <!-- Do it later... -->
+          <!-- WIP... -->
+          <span>{{_hours}}</span>
+          <span>:</span>
+          <span>{{_minutes}}</span>
         </div>
 
         <div class="clock flex-2 layout vertical center-center">
-            <!-- <circle cx="100" cy="12" r="1" style="stroke:#009688;stroke-width:2;"/> -->
-
-            <!-- <line x1="100" y1="100" x2="100" y2="5" style="stroke:rgb(255,0,0);stroke-width:2" />
-            <line x1="100" y1="0" x2="100" y2="200" stroke-dasharray="2,1" style="stroke:rgb(0,0,0);stroke-width:1" />
-            <line x1="0" y1="100" x2="200" y2="100" stroke-dasharray="3, 2" style="stroke:rgb(0,0,0);stroke-width:1" /> -->
-
           <svg width="200" height="200" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
             <g style="fill:#eeeeee;">
               <circle id="minuteRing" cx="100" cy="100" r="100" style="cursor:pointer;"/>
               <circle id="hourRing" cx="100" cy="100" r="66" style="fill:#eeeeee;cursor:pointer;"/>
-              <circle id="secondRing" cx="100" cy="100" r="32" style="fill:#e0e0e0;"/>
+              <circle id="secondRing" cx="100" cy="100" r="32" style="fill:#e0e0e0;pointer-events:none;"/>
             </g>
 
-            <<g id="hourGroup" transform="rotate(0, 100, 100)">
+            <g id="hourGroup" transform="rotate(0, 100, 100)">
               <circle id="hour" cx="100" cy="51" r="15" style="fill:#c8e6c9;cursor:pointer;"/>
               <circle id="hourCentroid" cx="100" cy="51" r="4" style="fill:#4caf50;cursor:pointer;stroke-width:4;pointer-events:none;"/>
               <line id="hourHand" x1="100" y1="100" x2="100" y2="51" style="stroke:#4caf50;stroke-width:2;pointer-events:none;"/>
             </g>
-            <!-- <line id="hourHand" x1="100" y1="100" x2="149" y2="100" style="stroke:#4caf50;stroke-width:2;pointer-events:none;"/> -->
 
             <g id="minuteGroup" transform="rotate(0, 100, 100)">
-            <circle id="minute" cx="100" cy="17" r="15" style="cursor:pointer;" class="minute"/>
-            <circle id="minuteCentroid" cx="100" cy="17" r="4" style="fill:#009688;stroke-width:4;pointer-events:none;"/>
-            <line id="minuteHand" x1="100" y1="100" x2="100" y2="17" style="stroke:#009688;stroke-width:2;fill:#009688;pointer-events:none;"/>
+              <circle id="minute" cx="100" cy="17" r="15" style="cursor:pointer;" class="minute"/>
+              <circle id="minuteCentroid" cx="100" cy="17" r="4" style="fill:#009688;stroke-width:4;pointer-events:none;"/>
+              <line id="minuteHand" x1="100" y1="100" x2="100" y2="17" style="stroke:#009688;stroke-width:2;fill:#009688;pointer-events:none;"/>
             </g>
 
             <circle id="centroid" cx="100" cy="100" r="2" style="stroke:#009688;stroke-width:2;fill:#009688;pointer-events:none;"/>
+
             <g id="numbers"></g>
           </svg>
-          <!-- <svg width="800" height="800" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
-            <g style="fill:#7d7d7d;">
-              <circle id="hourRing" cx="400" cy="400" r="400" style="cursor:pointer;"/>
-              <circle id="minuteRing" cx="400" cy="400" r="376" style="fill:#f5f5f5;cursor:pointer;"/>
-              <circle id="secondRing" cx="400" cy="400" r="352" style="fill:#bdbdbd;"/>
-            </g>
-            <circle id="centroid" cx="400" cy="400" r="2" style="stroke:rgb(0,0,0);stroke-width:1"/>
-            <circle id="hour" cx="400" cy="12" r="10" style="fill:#64ffda;fill-opactiy:.25;cursor:pointer;"/>
-            <circle id="minute" cx="400" cy="36" r="10" style="fill:#009688;fill-opactiy:.25;cursor:pointer;"/>
-            <line id="hourHand" x1="400" y1="400" x2="400" y2="22" style="stroke:#64ffda;stroke-width:.5;"/>
-            <line id="minuteHand" x1="400" y1="400" x2="400" y2="46" style="stroke:#009688;stroke-width:.5;"/>
-            <g id="numbers"></g>
-          </svg> -->
         </div>
     </div>
   </template>
@@ -103,37 +87,6 @@ Example:
        * @type {{name: string, image: string}}
        */
 
-      // _outerDragX: {
-      //   type: Number,
-      //   value: 100,
-      //   notify: true
-      // },
-      // _outerDragY: {
-      //   type: Number,
-      //   value: 22,
-      //   notify: true
-      // },
-      // _innerDragX: {
-      //   type: Number,
-      //   value: 100,
-      //   notify: true
-      // },
-      // _innerDragY: {
-      //   type: Number,
-      //   value: 46,
-      //   notify: true
-      // },
-
-      _lastTrackingPos: {
-        type: Object,
-        value: function () {
-          return {};
-        }
-      },
-      // _dragAngle: {
-      //   type: Number,
-      //   computed: '_angleify(_mappedClockXY.y, _mappedClockXY.x)'
-      // },
       _dragStep: {
         type: Number,
         computed: '_dragStepAngleify(step)'
@@ -143,19 +96,44 @@ Example:
         value: false
       },
       _startRing: String,
-
+      _lastTrackingPos: {
+        type: Object,
+        value: function () {
+          return {};
+        }
+      },
+      _textStyled: {
+        type: Number,
+        value: 0
+      },
       step: {
         type: Number,
         value: 1,
         observer: '_validateStep',
         notify: true
       },
-
-      _textStyled: {
+      hours: {
         type: Number,
-        value: 0
-      }
-
+        value: function() {
+          return new Date().getHours();
+        },
+        notify: true
+      },
+      minutes: {
+        type: Number,
+        value: function() {
+          return new Date().getMinutes();
+        },
+        notify: true
+      },
+      _hours: {
+        type: String,
+        computed: '_textify(hours)'
+      },
+      _minutes: {
+        type: String,
+        computed: '_textify(minutes)'
+      },
     },
 
     // Element Lifecycle
@@ -168,10 +146,7 @@ Example:
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
       this._clockNumberify();
-      // console.time('haha');
-      // this.$.minute.classList.add('number-selected');
-      // this.$.numbers.children[0].classList.add('text-selected');
-      // console.timeEnd('haha');
+      this._initClock(this.hours, this.minutes, this._dragStep);
     },
 
     attached: function() {
@@ -205,24 +180,20 @@ Example:
      * @param {string} greeting A positive greeting.
      * @return {string} The full greeting.
      */
-    sayHello: function(greeting) {
-      var response = greeting || 'Hello World!';
-      return 'compound-timepicker says, ' + response;
-    },
 
     _clockNumberify: function() {
-      var x = STARTING_POS_OF_FIRST_NUMBER_X, // 100
-          y = STARTING_POS_OF_FIRST_NUMBER_Y, // 17
-          cx = CENTER_OF_CIRCLE_X, // 100
-          cy = CENTER_OF_CIRCLE_Y, // 100
-          theta = THETA_BETWEEN_HOURS; // 30
+      var _x = STARTING_POS_OF_FIRST_NUMBER_X, // 100
+          _y = STARTING_POS_OF_FIRST_NUMBER_Y, // 17
+          _cx = CENTER_OF_CIRCLE_X, // 100
+          _cy = CENTER_OF_CIRCLE_Y, // 100
+          _theta = THETA_BETWEEN_HOURS; // 30
 
       for(var i = 0; i < 12; i++) {
         var _i = i == 0 ? 12: i,
-            _theta = theta * i,
+            __theta = _theta * i,
             _temp = document.createElementNS('http://www.w3.org/2000/svg', 'text'), // up to 30% faster.
-            _xy = this._textNumberClockwisify(_theta, y, x, cy, cx);
-        this.$.numbers.appendChild(this._textNumberify(_temp, _i, _xy.x, _xy.y));
+            __xy = this._textNumberClockwisify(__theta, _y, _x, _cy, _cx);
+        this.$.numbers.appendChild(this._textNumberify(_temp, _i, __xy.x, __xy.y));
       }
     },
 
@@ -242,59 +213,56 @@ Example:
       return _text;
     },
 
-    _textNumberClockwisify: function(theta, y, x, cy, cx) {
-      var rotXY = {}, _theta;
+    _textNumberClockwisify: function(_theta, _y, _x, _cy, _cx) {
+      var rotXY = {}, __theta;
 
-      function toRad(theta) {
-        return theta / 180 * Math.PI;
+      function toRad(_theta) {
+        return _theta / 180 * Math.PI;
       }
 
-      function sin(theta, xy, cxy) {
-        return Math.sin(theta) * (xy - cxy);
+      function sin(_theta, _xy, _cxy) {
+        return Math.sin(_theta) * (_xy - _cxy);
       }
 
-      function cos(theta, xy, cxy) {
-        return Math.cos(theta) * (xy - cxy);
+      function cos(_theta, _xy, _cxy) {
+        return Math.cos(_theta) * (_xy - _cxy);
       }
 
-      function rotatedX(theta, x, y, cx, cy) {
-        return (cos(theta, x, cx) - sin(theta, y, cy)) + cx;
+      function rotatedX(_theta, _x, _y, _cx, cy) {
+        return (cos(_theta, _x, _cx) - sin(_theta, _y, _cy)) + _cx;
       }
 
-      function rotatedY(theta, x, y, cx, cy) {
-        return (cos(theta, y, cy) + sin(theta, x, cx)) + cy;
+      function rotatedY(_theta, _x, _y, _cx, _cy) {
+        return (cos(_theta, _y, _cy) + sin(_theta, _x, _cx)) + _cy;
       }
 
-      _theta = toRad(theta);
-      rotXY.x = rotatedX(_theta, x, y, cx, cy).toFixed(1);
-      rotXY.y = rotatedY(_theta, x, y, cx, cy).toFixed(1);
+      __theta = toRad(_theta);
+      rotXY.x = rotatedX(__theta, _x, _y, _cx, _cy).toFixed(1);
+      rotXY.y = rotatedY(__theta, _x, _y, _cx, _cy).toFixed(1);
 
       return rotXY;
-    },
-
-    _computePosx: function(dragX) {
-      this.x2.baseVal.value = dragX;
-    },
-
-    _computePosy: function(dragY) {
-      this.y2.baseVal.value = dragY;
-    },
-
-    _computeCentery: function(dragY) {
-      this.cy.baseVal.value = dragY;
-    },
-
-    _computeCenterx: function(dragX) {
-      this.cx.baseVal.value = dragX;
     },
 
     _rotatify: function(_angle) {
       this.transform.baseVal.getItem(0).setRotate(_angle, 100, 100);
     },
 
-    _updateClockHand: function(y, x, node) {
-      // this._rotatify().x2.bind(node)(x);
-      // this._rotatify().y2.bind(node)(y);
+    _initClock: function(_hr, _min, _dragStep) {
+      var _h = (_hr%12) * 30,
+          _m = (_min%60) * _dragStep,
+          _m2 = _m%30 === 0;
+
+      // style selected minute at start.
+      if (_m2) {
+        var _child = _m/30;
+        this._textStyled = _child;
+        this.$.numbers.childNodes[_child].classList.add('text-selected');
+        this.$.minute.classList.add('number-selected');
+      }
+
+      // rotate whatever needs to be rotated.
+      this._rotatify.call(this.$.hourGroup, _h);
+      this._rotatify.call(this.$.minuteGroup, _m);
     },
 
     _updateTracking: function() {
@@ -329,14 +297,15 @@ Example:
     },
 
     _dragHand: function(ev) {
-      var _xy = {};
       switch (ev.detail.state) {
         case 'start':
           break;
         case 'track':
+          var _xy = {};
           // keep updating last tracking position before rAF.
           _xy.y = ev.detail.y; _xy.x = ev.detail.x;
           this._lastTrackingPos = _xy;
+
           this._updateTracking();
           break;
         case 'end':
@@ -349,11 +318,11 @@ Example:
       this._startRing = null;
     },
 
-    _draggingClockHand: function(xy) {
+    _draggingClockHand: function(_xy) {
       var _translatedXY = {},
           _rotatedXY = {},
           _angle,
-          hourRingParam = this.$.minuteRing.getBoundingClientRect(),
+          _minuteRingParam = this.$.minuteRing.getBoundingClientRect(),
           _ctr = this.$.centroid.getBoundingClientRect();
 
       // 4 times faster after heavy optimization of codes.
@@ -362,76 +331,61 @@ Example:
         case 'hour':
         case 'hourHand':
         case 'hourCentroid':
-          if (this._isInner(xy, _ctr, HOUR_INNER_RADIUS) &&
-              this._isOuter(xy, _ctr, HOUR_OUTER_RADIUS)) {
+          if (this._isInner(_xy, _ctr, HOUR_INNER_RADIUS) &&
+              this._isOuter(_xy, _ctr, HOUR_OUTER_RADIUS)) {
+            _translatedXY = this._translateToOrigin(_minuteRingParam, _xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            _angle = this._angleify(_translatedXY.y, _translatedXY.x, THETA_BETWEEN_HOURS);
+            if (_angle >= 0) {
+              _rotatedXY = this._textNumberClockwisify(_angle, HOUR_CIRCLE_Y, HOUR_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
 
-              _translatedXY = this._translateToOrigin(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-              _angle = this._angleify(_translatedXY.y, _translatedXY.x, THETA_BETWEEN_HOURS);
-              if (!isNaN(_angle) && _angle >= 0) {
-                if (_angle >= 360) {
-                  /**
-                   * - Fallback to zero instead of to the 1st value
-                   * which is 1*this.step*6;
-                   * - If so, zero (00 @ 360 degree) can never be selected.
-                   * - To avoid this from happening, 00 must be selectable.
-                   *
-                   */
-                  _angle = 0;
-                }
-                _rotatedXY = this._textNumberClockwisify(_angle, HOUR_CIRCLE_Y, HOUR_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-
-                // roatate everything.
-                this._rotatify.call(this.$.hourGroup, _angle);
-              }
+              // roatate everything.
+              this._rotatify.call(this.$.hourGroup, _angle);
+              // update hours.
+              this.hours = _angle === 0 ? 12 : _angle / 30;
+            }
           }
           break;
         case 'minuteRing':
         case 'minute':
         case 'minuteHand':
         case 'minuteCentroid':
-        if (this._isInner(xy, _ctr, MINUTE_INNER_RADIUS) &&
-            this._isOuter(xy, _ctr, MINUTE_OUTER_RADIUS)) {
-              _translatedXY = this._translateToOrigin(hourRingParam, xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-              _angle = this._angleify(_translatedXY.y, _translatedXY.x, this._dragStep);
-              if (!isNaN(_angle) && _angle >= 0) {
-                var _numbers = this.$.numbers,
-                    _minute = this.$.minute,
-                    _minuteCentroid = this.$.minuteCentroid,
-                    _minuteHand = this.$.minuteHand;
-                if (_angle >= 360) {
-                  /**
-                   * - Fallback to zero instead of to the 1st value
-                   * which is 1*this.step*6;
-                   * - If so, zero (00 @ 360 degree) can never be selected.
-                   * - To avoid this from happening, 00 must be selectable.
-                   */
-                  _angle = 0;
-                }
+          if (this._isInner(_xy, _ctr, MINUTE_INNER_RADIUS) &&
+              this._isOuter(_xy, _ctr, MINUTE_OUTER_RADIUS)) {
+            var _dragStep = this._dragStep;
+            _translatedXY = this._translateToOrigin(_minuteRingParam, _xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+            _angle = this._angleify(_translatedXY.y, _translatedXY.x, _dragStep);
 
-                if (_angle%30 === 0) {
-                  // remove previous selected clock number.
+            if (_angle >= 0) {
+              var _numbers = this.$.numbers,
+                  _minute = this.$.minute,
+                  _minuteCentroid = this.$.minuteCentroid,
+                  _minuteHand = this.$.minuteHand;
+              if (_angle%30 === 0) {
+                // remove previous selected clock number.
+                _numbers.children[this._textStyled].classList.remove('text-selected');
+                // assign new value to _textStyled.
+                this._textStyled = Math.floor(_angle/30);
+
+                // add class to minute circle.
+                _minute.classList.add('number-selected');
+                // add class to selecte clock number.
+                _numbers.children[this._textStyled].classList.add('text-selected');
+              } else {
+                // for everything just remove all previously added classes.
+                if (_numbers.children[this._textStyled].classList.contains('text-selected') ||
+                    _minute.classList.contains('numberselected')) {
+                  _minute.classList.remove('number-selected');
                   _numbers.children[this._textStyled].classList.remove('text-selected');
-                  // assign new value to _textStyled.
-                  this._textStyled = Math.floor(_angle/30);
-
-                  // add class to minute circle.
-                  _minute.classList.add('number-selected');
-                  // add class to selecte clock number.
-                  _numbers.children[this._textStyled].classList.add('text-selected');
-                } else {
-                  // for everything just remove all previously added classes.
-                  if (_numbers.children[this._textStyled].classList.contains('text-selected') ||
-                      _minute.classList.contains('numberselected')) {
-                    _minute.classList.remove('number-selected');
-                    _numbers.children[this._textStyled].classList.remove('text-selected');
-                  }
                 }
-
-                _rotatedXY = this._textNumberClockwisify(_angle, MINUTE_CIRCLE_Y, MINUTE_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-
-                // rotate everything.
-                this._rotatify.call(this.$.minuteGroup, _angle);
               }
+
+              _rotatedXY = this._textNumberClockwisify(_angle, MINUTE_CIRCLE_Y, MINUTE_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+
+              // rotate everything.
+              this._rotatify.call(this.$.minuteGroup, _angle);
+              // update minutes.
+              this.minutes = _angle / _dragStep;
+            }
           }
           break;
         default:
@@ -449,7 +403,7 @@ Example:
       var _degree = Math.round(Math.atan2(_x, -_y)/Math.PI*180);
 
       function _factorise(_degree, _step) {
-        return Math.ceil(_degree/ _step) * _step;
+        return Math.ceil(_degree/ _step) * _step % 360;
       }
 
       /**
@@ -457,30 +411,37 @@ Example:
        * - convert the return value to value in between 0 and 2pi;
        */
       function _convertFullPie(_degree) {
+        /**
+         * - Fallback to zero instead of to the 1st value
+         * which is 1*this.step*6;
+         * - If so, zero (00 @ 360 degree) can never be selected.
+         * - To avoid this from happening, 00 must be selectable.
+         *
+         */
         return _degree <= 0? (360 + _degree): _degree;
       }
 
       return _factorise(_convertFullPie(_degree), _step);
     },
 
-    _radiusify: function(y, x, cy, cx) {
-      function deltaXY(xy, cxy) {
-        return Math.pow((xy - cxy), 2);
+    _radiusify: function(_y, _x, _cy, _cx) {
+      function deltaXY(_xy, _cxy) {
+        return Math.pow((_xy - _cxy), 2);
       }
 
-      return Math.sqrt(deltaXY(y, cy) + deltaXY(x, cx));
+      return Math.sqrt(deltaXY(_y, _cy) + deltaXY(_x, _cx));
     },
 
-    _isInner: function(xy, ctr, radius) {
-      return this._radiusify(xy.y, xy.x, ctr.top, ctr.left) > radius;
+    _isInner: function(_xy, _ctr, _radius) {
+      return this._radiusify(_xy.y, _xy.x, _ctr.top, _ctr.left) > _radius;
     },
 
-    _isOuter: function(xy, ctr, radius) {
-      return this._radiusify(xy.y, xy.x, ctr.top, ctr.left) < radius;
+    _isOuter: function(_xy, _ctr, _radius) {
+      return this._radiusify(_xy.y, _xy.x, _ctr.top, _ctr.left) < _radius;
     },
 
-    _translateToOrigin: function(clockPos, xy, cy, cx) {
-      var _xy = {};
+    _translateToOrigin: function(_clockPos, _xy, _cy, _cx) {
+      var __xy = {};
 
       function _translateToOriginy(_clockPos, _xy, _cy) {
         return (_xy.y - _clockPos.top) - _cy;
@@ -490,20 +451,25 @@ Example:
         return (_xy.x - _clockPos.left) - _cx;
       }
 
-      _xy.y = _translateToOriginy(clockPos, xy, cy);
-      _xy.x = _translateToOriginx(clockPos, xy, cx);
+      __xy.y = _translateToOriginy(_clockPos, _xy, _cy);
+      __xy.x = _translateToOriginx(_clockPos, _xy, _cx);
 
-      return _xy;
+      return __xy;
     },
 
     _validateStep: function(newVal, oldVal) {
-      if (isNaN(newVal) || newVal < 1) {
+      // if (isNaN(newVal) || newVal < 1) {
+      if (newVal < 1) {
         this.step = oldVal;
       }
     },
 
     _dragStepAngleify: function(step) {
       return step * 6;
+    },
+
+    _textify: function(_number) {
+      return String.prototype.slice.call(('0' + _number), -2);
     }
   });
 

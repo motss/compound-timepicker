@@ -254,7 +254,7 @@ Example:
 
     _initClock: function(_hr, _min, _dragStep) {
       var _h = (_hr%12) * 30,
-          _m = (_min%60) * _dragStep,
+          _m = (_min%60) * 6,
           _m2 = _m%30 === 0;
 
       // style selected minute at start.

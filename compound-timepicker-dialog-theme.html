@@ -22,19 +22,35 @@
       }
 
       /* mobile-small */
+      /* Not supporting IP4 anymore, IP5 onwards. */
       @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) {
         :host {
           @apply(--layout-fit);
-          background: blue;
         }
+
       }
+
       /* mobile-large */
       @media all and (min-width: 361px) and (max-width: 599px) and (orientation: portrait) {
         :host {
           @apply(--layout-fit);
+          margin: 32px 64px;
           background: blue;
         }
+
       }
+
+      /* taller mobile-large */
+      /* IP6, IP6+, N6 */
+      @media all and (min-width: 361px) and (max-width: 599px) and (min-height: 567px) and (orientation: portrait) {
+        :host {
+          @apply(--layout-fit);
+          margin: 64px 64px;
+          background: blue;
+        }
+
+      }
+
       /* tablet and above*/
       @media all and (min-width: 600px) and (orientation: portrait) {
         :host {

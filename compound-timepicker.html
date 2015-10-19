@@ -22,11 +22,16 @@ Example:
 
     <!-- Main codes starts here -->
     <div class="layout vertical flex-auto content">
-        <div class="day-night flex-1">
+        <div class="day-night flex-1 layout horizontal center-center end-justified">
           <!-- WIP... -->
-          <span>{{_hours}}</span>
-          <span>:</span>
-          <span>{{_minutes}}</span>
+          <!-- <div>{{_hours}}</div>
+          <div>:</div>
+          <div>{{_minutes}}</div> -->
+          <div class="clock-time">
+            <span>{{_hours}}</span>
+            <span>:</span>
+            <span>{{_minutes}}</span>
+          </div>
         </div>
 
         <div class="clock flex-2 layout vertical center-center">

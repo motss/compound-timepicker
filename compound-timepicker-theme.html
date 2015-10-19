@@ -18,6 +18,9 @@
 
       .day-night {
         background: #e0e0e0;
+        -webkit-font-smoothing: antialiased;
+        font-size: 56px;
+        text-align: right;
       }
 
       .clock {
@@ -26,10 +29,24 @@
         margin-top: 24px;
       }
 
+      .clock-time {
+        padding-right: 24px;
+        font-weight: 500;
+      }
+
+      .clock-time span:nth-of-type(1) {
+        margin-right: -12px;
+      }
+
+      .clock-time span:nth-of-type(3) {
+        margin-left: -10px;
+      }
+
       .number {
         pointer-events: none;
         dominant-baseline: central;
         text-anchor: middle;
+        text-rendering: optimizeLegibility;
         /*cursor: pointer;*/
         /*text-align: center;*/
       }

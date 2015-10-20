@@ -23,14 +23,20 @@
       }
 
       .day-night {
-        background: #e0e0e0;
+        /*background: #e0e0e0;*/
+        background: var(--paper-grey-800, --compound-timepicker-ampm-bg);
         /*-webkit-font-smoothing: antialiased;*/
         font-size: 56px;
         text-align: right;
+        transition: background ease-out .5s;
+      }
+
+      .night-day {
+        background: var(--paper-light-blue-100, --compound-timepicker-revert-bg);
       }
 
       .clock {
-        background: #f5f5f5;
+        background: var(--paper-grey-100, --compound-timepicker-clock-bg);
         padding: 0 24px;
         margin-top: 24px;
       }
@@ -52,27 +58,76 @@
         pointer-events: none;
         dominant-baseline: central;
         text-anchor: middle;
-        text-rendering: optimizeLegibility;
+        /*text-rendering: optimizeLegibility;*/
+      }
+
+      /* rings-related mixins */
+      .rings {
+        fill: var(--paper-grey-200, --compound-timepicker-rings);
+      }
+
+      .minute-ring {
+        fill: var(--paper-grey-200, --compound-timepicker-minute-ring);
+        cursor: pointer;
+      }
+
+      .hour-ring {
+        fill: var(--paper-grey-200, --compound-timepicker-hour-ring);
+        cursor: pointer;
+      }
+
+      .center {
+        fill: var(--paper-grey-300, --compound-timepicker-center);
+        pointer-events: none;
+      }
+
+      /* hour-related mixins */
+      .hour {
+        fill: var(--paper-green-100, --compound-timepicker-hour);
+        cursor: pointer;
+      }
+
+      .hour-centroid {
+        fill: var(--paper-green-500, --compound-timepicker-hour-centroid);
+        stroke-width: var(4, --compound-timepicker-strokewidth-hour-centroid);
+        cursor: pointer;
+        pointer-events: none;
+      }
+
+      .hour-hand {
+        stroke: var(--paper-green-500, --compound-timepicker-stroke-hour-hand);
+        stroke-width: 2;
+        pointer-events: none;
+      }
+
+      /* minute-related mixins */
+      .minute {
+        fill: var(--paper-teal-100, --compound-timepicker-minute);
+        cursor: pointer;
+      }
+
+      .minute-centroid {
+        fill: var(--paper-teal-500, --compound-timepicker-minute-centroid);
+        stroke-width: var(4, --compound-timepicker-strokewidth-minute-centroid);
+        pointer-events: none;
+      }
+
+      .minute-hand {
+        stroke: var(--paper-teal-500, --compound-timepicker-stroke-minute-hand);
+        stroke-width: var(2, --compound-timepicker-strokewidth-minute-hand);
+        pointer-events: none;
       }
 
       .number-selectable {
         fill: orange;
       }
 
-      .minute {
-        fill:#b2dfdb;
-      }
-
       .minute.number-selected {
-        fill: #009688;
+        fill: var(--paper-teal-500, --compound-timepicker-minute-selected);
       }
 
       .text-selected {
-        fill: #ffffff;
-      }
-
-      .text-unselected {
-        fill: #000000;
+        fill: var(--text-primary-color, --compound-timepicker-text-selected);
       }
 
       /* mobile-small */

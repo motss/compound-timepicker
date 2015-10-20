@@ -4,6 +4,8 @@
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-styles/paper-styles.html">
 <link rel="import" href="../iron-media-query/iron-media-query.html">
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+
 <!--
 An element providing a solution to no problem in particular.
 
@@ -28,33 +30,34 @@ Example:
 
     <!-- <div class="layout horizontal flex-auto content"> -->
     <div class$="{{_computeContentCls(_portrait)}}">
-        <div class="day-night flex-1 layout horizontal center-center end-justified">
+        <div id="ampm" class="day-night flex-1 layout horizontal center-center end-justified relative" on-tap="_toggleAmpm">
           <!-- WIP... -->
           <div class="clock-time">
             <span>{{_hours}}</span>
             <span>:</span>
             <span>{{_minutes}}</span>
           </div>
+          <paper-ripple></paper-ripple>
         </div>
 
         <div class="clock flex-2 layout vertical center-center">
           <svg width="200" height="200" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
-            <g style="fill:#eeeeee;">
-              <circle id="minuteRing" cx="100" cy="100" r="100" style="cursor:pointer;"/>
-              <circle id="hourRing" cx="100" cy="100" r="66" style="fill:#eeeeee;cursor:pointer;"/>
-              <circle id="secondRing" cx="100" cy="100" r="32" style="fill:#e0e0e0;pointer-events:none;"/>
+            <g class="rings">
+              <circle id="minuteRing" cx="100" cy="100" r="100" class="minute-ring"/>
+              <circle id="hourRing" cx="100" cy="100" r="66" class="hour-ring"/>
+              <circle id="center" cx="100" cy="100" r="32" class="center"/>
             </g>
 
             <g id="hourGroup" transform="rotate(0, 100, 100)">
-              <circle id="hour" cx="100" cy="51" r="15" style="fill:#c8e6c9;cursor:pointer;"/>
-              <circle id="hourCentroid" cx="100" cy="51" r="4" style="fill:#4caf50;cursor:pointer;stroke-width:4;pointer-events:none;"/>
-              <line id="hourHand" x1="100" y1="100" x2="100" y2="51" style="stroke:#4caf50;stroke-width:2;pointer-events:none;"/>
+              <circle id="hour" cx="100" cy="51" r="15" class="hour"/>
+              <circle id="hourCentroid" cx="100" cy="51" r="4" class="hour-centroid"/>
+              <line id="hourHand" x1="100" y1="100" x2="100" y2="51" class="hour-hand"/>
             </g>
 
             <g id="minuteGroup" transform="rotate(0, 100, 100)">
-              <circle id="minute" cx="100" cy="17" r="15" style="cursor:pointer;" class="minute"/>
-              <circle id="minuteCentroid" cx="100" cy="17" r="4" style="fill:#009688;stroke-width:4;pointer-events:none;"/>
-              <line id="minuteHand" x1="100" y1="100" x2="100" y2="17" style="stroke:#009688;stroke-width:2;fill:#009688;pointer-events:none;"/>
+              <circle id="minute" cx="100" cy="17" r="15" class="minute"/>
+              <circle id="minuteCentroid" cx="100" cy="17" r="4" class="minute-centroid"/>
+              <line id="minuteHand" x1="100" y1="100" x2="100" y2="17" class="minute-hand"/>
             </g>
 
             <circle id="centroid" cx="100" cy="100" r="2" style="stroke:#009688;stroke-width:2;fill:#009688;pointer-events:none;"/>
@@ -132,6 +135,13 @@ Example:
         value: function() {
           return new Date().getMinutes();
         },
+        notify: true
+      },
+      // am - true; pm - false
+      ampm: {
+        type: Boolean,
+        value: false,
+        computed: '_dayOrNight(hours)',
         notify: true
       },
       _hours: {
@@ -485,6 +495,20 @@ Example:
       _cls += _portrait ? 'vertical' : 'horizontal';
 
       return _cls;
+    },
+
+    _toggleAmpm: function() {
+      this.$.ampm.classList.toggle('night-day');
+      this.ampm = !this.ampm;
+    },
+
+    _dayOrNight: function(_hours) {
+      this.hours = _hours%12;
+      if (_hours >= 12 && _hours <= 23) {
+        this.$.ampm.classList.remove('night-day');
+      }else {
+        this.$.ampm.classList.add('night-day');
+      }
     }
   });
 

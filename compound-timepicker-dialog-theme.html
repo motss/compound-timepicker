@@ -10,13 +10,16 @@
         display: block;
         box-sizing: border-box;
         @apply(--layout-vertical);
+        /* clock + buttons = 340 + 57 */
+        min-height: 397px;
       }
 
       *, *:before, *:after {
         box-sizing: inherit;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
       }
 
-      .content {
+      .content, .container {
         margin: 0;
         padding: 0;
       }

@@ -25,12 +25,14 @@ Example:
 
     <!-- Main codes starts here -->
     <!-- compound-timepicker's code -->
-    <compound-timepicker step="5" class="flex-auto layout vertical content"></compound-timepicker>
+    <div class="container layout vertical flex-auto">
+      <compound-timepicker step="5" class="flex-auto layout vertical content"></compound-timepicker>
 
-    <!-- Dialog buttons -->
-    <div class="buttons">
-      <paper-button dialog-dismiss>Cancel</paper-button>
-      <paper-button dialog-confirm autofocus>OK</paper-button>
+      <!-- Dialog buttons -->
+      <div class="buttons layout horizontal">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus>OK</paper-button>
+      </div>
     </div>
 
   </template>

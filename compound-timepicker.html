@@ -3,6 +3,7 @@
 <link rel="import" href="../paper-dialog/paper-dialog.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-styles/paper-styles.html">
+<link rel="import" href="../iron-media-query/iron-media-query.html">
 <!--
 An element providing a solution to no problem in particular.
 
@@ -21,7 +22,12 @@ Example:
     <style include="compound-timepicker-theme"></style>
 
     <!-- Main codes starts here -->
-    <div class="layout vertical flex-auto content">
+    <!-- portrait's mq -->
+    <iron-media-query query="(orientation: portrait)" query-matches="{{_portrait}}">
+    </iron-media-query>
+
+    <!-- <div class="layout horizontal flex-auto content"> -->
+    <div class$="{{_computeContentCls(_portrait)}}">
         <div class="day-night flex-1 layout horizontal center-center end-justified">
           <!-- WIP... -->
           <div class="clock-time">
@@ -471,6 +477,14 @@ Example:
 
     _textify: function(_number) {
       return String.prototype.slice.call(('0' + _number), -2);
+    },
+
+    _computeContentCls: function(_portrait) {
+      var _cls = 'layout flex-auto content ';
+
+      _cls += _portrait ? 'vertical' : 'horizontal';
+
+      return _cls;
     }
   });
 

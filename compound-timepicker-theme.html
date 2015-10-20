@@ -23,7 +23,6 @@
       }
 
       .day-night {
-        min-height: 76px;
         background: #e0e0e0;
         /*-webkit-font-smoothing: antialiased;*/
         font-size: 56px;
@@ -31,7 +30,6 @@
       }
 
       .clock {
-        min-height: 240px;
         background: #f5f5f5;
         padding: 0 24px;
         margin-top: 24px;
@@ -55,8 +53,6 @@
         dominant-baseline: central;
         text-anchor: middle;
         text-rendering: optimizeLegibility;
-        /*cursor: pointer;*/
-        /*text-align: center;*/
       }
 
       .number-selectable {
@@ -80,34 +76,56 @@
       }
 
       /* mobile-small */
-      @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) { }
-      /* mobile-large */
-      @media all and (min-width: 361px) and (orientation: portrait) { }
-      /* tablet and above*/
-      @media all and (min-width: 600px) and (orientation: portrait) {
-        paper-dialog {
-          width: 360px;
-          height: 640px;
-          /*min-width: 360px;
-          min-height: 640px;*/
-          /*max-width: 360px;
-          max-height: 640px;*/
+      @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) {
+        .day-night {
+          min-height: 76px;
+        }
+
+        .clock {
+          min-height: 240px;
         }
       }
+      /* mobile-large */
+      @media all and (min-width: 361px) and (orientation: portrait) {
+        .day-night {
+          min-height: 76px;
+        }
+
+        .clock {
+          min-height: 240px;
+        }
+      }
+      /* tablet and above*/
+      @media all and (min-width: 600px) and (orientation: portrait) {
+      }
       /* mobile-small-landscape */
-      @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) { }
+      @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) {
+        .day-night {
+          min-width: 180px;
+        }
+
+        .clock {
+          margin-top: 0;
+          padding: 0;
+        }
+
+        .content {
+          max-height: 212px;
+        }
+      }
       /* mobile-large-landscape */
-      @media all and (min-width: 481px) and (orientation: landscape) { }
+      @media all and (min-width: 481px) and (orientation: landscape) {
+        .day-night {
+          min-width: 220px;
+        }
+
+        .clock {
+          margin-top: 0;
+          padding: 24px;
+        }
+      }
       /* tablet-landscape */
       @media all and (min-width: 960px) and (orientation: landscape) {
-        paper-dialog {
-          width: 640px;
-          height: 360px;
-          /*min-width: 640px;
-          max-width: 640px;
-          min-height: 360px;
-          max-height: 360px;*/
-        }
       }
 
     </style>

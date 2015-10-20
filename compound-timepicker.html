@@ -356,9 +356,8 @@ Example:
         case 'minuteCentroid':
           if (this._isInner(_xy, _ctr, MINUTE_INNER_RADIUS) &&
               this._isOuter(_xy, _ctr, MINUTE_OUTER_RADIUS)) {
-            var _dragStep = this._dragStep;
             _translatedXY = this._translateToOrigin(_minuteRingParam, _xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-            _angle = this._angleify(_translatedXY.y, _translatedXY.x, _dragStep);
+            _angle = this._angleify(_translatedXY.y, _translatedXY.x, this._dragStep);
 
             if (_angle >= 0) {
               var _numbers = this.$.numbers,
@@ -389,7 +388,7 @@ Example:
               // rotate everything.
               this._rotatify.call(this.$.minuteGroup, _angle);
               // update minutes.
-              this.minutes = _angle / _dragStep;
+              this.minutes = _angle / 6;
             }
           }
           break;

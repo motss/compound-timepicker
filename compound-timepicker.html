@@ -137,13 +137,6 @@ Example:
         },
         notify: true
       },
-      // am - true; pm - false
-      // _ampm: {
-      //   type: Boolean,
-      //   value: false,
-      //   computed: '_dayOrNight(hours)',
-      //   notify: true
-      // },
       _hours: {
         type: String,
         computed: '_textify(hours)'
@@ -156,6 +149,11 @@ Example:
         type: Boolean,
         value: false,
         notify: true
+      },
+      time : String,
+      timeFormat: {
+        type: Number,
+        value: 12,
       }
     },
 
@@ -168,8 +166,13 @@ Example:
       //
       // This is the point where you should make modifications to the DOM (when
       // necessary), or kick off any processes the element wants to perform.
+
+      // generate all clock numbers on the clock face.
       this._clockNumberify();
+      // init clock with current time by adjusting angle of all clock hands.
       this._initClock(this.hours, this.minutes, this._dragStep);
+      // set initial time just in case no time is beng selected.
+      this.time = this._selectedTime(this.hours, this.minutes, this._dayNight, this.timeFormat);
     },
 
     attached: function() {
@@ -348,6 +351,9 @@ Example:
     _releaseHand: function(ev) {
       cancelAnimationFrame(this._updateTracking);
       this._startRing = null;
+      // once release touch/ mouse, fire output.
+      this.time = this._selectedTime(this.hours, this.minutes, this._dayNight, this.timeFormat);
+      console.log(this.time);
     },
 
     _draggingClockHand: function(_xy) {
@@ -520,6 +526,20 @@ Example:
         this.$.ampm.classList.remove('night-day');
       }else {
         this.$.ampm.classList.add('night-day');
+      }
+    },
+
+    _selectedTime: function(_h, _m, _d, _f) {
+      var _ampm = 'PM';
+
+      if (_d) {
+        _ampm = 'AM';
+      }
+
+      if (_f === 12) {
+        return this.hours + ':' + this._minutes + ' ' + _ampm;
+      } else if (_f === 24) {
+        return this._hours + ':' + this._minutes;
       }
     }
   });

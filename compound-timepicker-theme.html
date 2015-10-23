@@ -23,16 +23,17 @@
       }
 
       .day-night {
-        /*background: #e0e0e0;*/
-        background: var(--paper-grey-800, --compound-timepicker-ampm-bg);
-        /*-webkit-font-smoothing: antialiased;*/
+        /*background: var(--paper-grey-800, --compound-timepicker-ampm-bg);*/
+        background: url(day-compressed.svg);
         font-size: 56px;
         text-align: right;
-        transition: background ease-out .5s;
+        transition: all ease-out .5s;
       }
 
       .night-day {
-        background: var(--paper-light-blue-100, --compound-timepicker-revert-bg);
+        /*background: var(--paper-light-blue-100, --compound-timepicker-revert-bg);*/
+        color: #1E88E5;
+        background: url(night-compressed.svg);
       }
 
       .clock {

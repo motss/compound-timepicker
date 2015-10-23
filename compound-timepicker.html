@@ -30,14 +30,14 @@ Example:
 
     <!-- <div class="layout horizontal flex-auto content"> -->
     <div class$="{{_computeContentCls(_portrait)}}">
-        <div id="ampm" class="day-night flex-1 layout horizontal center-center end-justified relative" on-tap="_toggleAmpm">
+        <div id="ampm" class="day-night flex-1 layout horizontal center-center end-justified relative" on-tap="_toggleDayNight">
           <!-- WIP... -->
-          <div class="clock-time">
+          <div class="clock-time flex-auto">
             <span>{{_hours}}</span>
             <span>:</span>
             <span>{{_minutes}}</span>
           </div>
-          <paper-ripple></paper-ripple>
+          <paper-ripple on-transitionend="_switchDay"></paper-ripple>
         </div>
 
         <div class="clock flex-2 layout vertical center-center">
@@ -138,12 +138,12 @@ Example:
         notify: true
       },
       // am - true; pm - false
-      ampm: {
-        type: Boolean,
-        value: false,
-        computed: '_dayOrNight(hours)',
-        notify: true
-      },
+      // _ampm: {
+      //   type: Boolean,
+      //   value: false,
+      //   computed: '_dayOrNight(hours)',
+      //   notify: true
+      // },
       _hours: {
         type: String,
         computed: '_textify(hours)'
@@ -152,6 +152,11 @@ Example:
         type: String,
         computed: '_textify(minutes)'
       },
+      _dayNight: {
+        type: Boolean,
+        value: false,
+        notify: true
+      }
     },
 
     // Element Lifecycle
@@ -276,6 +281,15 @@ Example:
         this._textStyled = _child;
         this.$.numbers.childNodes[_child].classList.add('text-selected');
         this.$.minute.classList.add('number-selected');
+      }
+
+      // set cls for hours.
+      if (_hr >= 12 && _hr <= 23) {
+        this.set('_dayNight', false);
+        this.$.ampm.classList.add('night-day');
+      }else {
+        this.set('_dayNight', true);
+        this.$.ampm.classList.remove('night-day');
       }
 
       // rotate whatever needs to be rotated.
@@ -497,14 +511,12 @@ Example:
       return _cls;
     },
 
-    _toggleAmpm: function() {
-      this.$.ampm.classList.toggle('night-day');
-      this.ampm = !this.ampm;
+    _toggleDayNight: function() {
+      this._dayNight = !this._dayNight;
     },
 
-    _dayOrNight: function(_hours) {
-      this.hours = _hours%12;
-      if (_hours >= 12 && _hours <= 23) {
+    _switchDay: function() {
+      if (this._dayNight) {
         this.$.ampm.classList.remove('night-day');
       }else {
         this.$.ampm.classList.add('night-day');

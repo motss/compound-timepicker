@@ -1,0 +1,215 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../test-fixture/test-fixture-mocha.js"></script>
+    <link rel="import" href="../../test-fixture/test-fixture.html">
+
+    <!-- Step 1: import the element to test -->
+    <link rel="import" href="../compound-timepicker.html">
+    <link rel="import" href="../compound-timepicker-dialog.html">
+  </head>
+  <body>
+
+    <!-- You can use the document as a place to set up your fixtures. -->
+    <test-fixture id="CompoundTimepicker">
+      <template>
+        <compound-timepicker></compound-timepicker>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="CompoundTimepickerDialog">
+      <template>
+        <compound-timepicker-dialog></compound-timepicker-dialog>
+      </template>
+    </test-fixture>
+
+    <script>
+      'use strict';
+
+      describe('<compound-timepicker>', function () {
+        var timepicker, dialog;
+
+        beforeEach(function () {
+          timepicker = fixture('CompoundTimepicker');
+          dialog = fixture('CompoundTimepickerDialog');
+        });
+
+        context('test inputs for property hours', function () {
+          it('should show correct hours when inputs numbers from 0 till 23', function () {
+            for (var i = 0; i < 24; i++) {
+              timepicker.setAttribute('hours', i);
+              expect(timepicker.hours).to.be.equal(i);
+            }
+          });
+
+          it('should show correct time when inputs passed in', function () {
+            for (var i = 0; i < 24; i++) {
+              timepicker.setAttribute('hours', i);
+              timepicker.notifyTimeUpdate();
+              if (i < 10) {
+                expect(timepicker.time.slice(0, 1)).to.be.equal(i.toString());
+              }else {
+                expect(timepicker.time.slice(0, 2)).to.be.equal(i.toString());
+              }
+            }
+          });
+
+          it('should not accept String-typed arguments', function () {
+            timepicker.hours = 'a';
+            expect(timepicker.hours).to.be.within(0, 23);
+          });
+
+          it('should not accept number lesser than 0', function () {
+            timepicker.hours = -1;
+            expect(timepicker.hours).to.not.be.below(0);
+          })
+
+          it('should not accept number greater than 23', function () {
+            timepicker.hours = 99;
+            expect(timepicker.hours).to.be.at.most(23);
+          });
+
+          it('should not be undefined when unset', function () {
+            expect(timepicker.hours).to.not.be.undefined;
+          });
+
+          it('should be equal to current time', function () {
+            expect(timepicker.hours).to.be.equal(new Date().getHours());
+          });
+        });
+
+        context('test inputs for property minutes', function () {
+          it('should show correct minutes when inputs numbers from 0 till 59', function () {
+            for (var i = 0; i < 60; i++) {
+              timepicker.setAttribute('minutes', i);
+              expect(timepicker.minutes).to.be.eql(i);
+            }
+          });
+
+          it('should show correct time when inputs passed in', function () {
+            for (var i = 0; i < 60; i++) {
+              timepicker.minutes = i;
+              timepicker.notifyTimeUpdate();
+              expect(timepicker.time.slice(-5, -3)).to.be.within('00', '59');
+            }
+          });
+
+          it('should not accpet String-typed arguments', function () {
+            var _str = 'this is a string!!!!'
+            timepicker.minutes = _str;
+            expect(timepicker.minutes).to.not.be.eql(_str);
+          });
+
+          it('should not accept number lesser than 0', function () {
+            timepicker.minutes = -9999;
+            expect(timepicker.minutes).to.not.be.below(0);
+          });
+
+          it('should not accept number greater than 59', function () {
+            timepicker.setAttribute('minutes', 60);
+            expect(timepicker.minutes).to.not.be.above(59);
+          });
+
+          it('should not be undefined when unset', function() {
+            expect(timepicker.minutes).to.not.be.undefined;
+          });
+
+          it('should be equal to current time', function () {
+            expect(timepicker.minutes).to.be.eql(new Date().getMinutes());
+          });
+        });
+
+        context('test inputs for step', function () {
+          it('should not accept String-typed arguments', function () {
+            timepicker.setAttribute('step', 'dubstep');
+            expect(timepicker.step).to.not.be.eql('dubstep');
+          });
+
+          it('should not be undefined', function () {
+            expect(timepicker.step).to.not.be.undefined;
+          });
+
+          it('should have the correct default value of 1', function () {
+            expect(timepicker.step).to.be.at.least(1);
+          });
+        });
+
+        context('test outputs from time', function () {
+          it('should not be undefined when init', function () {
+            expect(timepicker.time).to.not.be.undefined;
+          });
+
+          it('should show current time', function () {
+            var _hours = new Date().getHours(),
+                _minutes = new Date().getMinutes(),
+                _dayNight = _hours >= 12 && _hours <= 23 ? 'PM' : 'AM',
+                _cur;
+
+            _hours %= 12;
+            _hours = _hours === 0 ? 12 : _hours;
+
+            _cur = _hours + ':' + ('0' + _minutes).slice(-2) + ' ' + _dayNight;
+            expect(timepicker.time).to.be.eql(_cur);
+          });
+        });
+
+        context('test for time format', function () {
+          it('should not be undefined', function () {
+            expect(timepicker.timeFormat).to.not.be.undefined;
+          });
+
+          it('should have its own default value', function () {
+            expect(timepicker.timeFormat).to.be.eql(12);
+          });
+
+          it('should not change the time format to 24 hours when set', function () {
+            timepicker.timeFormat = 24;
+            expect(timepicker.timeFormat).to.be.at.most(24);
+
+            var _nowHours = new Date().getHours();
+            _nowHours = ('0' + _nowHours).slice(-2);
+            timepicker.notifyTimeUpdate();
+            expect(timepicker.time.slice(0, 2)).to.be.eql(_nowHours);
+
+            timepicker.setAttribute('hours', 23);
+            timepicker.notifyTimeUpdate();
+            expect(timepicker.time.slice(0,2)).to.be.eql(('0' + 23).slice(-2));
+          });
+        });
+      });
+
+
+      // var myEl = document.querySelector('compound-timepicker');
+      //
+      // suite('<compound-timepicker>', function() {
+      //
+      //   test('defines the "author" property', function() {
+      //     assert.equal(myEl.author.name, 'Dimitri Glazkov');
+      //     assert.equal(myEl.author.image, 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg');
+      //   });
+      //
+      //   test('says hello', function() {
+      //     assert.equal(myEl.sayHello(), 'compound-timepicker says, Hello World!');
+      //
+      //     var greetings = myEl.sayHello('greetings Earthlings');
+      //     assert.equal(greetings, 'compound-timepicker says, greetings Earthlings');
+      //   });
+      //
+      //   test('fires lasers', function(done) {
+      //     myEl.addEventListener('compound-timepicker-lasers', function(event) {
+      //       assert.equal(event.detail.sound, 'Pew pew!');
+      //       done();
+      //     });
+      //     myEl.fireLasers();
+      //   });
+      //
+      // });
+    </script>
+
+  </body>
+</html>

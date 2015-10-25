@@ -523,6 +523,7 @@ Example:
     _validateHours: function(newVal, oldVal) {
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 0 && newVal <= 23) {
+        this.set('hours', newVal);
         return;
       }else {
         this.set('hours', new Date().getHours());
@@ -574,6 +575,11 @@ Example:
       } else if (_f === 24) {
         return this._hours + ':' + _m;
       }
+    },
+
+    // explicitly update time.
+    notifyTimeUpdate: function() {
+      this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
     }
   });
 

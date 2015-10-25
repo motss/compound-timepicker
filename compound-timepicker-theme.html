@@ -6,6 +6,7 @@
         --hour-hand-strokewidth: 2;
         --minute-centroid-strokweidth: 4;
         --hour-centroid-strokewidth: 4;
+        --centroid-strokewidth: 2;
         --paper-white: #ffffff;
       }
 
@@ -121,6 +122,13 @@
         stroke: var(--paper-teal-500, --compound-timepicker-stroke-minute-hand);
         stroke-width: var(--minute-hand-strokewidth, --compound-timepicker-strokewidth-minute-hand);
         pointer-events: none;
+      }
+
+      .centroid {
+        stroke: var(--paper-teal-500, --compound-timepicker-stroke-centroid);
+        stroke-width: var(--centroid-strokewidth, --compound-timepicker-strokewidth-centroid);
+        fill: var(--paper-teal-500, --compound-timepicker-centroid);
+        pointer-events:none;
       }
 
       .number-selectable {

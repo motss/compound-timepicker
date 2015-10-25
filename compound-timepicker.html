@@ -128,7 +128,6 @@ Example:
         value: function() {
           return new Date().getHours();
         },
-        observer: '_validateHours',
         notify: true
       },
       minutes: {
@@ -136,7 +135,6 @@ Example:
         value: function() {
           return new Date().getMinutes();
         },
-        observer: '_validateMinutes',
         notify: true
       },
       _hours: {
@@ -311,7 +309,7 @@ Example:
 
     _selectHand: function(ev) {
       var _id = ev.target.id, _xy = {};
-      ev.preventDefault();
+      // ev.preventDefault();
       /**
        * - 400 times faster using switch compared to multi if statements.
        * - switch case up to ~10ms.
@@ -355,7 +353,7 @@ Example:
       this._startRing = null;
       // once release touch/ mouse, fire output.
       this.time = this._selectedTime(this.hours, this.minutes, this._dayNight, this.timeFormat);
-      // console.log(this.time);
+      console.log(this.time);
     },
 
     _draggingClockHand: function(_xy) {
@@ -442,23 +440,7 @@ Example:
       var _degree = Math.round(Math.atan2(_x, -_y)/Math.PI*180);
 
       function _factorise(_degree, _step) {
-        var _factor = _degree / _step,
-            _max = Math.ceil(_factor) * _step,
-            _th = _max - 3,
-            _min = Math.floor(_factor) * _step;
-
-        // when clock step !== 6, reset to 0 instead of modulus by 360.
-        _max = _max > 359 ? 0 : _max;
-        _min = _min > 359 ? 0 : _min;
-
-        // negate negative values.
-        _th = _th < 0 ? 360 + _th : _th;
-
-        /**
-         * - check if computed value >= threshold value.
-         * - if true, return max angle; else return min one.
-         */
-        return _degree >= _th ? _max : _min;
+        return Math.ceil(_degree/ _step) * _step % 360;
       }
 
       /**
@@ -513,29 +495,9 @@ Example:
     },
 
     _validateStep: function(newVal, oldVal) {
-      // Polymer seemed to have changed the way observer works.
-      if (newVal >= 1 && newVal <= 60) {
-        return;
-      }else {
-        this.set('step', 1);
-      }
-    },
-
-    _validateHours: function(newVal, oldVal) {
-      // Polymer seemed to have changed the way observer works.
-      if (newVal >= 0 && newVal <= 23) {
-        return;
-      }else {
-        this.set('hours', new Date().getHours());
-      }
-    },
-
-    _validateMinutes: function (newVal, oldVal) {
-      // Polymer seemed to have changed the way observer works.
-      if (newVal >= 0 && newVal <= 59) {
-        return;
-      }else {
-        this.set('minutes', new Date().getMinutes());
+      // if (isNaN(newVal) || newVal < 1) {
+      if (newVal < 1) {
+        this.step = oldVal;
       }
     },
 

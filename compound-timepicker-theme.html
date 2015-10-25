@@ -1,14 +1,6 @@
-<dom-module id="compound-timepicker-theme">
+<<dom-module id="compound-timepicker-theme">
   <template>
     <style>
-      :root {
-        --minute-hand-strokewidth: 2;
-        --hour-hand-strokewidth: 2;
-        --minute-centroid-strokweidth: 4;
-        --hour-centroid-strokewidth: 4;
-        --paper-white: #ffffff;
-      }
-
       :host {
         -moz-user-select: none;
         -webkit-user-select: none;
@@ -31,19 +23,23 @@
       }
 
       .day-night {
-        background: url(day-compressed.svg) no-repeat;
+        /*background: var(--paper-grey-800, --compound-timepicker-ampm-bg);*/
+        background: url(day-compressed.svg);
         font-size: 56px;
         text-align: right;
+        transition: all ease-out .5s;
       }
 
       .night-day {
+        /*background: var(--paper-light-blue-100, --compound-timepicker-revert-bg);*/
         color: #1E88E5;
-        background: url(night-compressed.svg) no-repeat;
+        background: url(night-compressed.svg);
       }
 
       .clock {
         background: var(--paper-grey-100, --compound-timepicker-clock-bg);
         padding: 0 24px;
+        margin-top: 24px;
       }
 
       .clock-time {
@@ -94,14 +90,14 @@
 
       .hour-centroid {
         fill: var(--paper-green-500, --compound-timepicker-hour-centroid);
-        stroke-width: var(--hour-centroid-strokewidth, --compound-timepicker-strokewidth-hour-centroid);
+        stroke-width: var(4, --compound-timepicker-strokewidth-hour-centroid);
         cursor: pointer;
         pointer-events: none;
       }
 
       .hour-hand {
         stroke: var(--paper-green-500, --compound-timepicker-stroke-hour-hand);
-        stroke-width: var(--hour-hand-strokewidth, --compound-timepicker-strokewidth-hour-hand);
+        stroke-width: 2;
         pointer-events: none;
       }
 
@@ -113,13 +109,13 @@
 
       .minute-centroid {
         fill: var(--paper-teal-500, --compound-timepicker-minute-centroid);
-        stroke-width: var(--minute-centroid-strokewidth, --compound-timepicker-strokewidth-minute-centroid);
+        stroke-width: var(4, --compound-timepicker-strokewidth-minute-centroid);
         pointer-events: none;
       }
 
       .minute-hand {
         stroke: var(--paper-teal-500, --compound-timepicker-stroke-minute-hand);
-        stroke-width: var(--minute-hand-strokewidth, --compound-timepicker-strokewidth-minute-hand);
+        stroke-width: var(2, --compound-timepicker-strokewidth-minute-hand);
         pointer-events: none;
       }
 
@@ -132,13 +128,13 @@
       }
 
       .text-selected {
-        fill: var(--paper-white, --compound-timepicker-text-selected);
+        fill: var(--text-primary-color, --compound-timepicker-text-selected);
       }
 
       /* mobile-small */
       @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) {
         .day-night {
-          min-height: 90px;
+          min-height: 76px;
         }
 
         .clock {
@@ -148,7 +144,7 @@
       /* mobile-large */
       @media all and (min-width: 361px) and (orientation: portrait) {
         .day-night {
-          min-height: 90px;
+          min-height: 76px;
         }
 
         .clock {
@@ -157,12 +153,6 @@
       }
       /* tablet and above*/
       @media all and (min-width: 600px) and (orientation: portrait) {
-        .day-night {
-          -webkit-transition: background ease-out .5s, color ease-out .5s;
-          -moz-transition: background ease-out .5s, color ease-out .5s;
-          -o-transition: background ease-out .5s, color ease-out .5s;
-          transition: background ease-out .5s, color ease-out .5s;
-        }
       }
       /* mobile-small-landscape */
       @media all and (min-width: 0) and (max-width: 480px) and (orientation: landscape) {
@@ -192,12 +182,6 @@
       }
       /* tablet-landscape */
       @media all and (min-width: 960px) and (orientation: landscape) {
-        .day-night {
-          -webkit-transition: background ease-out .5s, color ease-out .5s;
-          -moz-transition: background ease-out .5s, color ease-out .5s;
-          -o-transition: background ease-out .5s, color ease-out .5s;
-          transition: background ease-out .5s, color ease-out .5s;
-        }
       }
 
     </style>

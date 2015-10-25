@@ -128,16 +128,14 @@ Example:
         value: function() {
           return new Date().getHours();
         },
-        observer: '_validateHours',
-        notify: true
+        observer: '_validateHours'
       },
       minutes: {
         type: Number,
         value: function() {
           return new Date().getMinutes();
         },
-        observer: '_validateMinutes',
-        notify: true
+        observer: '_validateMinutes'
       },
       _hours: {
         type: String,
@@ -149,10 +147,12 @@ Example:
       },
       _dayNight: {
         type: Boolean,
-        value: false,
+        value: false
+      },
+      time : {
+        type: String,
         notify: true
       },
-      time : String,
       timeFormat: {
         type: Number,
         value: 12,
@@ -174,7 +174,7 @@ Example:
       // init clock with current time by adjusting angle of all clock hands.
       this._initClock(this.hours, this.minutes, this._dragStep);
       // set initial time just in case no time is beng selected.
-      this.time = this._selectedTime(this.hours, this.minutes, this._dayNight, this.timeFormat);
+      this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
     },
 
     attached: function() {
@@ -329,7 +329,7 @@ Example:
           this._updateTracking();
           break;
         default:
-          console.log('not-inside-ring');
+          // console.log('not-inside-ring');
       }
     },
 
@@ -354,8 +354,7 @@ Example:
       cancelAnimationFrame(this._updateTracking);
       this._startRing = null;
       // once release touch/ mouse, fire output.
-      this.time = this._selectedTime(this.hours, this.minutes, this._dayNight, this.timeFormat);
-      // console.log(this.time);
+      this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
     },
 
     _draggingClockHand: function(_xy) {
@@ -557,6 +556,8 @@ Example:
 
     _toggleDayNight: function() {
       this._dayNight = !this._dayNight;
+      // update time when dayNight being switched between.
+      this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
     },
 
     _switchDay: function() {
@@ -568,16 +569,10 @@ Example:
     },
 
     _selectedTime: function(_h, _m, _d, _f) {
-      var _ampm = 'PM';
-
-      if (_d) {
-        _ampm = 'AM';
-      }
-
       if (_f === 12) {
-        return this.hours + ':' + this._minutes + ' ' + _ampm;
+        return _h + ':' + _m + ' ' + (_d ? 'AM' : 'PM');
       } else if (_f === 24) {
-        return this._hours + ':' + this._minutes;
+        return this._hours + ':' + _m;
       }
     }
   });

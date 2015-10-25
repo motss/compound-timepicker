@@ -38,13 +38,13 @@
        <div>
          <h4>dialog</h4>
          <section class="horizontal-section">
-           <paper-button id="simple" raised on-transitionend="openTimepicker">dialog</paper-button>
+           <paper-button id="simple" raised on-transitionend="openTimepicker">{{chosenTime}}</paper-button>
          </section>
        </div>
       </div>
 
       <!-- <section> -->
-        <compound-timepicker-dialog id="dialog" with-backdrop></compound-timepicker-dialog>
+        <compound-timepicker-dialog id="dialog" with-backdrop time="{{chosenTime}}"></compound-timepicker-dialog>
         <!-- <paper-dialog id="dialog" class="layout vertical" with-backdrop>
           <compound-timepicker></compound-timepicker>
           <div class="buttons">

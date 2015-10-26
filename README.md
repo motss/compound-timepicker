@@ -1,7 +1,7 @@
 [![GitHub version](https://badge.fury.io/gh/motss%2Fcompound-timepicker.svg)](https://badge.fury.io/gh/motss%2Fcompound-timepicker)
 [![Bower version](https://badge.fury.io/bo/compound-timepicker.svg)](https://badge.fury.io/bo/compound-timepicker)
 
-# compound-timepicker
+compound-timepicker
 ============
 
 Compound is composed of two or more separate elements and `compound-timepicker` happens to be under this category.
@@ -30,7 +30,7 @@ Example:
 ## Styling
 
 Style the timepicker with CSS as you would a normal DOM element.
-Click [here](http://motss.github.io/compound-timepicker/components/compound-timepicker/#styling) to learn more.
+Click [here](http://motss.github.io/compound-timepicker/components/compound-timepicker/index.html#styling) to learn more.
 
 ## Generating your own boilerplate code of the compounds
 

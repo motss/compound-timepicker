@@ -19,6 +19,8 @@
         /* default for all elements is display: inline; */
         display: block;
         box-sizing: border-box;
+
+        @apply(--compound-timepicker);
       }
 
       *, *::before, *::after {
@@ -35,6 +37,7 @@
         background: url(day-compressed.svg) no-repeat;
         font-size: 56px;
         text-align: right;
+        cursor: pointer;
       }
 
       .night-day {
@@ -129,10 +132,6 @@
         stroke-width: var(--centroid-strokewidth, --compound-timepicker-strokewidth-centroid);
         fill: var(--paper-teal-500, --compound-timepicker-centroid);
         pointer-events:none;
-      }
-
-      .number-selectable {
-        fill: orange;
       }
 
       .minute.number-selected {

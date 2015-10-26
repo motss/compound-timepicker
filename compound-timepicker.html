@@ -5,15 +5,70 @@
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 
 <!--
-An element providing a solution to no problem in particular.
+Compound is composed of two or more separate elements and `compound-timepicker` happens to be under this category.
+
+`compound-timepicker` is a timepicker. It is used to select a single time (hours: minutes) on both mobile and desktop web applications.
+The selected time is indicated by the filled circle at the end of each clock hand.
 
 Example:
 
     <compound-timepicker></compound-timepicker>
+    <compound-timepicker hours="23"></compound-timepicker>
+    <compound-timepicker minutes="59"></compound-timepicker>
+    <compound-timepicker step="5"></compound-timepicker>
+    <compound-timepicker time-format="24"></compound-timepicker>
 
-@element compound-timepicker
+On mobile, pickers are best suited for display in a confirmation dialog. The timepicker can be wrapped inside a `paper-dialog`. `compound-timepicker-dialog` is created alongside `compound-timepicker` to provide a easy-to-use dialog timepicker.
+
+Example:
+
+    <compound-timepicker-dialog></compound-timepicker-dialog>
+    <compound-timepicker-dialog hours="23"></compound-timepicker-dialog>
+    <compound-timepicker-dialog minutes="59"></compound-timepicker-dialog>
+    <compound-timepicker-dialog step="5"></compound-timepicker-dialog>
+    <compound-timepicker-dialog time-format="24"></compound-timepicker-dialog>
+
+### Styling
+
+Style the timepicker with CSS as you would a normal DOM element.
+
+The following custom properties and mixins are also available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--compound-timepicker` | Mixin applied to the timepicker | `{}`
+`--compound-timepicker-clock-bg` | Background color of the clock face | `--paper-grey-100`
+||
+`--compound-timepicker-rings` | Background color of the all rings | `--paper-grey-200`
+`--compound-timepicker-minute-ring` | Background color of the minute ring | `--paper-grey-200`
+`--compound-timepicker-hour-ring` | Background color of the hour ring | `--paper-grey-200`
+`--compound-timepicker-center` | Background color of the center ring | `--paper-grey-300`
+||
+`--compound-timepicker-hour` | Fill color of the hour selector | `--paper-green-100`
+`--compound-timepicker-hour-centroid` | Fill color of the centroid of hour selector | `--paper-green-500`
+`--compound-timepicker-strokewidth-hour-centroid` | Stroke width of the centroid of hour selector | `4`
+`--compound-timepicker-hour-hand` | Fill color of the hour hand | `--paper-green-500`
+`--compound-timepicker-strokewidth-hour-hand` | Stroke width of the hour hand | `2`
+||
+`--compound-timepicker-minute` | Fill color of the minute selector | `--paper-teal-100`
+`--compound-timepicker-minute-centroid` | Fill color of the centroid of minute selector | `--paper-teal-500`
+`--compound-timepicker-strokewidth-minute-centroid` | Stroke width of the centroid of minute selector | `4`
+`--compound-timepicker-minute-hand` | Fill color of the minute hand | `--paper-teal-500`
+`--compound-timepicker-strokewidth-minute-hand` | Stroke width of the minute hand | `2`
+||
+`--compound-timepicker-stroke-centroid` | Stroke color of the centroid of clock face | `--paper-teal-500`
+`--compound-timepicker-strokewidth-centroid` | Stroke width of the centroid of clock face | `2`
+`--compound-timepicker-centroid` | Fill color of the centroid of clock face | `--paper-teal-500`
+||
+`--compound-timepicker-minute-selected` | Fill color of the minute selector on clock number | `--paper-teal-500`
+`--compound-timepicker-text-selected` | Fill color of the clock number when selected | `--paper-white
+
+### Generating your own boilerplate code of the compounds
+
+At the end of the demo, there is a section where user can play around with to generate your own boilerplate code with the attributes provided. Let's go and check out the demo!`
+
+@compound compound-timepicker
 @demo demo/index.html
-@hero hero.svg
 -->
 <dom-module id="compound-timepicker">
 

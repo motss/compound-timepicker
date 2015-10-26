@@ -2,18 +2,17 @@
 <link rel="import" href="compound-timepicker.html">
 <link rel="import" href="compound-timepicker-dialog-theme.html">
 <link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-styles/paper-styles.html">
+<!-- <link rel="import" href="../paper-styles/paper-styles.html"> -->
 <link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
 <link rel="import" href="../paper-dialog-behavior/paper-dialog-behavior.html">
 
 <!--
-An element providing a solution to no problem in particular.
+Wrapper for <compound-timepicker>.
 
 Example:
 
     <compound-timepicker-dialog></compound-timepicker-dialog>
 
-@group Seed Elements
 @element compound-timepicker-dialog
 @demo demo/index.html
 @hero hero.svg
@@ -24,12 +23,14 @@ Example:
     <style include="compound-timepicker-dialog-theme"></style>
 
     <!-- Main codes starts here -->
-    <!-- compound-timepicker's code -->
     <div class="container layout vertical flex-auto">
+      <!-- compound-timepicker's code -->
       <compound-timepicker id="timepicker"
                            class="flex-auto layout vertical content"
                            hours="{{hours}}"
                            minutes="{{minutes}}"
+                           step="{{step}}"
+                           timeFormat="{{timeFormat}}"
                            time="{{time}}"></compound-timepicker>
 
       <!-- Dialog buttons -->
@@ -50,101 +51,34 @@ Example:
     is: 'compound-timepicker-dialog',
 
     properties: {
+      /**
+       * Set the starting hours of the clock.
+       */
+      hours: Number,
 
       /**
-       * `fancy` indicates that the element should don a monocle and tophat,
-       * while checking its pocket watch.
+       * Set the starting minutes of the clock.
        */
-      fancy: Boolean,
+      minutes: Number,
 
       /**
-       * Describes the author of the element, but is really just an excuse to
-       * show off JSDoc annotations.
-       *
-       * @type {{name: string, image: string}}
+       * Set the starting clock step.
        */
-      author: {
-        type: Object,
-        // Use `value` to provide a default value for a property, by setting it
-        // on your element's prototype.
-        //
-        // If you provide a function, as we do here, Polymer will call that
-        // _per element instance_.
-        //
-        // We do that to ensure that each element gets its own copy of the
-        // value, rather than having it shared across all instances (via the
-        // prototype).
-        value: function() {
-          return {
-            name:  'Dimitri Glazkov',
-            image: 'http://addyosmani.com/blog/wp-content/uploads/2013/04/unicorn.jpg',
-          };
-        }
-      },
+      step: Number,
 
+      /**
+       * Returns the seleced time from either the user's input or
+       * from first init of the component.
+       */
       time: {
         type: String,
         notify: true
       },
-      hours: Number,
-      minutes: Number,
-    },
 
-    // Element Lifecycle
-
-    ready: function() {
-      // `ready` is called after all elements have been configured, but
-      // propagates bottom-up. This element's children are ready, but parents
-      // are not.
-      //
-      // This is the point where you should make modifications to the DOM (when
-      // necessary), or kick off any processes the element wants to perform.
-    },
-
-    attached: function() {
-      // `attached` fires once the element and its parents have been inserted
-      // into a document.
-      //
-      // This is a good place to perform any work related to your element's
-      // visual state or active behavior (measuring sizes, beginning animations,
-      // loading resources, etc).
-    },
-
-    detached: function() {
-      // The analog to `attached`, `detached` fires when the element has been
-      // removed from a document.
-      //
-      // Use this to clean up anything you did in `attached`.
-    },
-
-    // Element Behavior
-
-    /**
-     * The `compound-timepicker-dialog-lasers` event is fired whenever `fireLasers` is called.
-     *
-     * @event compound-timepicker-dialog-lasers
-     * @detail {{sound: String}}
-     */
-
-    /**
-     * Sometimes it's just nice to say hi.
-     *
-     * @param {string} greeting A positive greeting.
-     * @return {string} The full greeting.
-     */
-    sayHello: function(greeting) {
-      var response = greeting || 'Hello World!';
-      return 'compound-timepicker-dialog says, ' + response;
-    },
-
-    /**
-     * Attempt to destroy this element's enemies with a beam of light!
-     *
-     * Or, at least, dispatch an event in the vain hope that someone else will
-     * do the zapping.
-     */
-    fireLasers: function() {
-      this.fire('compound-timepicker-dialog-lasers', {sound: 'Pew pew!'});
+      /**
+       * 12/ 24 hours time format.
+       */
+      timeFormat: Number
     },
 
     behaviors: [
@@ -178,11 +112,12 @@ Example:
       }
     },
 
+    /**
+     * Force update the selected time from the compound-timepicker.
+     */
     notifyTimeUpdate: function () {
       this.$.timepicker.notifyTimeUpdate();
     }
-
-
   });
 
 </script>

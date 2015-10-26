@@ -1,8 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="compound-timepicker-theme.html">
-<link rel="import" href="../paper-dialog/paper-dialog.html">
-<link rel="import" href="../paper-button/paper-button.html">
-<link rel="import" href="../paper-styles/paper-styles.html">
+<!-- <link rel="import" href="../paper-styles/paper-styles.html"> -->
 <link rel="import" href="../iron-media-query/iron-media-query.html">
 <link rel="import" href="../paper-ripple/paper-ripple.html">
 
@@ -13,7 +11,6 @@ Example:
 
     <compound-timepicker></compound-timepicker>
 
-@group Seed Elements
 @element compound-timepicker
 @demo demo/index.html
 @hero hero.svg
@@ -28,10 +25,10 @@ Example:
     <iron-media-query query="(orientation: portrait)" query-matches="{{_portrait}}">
     </iron-media-query>
 
-    <!-- <div class="layout horizontal flex-auto content"> -->
+    <!-- clock itself here -->
     <div class$="{{_computeContentCls(_portrait)}}">
         <div id="ampm" class="day-night flex-1 layout horizontal center-center end-justified relative" on-tap="_toggleDayNight">
-          <!-- WIP... -->
+          <!-- display time with day/ night background -->
           <div class="clock-time flex-auto">
             <span>{{_hours}}</span>
             <span>:</span>
@@ -40,6 +37,7 @@ Example:
           <paper-ripple on-transitionend="_switchDay"></paper-ripple>
         </div>
 
+        <!-- clock face here -->
         <div class="clock flex-2 layout vertical center-center">
           <svg width="200" height="200" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
             <g class="rings">
@@ -71,7 +69,9 @@ Example:
 </dom-module>
 
 <script>
-
+  /**
+   * CONSTANTS needed for rendering clock.
+   */
   var HOUR_OUTER_RADIUS = 66,
       HOUR_INNER_RADIUS = 32,
       MINUTE_OUTER_RADIUS = 100,
@@ -98,77 +98,97 @@ Example:
        * @type {{name: string, image: string}}
        */
 
+      /**
+       * Clock hours, any number between 0 and 23.
+       */
+      hours: {
+        type: Number,
+        value: function() {
+          return new Date().getHours();
+        },
+        observer: '_validateHours',
+        reflectToAttribute: true
+      },
+      /**
+       * Clock minutes, any number between 0 and 59.
+       */
+      minutes: {
+        type: Number,
+        value: function() {
+          return new Date().getMinutes();
+        },
+        observer: '_validateMinutes',
+        reflectToAttribute: true
+      },
+      /**
+       * Clock step, any number between 1 and 60.
+       * Default is 1 which means that each minute is selectable.
+       */
+      step: {
+        type: Number,
+        value: 1,
+        observer: '_validateStep',
+        reflectToAttribute: true
+      },
+      /**
+       * Returns selected time.
+       */
+      time : {
+        type: String,
+        notify: true
+      },
+      /**
+       * 12/ 24 hours time format. It can be either 12 or 24.
+       */
+      timeFormat: {
+        type: Number,
+        value: 12,
+        reflectToAttribute: true
+      },
+      // multiple step by 6 for minute hand tracking.
       _dragStep: {
         type: Number,
         computed: '_dragStepAngleify(step)'
       },
+      // Set true to enable tracking.
       _tracking: {
         type: Boolean,
         value: false
       },
+      // Stores selected ring's ID from touch or mouse.
       _startRing: String,
+      // Stores last value of touch/ mouse position when _tracking sets true.
       _lastTrackingPos: {
         type: Object,
         value: function () {
           return {};
         }
       },
+      // Previously styled clock number when selected.
       _textStyled: {
         type: Number,
         value: 0
       },
-      step: {
-        type: Number,
-        value: 1,
-        observer: '_validateStep',
-        notify: true
-      },
-      hours: {
-        type: Number,
-        value: function() {
-          return new Date().getHours();
-        },
-        observer: '_validateHours'
-      },
-      minutes: {
-        type: Number,
-        value: function() {
-          return new Date().getMinutes();
-        },
-        observer: '_validateMinutes'
-      },
+      // Being used to display selected hours.
       _hours: {
         type: String,
         computed: '_textify(hours)'
       },
+      // Being used to display selected minutes.
       _minutes: {
         type: String,
         computed: '_textify(minutes)'
       },
+      // Sets true for day else it's night.
       _dayNight: {
         type: Boolean,
         value: false
       },
-      time : {
-        type: String,
-        notify: true
-      },
-      timeFormat: {
-        type: Number,
-        value: 12,
-      }
     },
 
     // Element Lifecycle
 
     ready: function() {
-      // `ready` is called after all elements have been configured, but
-      // propagates bottom-up. This element's children are ready, but parents
-      // are not.
-      //
-      // This is the point where you should make modifications to the DOM (when
-      // necessary), or kick off any processes the element wants to perform.
-
       // generate all clock numbers on the clock face.
       this._clockNumberify();
       // init clock with current time by adjusting angle of all clock hands.
@@ -195,20 +215,7 @@ Example:
 
     // Element Behavior
 
-    /**
-     * The `compound-timepicker-lasers` event is fired whenever `fireLasers` is called.
-     *
-     * @event compound-timepicker-lasers
-     * @detail {{sound: String}}
-     */
-
-    /**
-     * Sometimes it's just nice to say hi.
-     *
-     * @param {string} greeting A positive greeting.
-     * @return {string} The full greeting.
-     */
-
+    // Populate clock numbers.
     _clockNumberify: function() {
       var _x = STARTING_POS_OF_FIRST_NUMBER_X, // 100
           _y = STARTING_POS_OF_FIRST_NUMBER_Y, // 17
@@ -225,7 +232,7 @@ Example:
       }
     },
 
-
+    // Convert clock number into text.
     _textNumberify: function(_svg, _number, _x, _y) {
       var _text = _svg;
       _text.textContent = _number.toString();
@@ -241,6 +248,7 @@ Example:
       return _text;
     },
 
+    // Return rotated params for each clock text.
     _textNumberClockwisify: function(_theta, _y, _x, _cy, _cx) {
       var rotXY = {}, __theta;
 
@@ -271,10 +279,12 @@ Example:
       return rotXY;
     },
 
+    // Rotate minute/ hand clock hand during tracking.
     _rotatify: function(_angle) {
       this.transform.baseVal.getItem(0).setRotate(_angle, 100, 100);
     },
 
+    // Initialize the clock with predefined config.
     _initClock: function(_hr, _min, _dragStep) {
       var _h = (_hr%12) * 30,
           _m = (_min%60) * 6,
@@ -302,6 +312,7 @@ Example:
       this._rotatify.call(this.$.minuteGroup, _m);
     },
 
+    // Update tracking position and rotate clock hand.
     _updateTracking: function() {
       if (!this._tracking) {
         requestAnimationFrame(this._draggingClockHand.bind(this, this._lastTrackingPos));
@@ -309,6 +320,7 @@ Example:
       }
     },
 
+    // What need to be done for touchstart/ mousedown.
     _selectHand: function(ev) {
       var _id = ev.target.id, _xy = {};
       ev.preventDefault();
@@ -333,6 +345,7 @@ Example:
       }
     },
 
+    // What need to be done for touchmove/ mousemove.
     _dragHand: function(ev) {
       switch (ev.detail.state) {
         case 'start':
@@ -350,6 +363,7 @@ Example:
       }
     },
 
+    // Update time and clear things up when touchend/ mouseup.
     _releaseHand: function(ev) {
       cancelAnimationFrame(this._updateTracking);
       this._startRing = null;
@@ -357,6 +371,7 @@ Example:
       this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
     },
 
+    // Update touch/ mouse tracking position and convert it to angle for rotation.
     _draggingClockHand: function(_xy) {
       var _translatedXY = {},
           _rotatedXY = {},
@@ -433,6 +448,7 @@ Example:
       this.set('_tracking', false);
     },
 
+    // Convert passed in positions into angle.
     _angleify: function(_y, _x, _step) {
       /**
        * Normal: Math.atan2(y, x) - angle from +ve X axis;
@@ -478,6 +494,7 @@ Example:
       return _factorise(_convertFullPie(_degree), _step);
     },
 
+    // Calculate the radius based on passed in position.
     _radiusify: function(_y, _x, _cy, _cx) {
       function deltaXY(_xy, _cxy) {
         return Math.pow((_xy - _cxy), 2);
@@ -486,14 +503,17 @@ Example:
       return Math.sqrt(deltaXY(_y, _cy) + deltaXY(_x, _cx));
     },
 
+    // Check if current position is inside the inner selectable area.
     _isInner: function(_xy, _ctr, _radius) {
       return this._radiusify(_xy.y, _xy.x, _ctr.top, _ctr.left) > _radius;
     },
 
+    // Check if current position is inside the outer seleectable area.
     _isOuter: function(_xy, _ctr, _radius) {
       return this._radiusify(_xy.y, _xy.x, _ctr.top, _ctr.left) < _radius;
     },
 
+    // Translation needed to make everything based from origin.
     _translateToOrigin: function(_clockPos, _xy, _cy, _cx) {
       var __xy = {};
 
@@ -511,6 +531,7 @@ Example:
       return __xy;
     },
 
+    // Check if passed in value is valid.
     _validateStep: function(newVal, oldVal) {
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 1 && newVal <= 60) {
@@ -520,6 +541,7 @@ Example:
       }
     },
 
+    // Check if passed in value is valid and update when needed.
     _validateHours: function(newVal, oldVal) {
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 0 && newVal <= 23) {
@@ -538,6 +560,7 @@ Example:
       }
     },
 
+    // Check if passed in value is valid.
     _validateMinutes: function (newVal, oldVal) {
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 0 && newVal <= 59) {
@@ -547,14 +570,17 @@ Example:
       }
     },
 
+    // Convert step into angle.
     _dragStepAngleify: function(step) {
       return step * 6;
     },
 
+    // Convert everything into string.
     _textify: function(_number) {
       return String.prototype.slice.call(('0' + _number), -2);
     },
 
+    // Calculate class based on screen orientation.
     _computeContentCls: function(_portrait) {
       var _cls = 'layout flex-auto content ';
 
@@ -563,12 +589,14 @@ Example:
       return _cls;
     },
 
+    // Update AM/ PM value.
     _toggleDayNight: function() {
       this._dayNight = !this._dayNight;
       // update time when dayNight being switched between.
       this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
     },
 
+    // Update background SVG based on AM/ PM value.
     _switchDay: function() {
       if (this._dayNight) {
         this.$.ampm.classList.remove('night-day');
@@ -577,6 +605,7 @@ Example:
       }
     },
 
+    // Return selected hours and minutes.
     _selectedTime: function(_h, _m, _d, _f) {
       if (_f === 12) {
         var _h = _h%12;
@@ -587,7 +616,7 @@ Example:
       }
     },
 
-    // explicitly update time.
+    // Force update selected time.
     notifyTimeUpdate: function() {
       this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
     }

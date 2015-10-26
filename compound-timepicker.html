@@ -524,6 +524,14 @@ Example:
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 0 && newVal <= 23) {
         this.set('hours', newVal);
+        // set _dayNight for every changes.
+        if (newVal >= 12) {
+          this.set('_dayNight', false);
+        }else {
+          this.set('_dayNight', true);
+        }
+        // re-init clock.
+        this._switchDay();
         return;
       }else {
         this.set('hours', new Date().getHours());
@@ -563,14 +571,18 @@ Example:
 
     _switchDay: function() {
       if (this._dayNight) {
+        console.log('remove');
         this.$.ampm.classList.remove('night-day');
       }else {
+        console.log('add');
         this.$.ampm.classList.add('night-day');
       }
     },
 
     _selectedTime: function(_h, _m, _d, _f) {
       if (_f === 12) {
+        var _h = _h%12;
+        _h = _h === 0 ? 12 : _h;
         return _h + ':' + _m + ' ' + (_d ? 'AM' : 'PM');
       } else if (_f === 24) {
         return this._hours + ':' + _m;

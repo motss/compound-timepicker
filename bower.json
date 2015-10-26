@@ -29,7 +29,6 @@
     "paper-dialog": "PolymerElements/paper-dialog#~1.0.2",
     "neon-animation": "PolymerElements/neon-animation#~1.0.6",
     "iron-media-query": "PolymerElements/iron-media-query#~1.0.4",
-    "iron-iconset": "PolymerElements/iron-iconset#~1.0.4",
     "test-fixture": "PolymerElements/test-fixture#~1.0.0"
   },
   "devDependencies": {

@@ -26,7 +26,11 @@ Example:
     <!-- Main codes starts here -->
     <!-- compound-timepicker's code -->
     <div class="container layout vertical flex-auto">
-      <compound-timepicker class="flex-auto layout vertical content" time="{{time}}"></compound-timepicker>
+      <compound-timepicker id="timepicker"
+                           class="flex-auto layout vertical content"
+                           hours="{{hours}}"
+                           minutes="{{minutes}}"
+                           time="{{time}}"></compound-timepicker>
 
       <!-- Dialog buttons -->
       <div class="buttons layout horizontal">
@@ -81,7 +85,9 @@ Example:
       time: {
         type: String,
         notify: true
-      }
+      },
+      hours: Number,
+      minutes: Number,
     },
 
     // Element Lifecycle
@@ -170,6 +176,10 @@ Example:
       } else {
         this._finishRenderClosed();
       }
+    },
+
+    notifyTimeUpdate: function () {
+      this.$.timepicker.notifyTimeUpdate();
     }
 
 

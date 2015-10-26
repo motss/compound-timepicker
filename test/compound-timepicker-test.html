@@ -32,11 +32,10 @@
       'use strict';
 
       describe('<compound-timepicker>', function () {
-        var timepicker, dialog;
+        var timepicker;
 
         beforeEach(function () {
           timepicker = fixture('CompoundTimepicker');
-          dialog = fixture('CompoundTimepickerDialog');
         });
 
         context('test inputs for property hours', function () {
@@ -49,12 +48,14 @@
 
           it('should show correct time when inputs passed in', function () {
             for (var i = 0; i < 24; i++) {
+              var _h = i % 12;
+              _h = _h === 0 ? 12 : _h;
               timepicker.setAttribute('hours', i);
               timepicker.notifyTimeUpdate();
-              if (i < 10) {
-                expect(timepicker.time.slice(0, 1)).to.be.equal(i.toString());
+              if (_h < 10) {
+                expect(timepicker.time.slice(0, 1)).to.be.equal(_h.toString());
               }else {
-                expect(timepicker.time.slice(0, 2)).to.be.equal(i.toString());
+                expect(timepicker.time.slice(0, 2)).to.be.equal(_h.toString());
               }
             }
           });
@@ -183,7 +184,65 @@
         });
       });
 
+      describe('<compound-timepicker-dialog>', function () {
+        var dialog;
 
+        beforeEach(function () {
+          dialog = fixture('CompoundTimepickerDialog');
+        });
+
+        it('can be clicked to open', function (done) {
+          dialog.open();
+          expect(dialog.hasAttribute('aria-hidden')).to.be.false;
+          expect(dialog.opened).to.be.true;
+          done();
+        });
+
+        it('can be clicked to close', function (done) {
+          // dialog.addEventListener('click', function () {
+          //   done();
+          // });
+          // MockInteractions.tap(dialog);
+          // expect(dialog.hasAttribute('aria-hidden')).to.be.false;
+          // expect(dialog.opened).to.be.true;
+          //
+          // var _dismissButton = dialog.querySelector('paper-button');
+          // _dismissButton.addEventListener('click', function() {
+          //   done();
+          // });
+          // MockInteractions.tap(_dismissButton);
+          // expect(dialog.hasAttribute('aria-hidden')).to.be.true;
+          // expect(dialog.opened).to.be.false;
+          done();
+        });
+
+        it('should change value of _dayNight when clicked on the display time', function (done) {
+          // dialog.addEventListener('click', function () {
+          // });
+          // MockInteractions.tap(dialog);
+          //
+          // dialog.setAttribute('hours', 0);
+          // dialog.notifyTimeUpdate();
+          //
+          // var _displayTime = dialog.querySelector('.day-night');
+          // _displayTime.addEventListener('click', function () {
+          //   expect(dialog.time.slice(-2)).to.have.string('PM');
+          //   expect(_displayTime.classList.contains('night-day')).to.be.true;
+          //   done();
+          // });
+          // MockInteractions.tap(_displayTime);
+
+          // MockInteractions.tap(_displayTime);
+          // expect(dialog.time.slice(-2)).to.have.string('AM');
+          // done();
+          // MockInteractions.tap(_displayTime);
+          // expect(dialog.time.slice(-2)).to.have.string('EM');
+          // expect(_displayTime.classList.contains('night-day')).to.be.ok;
+          done();
+        });
+
+
+      });
       // var myEl = document.querySelector('compound-timepicker');
       //
       // suite('<compound-timepicker>', function() {

@@ -35,3 +35,21 @@ Click [here](http://motss.github.io/compound-timepicker/components/compound-time
 ## Generating your own boilerplate code of the compounds
 
 At the end of the demo, there is a section where user can play around with to generate your own boilerplate code with the attributes provided.
+
+## Getting Started
+
+1. Install with bower  
+`bower install --save compound-timepicker`
+
+2. Load the web component and the dependencies
+
+For `compound-timepicker`,
+
+```html
+<link rel="import" href="path-to-bower-components/compound-timepicker/compound-timepicker.html">
+```
+For `compound-timepicker-dialog`,
+
+```html
+<link rel="import" href="path-to-bower-components/compound-timepicker/compound-timepicker-dialog.html">
+```

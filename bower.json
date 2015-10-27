@@ -1,10 +1,10 @@
 {
   "name": "compound-timepicker",
-  "version": "0.0.1",
+  "version": "0.2.3",
   "authors": [
     "motss <wes_ngrongsen@hotmail.com>"
   ],
-  "description": "A compound that constitutes a variety of elements to provide a solution to great timepicker for developers in building web apps.",
+  "description": "Compound is composed of two or more separate elements and compound-timepicker happens to be one. It provides solution for single time selection (hours: minutes) on both mobile and web application.",
   "keywords": [
     "web-component",
     "webcomponents",

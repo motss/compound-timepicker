@@ -642,7 +642,6 @@ Custom property | Description | Default
         this.set('hours', newVal);
         // set _dayNight for every changes when first start.
         if (!this._down) {
-          console.log('whywhy');
           if (newVal >= 12) {
             this.set('_dayNight', false);
           }else {

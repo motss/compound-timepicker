@@ -32,13 +32,6 @@
         });
 
         context('test inputs for property hours', function () {
-          it('should show correct hours when inputs numbers from 0 till 23', function () {
-            for (var i = 0; i < 24; i++) {
-              timepicker.setAttribute('hours', i);
-              expect(timepicker.hours).to.be.equal(i);
-            }
-          });
-
           it('should show correct time in 12-hours when inputs passed in', function () {
             for (var i = 0; i < 24; i++) {
               var _h = i % 12;
@@ -50,6 +43,21 @@
               }else {
                 expect(timepicker.time.slice(0, 2)).to.be.equal(_h.toString());
               }
+              if (i >= 12) {
+                expect(timepicker.time).to.have.string('PM');
+              }else {
+                expect(timepicker.time).to.have.string('AM');
+              }
+            }
+          });
+
+          it('should show correct hours in 24-hours when inputs numbers from 0 till 23', function () {
+            timepicker.setAttribute('time-format', 24);
+            for (var i = 0; i < 24; i++) {
+              timepicker.setAttribute('hours', i);
+              expect(timepicker.hours).to.be.equal(i);
+              timepicker.notifyTimeUpdate();
+              expect(timepicker.time).to.not.have.string('M');
             }
           });
 

@@ -243,7 +243,9 @@ Custom property | Description | Default
       // Sets true for day else it's night.
       _dayNight: {
         type: Boolean,
-        value: false
+        value: function() {
+          return new Date().getHours() < 12;
+        }
       },
       // hours check flag
       _isHours: {
@@ -386,13 +388,11 @@ Custom property | Description | Default
           this.$.minute.classList.remove('number-selected');
         }
 
-        // set cls for hours.
-        if (_hr >= 12 && _hr <= 23) {
-          this.set('_dayNight', false);
-          this.$.ampm.classList.add('night-day');
-        }else {
-          this.set('_dayNight', true);
+        // hours will determine _dayNight and here update the class.
+        if (this._dayNight) {
           this.$.ampm.classList.remove('night-day');
+        }else {
+          this.$.ampm.classList.add('night-day');
         }
 
         // rotate whatever needs to be rotated.
@@ -639,16 +639,19 @@ Custom property | Description | Default
     _validateHours: function(newVal, oldVal) {
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 0 && newVal <= 23) {
-        this.set('hours', newVal);
         // set _dayNight for every changes when first start.
         if (!this._down) {
-          if (newVal >= 12) {
-            this.set('_dayNight', false);
+          /**
+           * if 12-hours, set shifted hours and _dayNight.
+           * else set hours and _dayNight.
+           */
+          if (this.timeFormat === 12) {
+            this.set('hours', this._computeHours(newVal));
+            this.set('_dayNight', newVal < 12);
           }else {
-            this.set('_dayNight', true);
+            this.set('hours', newVal);
+            this.set('_dayNight', newVal < 12);
           }
-          // re-init clock.
-          this._switchDay();
         }
       }else {
         this.set('hours', new Date().getHours());

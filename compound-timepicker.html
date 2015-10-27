@@ -602,14 +602,16 @@ Custom property | Description | Default
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 0 && newVal <= 23) {
         this.set('hours', newVal);
-        // set _dayNight for every changes.
-        if (newVal >= 12) {
-          this.set('_dayNight', false);
-        }else {
-          this.set('_dayNight', true);
+        // set _dayNight for every changes when first start.
+        if (typeof oldVal !== 'number') {
+          if (newVal >= 12) {
+            this.set('_dayNight', false);
+          }else {
+            this.set('_dayNight', true);
+          }
+          // re-init clock.
+          this._switchDay();
         }
-        // re-init clock.
-        this._switchDay();
         return;
       }else {
         this.set('hours', new Date().getHours());

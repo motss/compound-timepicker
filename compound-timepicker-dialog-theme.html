@@ -66,7 +66,7 @@
       @media all and (min-width: 600px) and (orientation: portrait) {
         :host {
           width: 288px;
-          height: 512px;
+          min-height: 512px;
         }
       }
       /* mobile-small-landscape */
@@ -75,7 +75,7 @@
           margin-top: 6px;
           margin-bottom: 6px;
           @apply(--layout-fit);
-          height: 268px;
+          min-height: 268px;
         }
       }
       /* mobile-large-landscape */
@@ -89,7 +89,8 @@
       @media all and (min-width: 960px) and (orientation: landscape) {
         :host {
           width: 640px;
-          height: 360px;
+          /* min-height instead of height to override max-height */
+          min-height: 360px;
         }
       }
 

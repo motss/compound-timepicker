@@ -10,13 +10,14 @@
     <link rel="import" href="../../paper-styles/demo-pages.html">
     <!-- <link rel="import" href="../../paper-styles/paper-styles.html"> -->
     <link rel="import" href="../../paper-slider/paper-slider.html">
+    <link rel="import" href="../../paper-checkbox/paper-checkbox.html">
     <link rel="import" href="../../paper-button/paper-button.html">
     <!-- image prefetch -->
     <link rel="prefetch" href="../day-compressed.svg">
     <link rel="prefetch" href="../night-compressed.svg">
 
-
-    <style>
+    <!-- Don't forget to set is=custom-style -->
+    <style is="custom-style">
       html {
         box-sizing: border-box;
         -moz-user-select: none;
@@ -31,6 +32,36 @@
 
       .horizontal-section {
         min-width: 130px;
+      }
+
+      .copy-me {
+        -moz-user-select: text;
+        -webkit-user-select: text;
+        -ms-user-select: text;
+        border: 1px solid #cfd8dc;
+        color: #607d8b;
+        display: block;
+        height: 50px;
+        -webkit-flex-shrink: 0;
+        flex-shrink: 0;
+        padding: 10px 4px;
+        margin: 0 13px 12px;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        border-radius: 2px;
+        font-size: 12px;
+        word-break: break-word;
+      }
+
+      .copy-section {
+        padding: 24px 0;
+      }
+
+      .copy-attr {
+        padding: 16px 0;
+        @apply(--layout-horizontal);
+        @apply(--layout-justified);
+        @apply(--layout-flex-auto);
       }
     </style>
   </head>
@@ -83,6 +114,45 @@
            <paper-button data-dialog="format" raised on-transitionend="openTimepicker">{{formatTime}}</paper-button>
          </section>
        </div>
+
+       <div>
+         <h4>Boilerplate Generator</h4>
+         <section class="horizontal-section">
+           <div class="" on-change="updateCopyMe">
+             <div class="copy-attr">
+               <paper-checkbox data-box="hours" checked="{{copyHours}}">hours</paper-checkbox>
+               <paper-slider data-box="hours" data-slider="newTime" min="0" max="23" value="{{newHours}}" checked="{{copyHours}}" pin></paper-slider>
+             </div>
+             <div class="copy-attr">
+               <paper-checkbox data-box="minutes" checked="{{copyMinutes}}">minutes</paper-checkbox>
+               <paper-slider data-box="minutes" data-slider="newTime" min="0" max="59" value="{{newMinutes}}" checked="{{copyMinutes}}" pin></paper-slider>
+             </div>
+             <div class="copy-attr">
+               <paper-checkbox data-box="step" checked="{{copyStep}}">step</paper-checkbox>
+               <paper-slider data-box="step" data-slider="newTime" min="1" max="60" value="{{newStep}}" checked="{{copyStep}}" pin></paper-slider>
+             </div>
+             <div class="copy-attr">
+               <paper-checkbox data-box="format" checked="{{copyFormat}}">time-format</paper-checkbox>
+               <paper-slider data-box="format" data-slider="newTime" min="12" max="24" step="12" value="{{newFormat}}" checked="{{copyFormat}}" pin></paper-slider>
+             </div>
+             <div class="copy-attr">
+               <paper-checkbox data-box="banana" checked="{{banana}}">time</paper-checkbox>
+             </div>
+             <div class="copy-attr">
+               <paper-checkbox data-box="nocopy" checked="{{nocopy}}" disabled="{{withcopy}}">compound-timepicker</paper-checkbox>
+             </div>
+             <div class="copy-attr">
+               <paper-checkbox data-box="withcopy" checked="{{withcopy}}" disabled="{{nocopy}}">compound-timepicker-dialog</paper-checkbox>
+             </div>
+             <div class="copy-attr">
+               <paper-button data-dialog="newTime" raised on-transitionend="openTimepicker">{{newTime}}</paper-button>
+             </div>
+           </div>
+           <div class="copy-section layout horizontal flex-auto">
+             <input class="copy-me flex-auto" value="{{copyText}}" title="copy me" readonly onclick="this.select();">
+           </div>
+         </section>
+       </div>
       </div>
 
       <div class="">
@@ -91,6 +161,11 @@
         <compound-timepicker-dialog id="minutes" with-backdrop time="{{minutesTime}}" minutes="{{currentMinutes}}"></compound-timepicker-dialog>
         <compound-timepicker-dialog id="step" with-backdrop time="{{stepTime}}" step="{{currentStep}}"></compound-timepicker-dialog>
         <compound-timepicker-dialog id="format" with-backdrop time="{{formatTime}}" time-format="{{currentFormat}}"></compound-timepicker-dialog>
+        <compound-timepicker-dialog id="newTime" with-backdrop time="{{newTime}}"
+                                    hours="{{newHours}}"
+                                    minutes="{{newMinutes}}"
+                                    step="{{newStep}}"
+                                    time-format="{{newFormat}}"></compound-timepicker-dialog>
       </div>
     </template>
 
@@ -107,6 +182,15 @@
 
       timepicker.currentStep = 1;
       timepicker.currentFormat = 12;
+
+      // boilerplate generator's.
+      timepicker.newHours = 9;
+      timepicker.newMinutes = 9;
+      timepicker.newStep = 9;
+      timepicker.newFormat = 12;
+      timepicker.nocopy = true;
+      timepicker.withcopy = false;
+      timepicker.copyText = '<compound-timepicker></compound-timepicker>';
 
       timepicker.openTimepicker = function(ev) {
         var _id,
@@ -127,6 +211,18 @@
         }
       };
 
+      timepicker._computeCopy = function(copy) {
+        timepicker.withcopy = !copy;
+        return !copy;
+      };
+
+      timepicker.updateCopyMe = function(ev) {
+        // update time from slider.
+        timepicker.updateTime(ev);
+        // update copyText from checkbox.
+        timepicker.updateCopyText(ev);
+      };
+
       timepicker.updateTime = function(ev) {
         var _id,
             dialog,
@@ -136,15 +232,129 @@
           _target = _target.parentElement;
         }
 
-        if (_target.hasAttribute('data-slider')) {
-          _id = _target.getAttribute('data-slider');
-          dialog = document.querySelector('compound-timepicker-dialog#' + _id);
+        if (_target) {
+          if (_target.hasAttribute('data-slider')) {
+            _id = _target.getAttribute('data-slider');
+            dialog = document.querySelector('compound-timepicker-dialog#' + _id);
 
-          if (dialog) {
-            dialog.notifyTimeUpdate();
+            if (dialog) {
+              dialog.notifyTimeUpdate();
+            }
           }
         }
-      }
+      };
+
+      timepicker.updateCopyText = function(ev) {
+        var _target = ev.target,
+            _box,
+            _emblem,
+            _newText = timepicker.copyText;
+
+        if (_target) {
+          if (_target.tagName !== 'PAPER-CHECKBOX' && _target.tagName !== 'PAPER-SLIDER') {
+            return;
+          }
+        }
+
+        if (_target) {
+          if (_target.hasAttribute('data-box')) {
+            _box = _target.getAttribute('data-box');
+            _emblem = _target.checked;
+          }
+
+          switch (_box) {
+            case 'nocopy':
+              if (!_emblem) {
+                timepicker.withcopy = true;
+                _newText = timepicker.modifyCode(!_emblem, _newText, '', true);
+              }
+              break;
+            case 'withcopy':
+              if (!_emblem) {
+                timepicker.nocopy = true;
+                _newText = timepicker.modifyCode(_emblem, _newText, '', true);
+              }
+              break;
+            case 'hours':
+              if (_emblem) {
+                if (/\s(hours)\=\"\d*\"/gi.test(_newText)) {
+                  _newText = _newText.replace(/\s(hours)\=\"\d*\"/gi, ' hours="' + timepicker.newHours + '"');
+                }else {
+                  _newText = timepicker.modifyCode(_emblem, _newText, ' hours="' + timepicker.newHours + '"');
+                }
+              }else {
+                _newText = timepicker.modifyCode(_emblem, _newText, /\s(hours)\=\"\d*\"/gi);
+              }
+              break;
+            case 'minutes':
+              if (_emblem) {
+                if (/\s(minutes)\=\"\d*\"/gi.test(_newText)) {
+                  _newText = _newText.replace(/\s(minutes)\=\"\d*\"/gi, ' minutes="' + timepicker.newMinutes + '"');
+                }else {
+                  _newText = timepicker.modifyCode(_emblem, _newText, ' minutes="' + timepicker.newMinutes + '"');
+                }
+              }else {
+                _newText = timepicker.modifyCode(_emblem, _newText, /\s(minutes)\=\"\d*\"/gi);
+              }
+              break;
+            case 'step':
+              if (_emblem) {
+                if (/\s(step)\=\"\d*\"/gi.test(_newText)) {
+                  _newText = _newText.replace(/\s(step)\=\"\d*\"/gi, ' step="' + timepicker.newStep + '"');
+                }else {
+                  _newText = timepicker.modifyCode(_emblem, _newText, ' step="' + timepicker.newStep + '"');
+                }
+              }else {
+                _newText = timepicker.modifyCode(_emblem, _newText, /\s(step)\=\"\d*\"/gi);
+              }
+              break;
+            case 'format':
+              if (_emblem) {
+                if (/\s(time-format)\=\"\d*\"/gi.test(_newText)) {
+                  _newText = _newText.replace(/\s(time-format)\=\"\d*\"/gi, ' time-format="' + timepicker.newFormat + '"');
+                }else {
+                  _newText = timepicker.modifyCode(_emblem, _newText, ' time-format="' + timepicker.newFormat + '"');
+                }
+              }else {
+                _newText = timepicker.modifyCode(_emblem, _newText, /\s(time-format)\=\"\d*\"/gi);
+              }
+              break;
+            case 'banana':
+              if (_emblem) {
+                _newText = timepicker.modifyCode(_emblem, _newText, ' time=""');
+              }else {
+                _newText = timepicker.modifyCode(_emblem, _newText, /\s(time)\=\"\d*\"/gi);
+              }
+              break;
+            default:
+              console.log('Encounter error in the selection. Throw some bananas!');
+          }
+          // console.log(_newText);
+          timepicker.copyText = _newText;
+        }
+      };
+
+      timepicker.modifyCode = function(toggle, str, insertion, tag) {
+        var modifiedStr = '';
+        if (toggle) {
+          if (tag) {
+            modifiedStr = str.replace(/(compound-timepicker)/gi, 'compound-timepicker-dialog');
+          }else {
+            var findAssertPoint = str.indexOf('>'),
+                firstPartStr, lastParStr;
+            firstPartStr = str.substring(0, findAssertPoint);
+            lastParStr = str.substring(findAssertPoint);
+            modifiedStr = firstPartStr.concat(insertion, lastParStr);
+          }
+        }else {
+          if (tag) {
+            modifiedStr = str.replace(/(compound-timepicker-dialog)/gi, 'compound-timepicker');
+          }else {
+            modifiedStr = str.replace(insertion, '');
+          }
+        }
+        return modifiedStr;
+      };
     </script>
 
   </body>

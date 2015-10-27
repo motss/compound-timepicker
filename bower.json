@@ -30,7 +30,8 @@
     "neon-animation": "PolymerElements/neon-animation#~1.0.6",
     "iron-media-query": "PolymerElements/iron-media-query#~1.0.4",
     "test-fixture": "PolymerElements/test-fixture#~1.0.0",
-    "iron-test-helpers": "PolymerElements/iron-test-helpers#~1.0.5"
+    "iron-test-helpers": "PolymerElements/iron-test-helpers#~1.0.5",
+    "paper-slider": "PolymerElements/paper-slider#~1.0.7"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",

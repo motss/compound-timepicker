@@ -211,6 +211,11 @@ Custom property | Description | Default
         type: Boolean,
         value: false
       },
+      // Set true if touchstart/ mousedown.
+      _down: {
+        type: Boolean,
+        value: false
+      },
       // Stores selected ring's ID from touch or mouse.
       _startRing: String,
       // Stores last value of touch/ mouse position when _tracking sets true.
@@ -228,7 +233,7 @@ Custom property | Description | Default
       // Being used to display selected hours.
       _hours: {
         type: String,
-        computed: '_textify(hours)'
+        computed: '_textify(hours, _isHours)'
       },
       // Being used to display selected minutes.
       _minutes: {
@@ -240,7 +245,22 @@ Custom property | Description | Default
         type: Boolean,
         value: false
       },
+      // hours check flag
+      _isHours: {
+        type: Boolean,
+        value: true
+      },
+      // clock numbers ready check flag
+      _hasClockNumbersReady: {
+        type: Boolean,
+        value: false
+      }
     },
+
+    // init clock whenever [hours, minutes, _dragStep] encounters value change.
+    observers: [
+      '_initClock(hours, minutes, _dragStep)'
+    ],
 
     // Element Lifecycle
 
@@ -250,7 +270,7 @@ Custom property | Description | Default
       // init clock with current time by adjusting angle of all clock hands.
       this._initClock(this.hours, this.minutes, this._dragStep);
       // set initial time just in case no time is beng selected.
-      this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
+      this.time = this._selectedTime(this._hours, this._minutes, this._dayNight, this.timeFormat);
     },
 
     attached: function() {
@@ -286,6 +306,7 @@ Custom property | Description | Default
             __xy = this._textNumberClockwisify(__theta, _y, _x, _cy, _cx);
         this.$.numbers.appendChild(this._textNumberify(_temp, _i, __xy.x, __xy.y));
       }
+      this.set('_hasClockNumbersReady', true);
     },
 
     // Convert clock number into text.
@@ -342,30 +363,42 @@ Custom property | Description | Default
 
     // Initialize the clock with predefined config.
     _initClock: function(_hr, _min, _dragStep) {
-      var _h = (_hr%12) * 30,
-          _m = (_min%60) * 6,
-          _m2 = _m%30 === 0;
+      /**
+       * - init clock when and only when there are clock numbers.
+       * - init clock won't trigger to mouse/ touch.
+       * - problem (1510280120) when minutes was being set on-the-fly.
+       * - problem (1510280159) when hours changes with mouse/ touch.
+       */
+      if (this._hasClockNumbersReady && !this._down) {
+        var _h = (_hr%12) * 30,
+            _m = (_min%60) * 6,
+            _m2 = _m%30 === 0;
 
-      // style selected minute at start.
-      if (_m2) {
-        var _child = _m/30;
-        this._textStyled = _child;
-        this.$.numbers.childNodes[_child].classList.add('text-selected');
-        this.$.minute.classList.add('number-selected');
+        // style selected minute at start.
+        if (_m2) {
+          var _child = _m/30;
+          this._textStyled = _child;
+          this.$.numbers.childNodes[_child].classList.add('text-selected');
+          this.$.minute.classList.add('number-selected');
+        }else {
+          // to tacle problem 1510280120: remove all selected class.
+          this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
+          this.$.minute.classList.remove('number-selected');
+        }
+
+        // set cls for hours.
+        if (_hr >= 12 && _hr <= 23) {
+          this.set('_dayNight', false);
+          this.$.ampm.classList.add('night-day');
+        }else {
+          this.set('_dayNight', true);
+          this.$.ampm.classList.remove('night-day');
+        }
+
+        // rotate whatever needs to be rotated.
+        this._rotatify.call(this.$.hourGroup, _h);
+        this._rotatify.call(this.$.minuteGroup, _m);
       }
-
-      // set cls for hours.
-      if (_hr >= 12 && _hr <= 23) {
-        this.set('_dayNight', false);
-        this.$.ampm.classList.add('night-day');
-      }else {
-        this.set('_dayNight', true);
-        this.$.ampm.classList.remove('night-day');
-      }
-
-      // rotate whatever needs to be rotated.
-      this._rotatify.call(this.$.hourGroup, _h);
-      this._rotatify.call(this.$.minuteGroup, _m);
     },
 
     // Update tracking position and rotate clock hand.
@@ -394,6 +427,7 @@ Custom property | Description | Default
           _xy.y = ev.detail.y;
           _xy.x = ev.detail.x;
           this._lastTrackingPos = _xy;
+          this.set('_down', true);
           this._updateTracking();
           break;
         default:
@@ -405,6 +439,9 @@ Custom property | Description | Default
     _dragHand: function(ev) {
       switch (ev.detail.state) {
         case 'start':
+          if (!this._down) {
+            this.set('_down', true);
+          }
           break;
         case 'track':
           var _xy = {};
@@ -423,6 +460,7 @@ Custom property | Description | Default
     _releaseHand: function(ev) {
       cancelAnimationFrame(this._updateTracking);
       this._startRing = null;
+      this.set('_down', false);
       // once release touch/ mouse, fire output.
       this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
     },
@@ -603,7 +641,8 @@ Custom property | Description | Default
       if (newVal >= 0 && newVal <= 23) {
         this.set('hours', newVal);
         // set _dayNight for every changes when first start.
-        if (typeof oldVal !== 'number') {
+        if (!this._down) {
+          console.log('whywhy');
           if (newVal >= 12) {
             this.set('_dayNight', false);
           }else {
@@ -612,7 +651,6 @@ Custom property | Description | Default
           // re-init clock.
           this._switchDay();
         }
-        return;
       }else {
         this.set('hours', new Date().getHours());
       }
@@ -622,7 +660,6 @@ Custom property | Description | Default
     _validateMinutes: function (newVal, oldVal) {
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 0 && newVal <= 59) {
-        return;
       }else {
         this.set('minutes', new Date().getMinutes());
       }
@@ -634,7 +671,11 @@ Custom property | Description | Default
     },
 
     // Convert everything into string.
-    _textify: function(_number) {
+    _textify: function(_number, _hours) {
+      // hours check flag
+      if (_hours) {
+        _number = this._computeHours(_number);
+      }
       return String.prototype.slice.call(('0' + _number), -2);
     },
 
@@ -651,7 +692,7 @@ Custom property | Description | Default
     _toggleDayNight: function() {
       this._dayNight = !this._dayNight;
       // update time when dayNight being switched between.
-      this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
+      this.time = this._selectedTime(this._hours, this._minutes, this._dayNight, this.timeFormat);
     },
 
     // Update background SVG based on AM/ PM value.
@@ -666,17 +707,29 @@ Custom property | Description | Default
     // Return selected hours and minutes.
     _selectedTime: function(_h, _m, _d, _f) {
       if (_f === 12) {
-        var _h = _h%12;
-        _h = _h === 0 ? 12 : _h;
         return _h + ':' + _m + ' ' + (_d ? 'AM' : 'PM');
       } else if (_f === 24) {
-        return this._hours + ':' + _m;
+        // convert 12- to 24- when it's night.
+        if (!_d) {
+          // 12 is always 12 at noon.
+          if (_h < 12) {
+            return ((parseInt(_h) + 12) % 24) + ':' + _m;
+          }
+        }
+        return _h + ':' + _m;
       }
+    },
+
+    // Return shifted hours.
+    _computeHours: function (_hours) {
+      var _h = _hours % 12;
+
+      return _h === 0 ? 12 : _h;
     },
 
     // Force update selected time.
     notifyTimeUpdate: function() {
-      this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
+      this.time = this._selectedTime(this._hours, this._minutes, this._dayNight, this.timeFormat);
     }
   });
 

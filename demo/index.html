@@ -9,6 +9,7 @@
     <link rel="import" href="../compound-timepicker-dialog.html">
     <link rel="import" href="../../paper-styles/demo-pages.html">
     <!-- <link rel="import" href="../../paper-styles/paper-styles.html"> -->
+    <link rel="import" href="../../paper-slider/paper-slider.html">
     <link rel="import" href="../../paper-button/paper-button.html">
     <!-- image prefetch -->
     <link rel="prefetch" href="../day-compressed.svg">
@@ -25,6 +26,7 @@
 
       *, *:before, *:after {
         box-sizing: border-box;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
       }
 
       .horizontal-section {
@@ -36,32 +38,111 @@
     <template is="dom-bind" id="timepicker">
       <div class="horizontal-section-container">
        <div>
-         <h4>dialog</h4>
+         <h4>Simple</h4>
          <section class="horizontal-section">
-           <paper-button id="simple" raised on-transitionend="openTimepicker">{{chosenTime}}</paper-button>
+           <paper-button data-dialog="simple" raised on-transitionend="openTimepicker">{{simpleTime}}</paper-button>
+         </section>
+       </div>
+
+       <div>
+         <h4>Hours</h4>
+         <section class="horizontal-section">
+           <div class="">
+             <paper-slider data-slider="hours" min="0" max="23" value="{{currentHours}}" pin on-change="updateTime"></paper-slider>
+           </div>
+           <paper-button data-dialog="hours" raised on-transitionend="openTimepicker">{{hoursTime}}</paper-button>
+         </section>
+       </div>
+
+       <div>
+         <h4>Minutes</h4>
+         <section class="horizontal-section">
+           <div class="">
+             <paper-slider data-slider="minutes" min="0" max="59" value="{{currentMinutes}}" pin on-change="updateTime"></paper-slider>
+           </div>
+           <paper-button data-dialog="minutes" raised on-transitionend="openTimepicker">{{minutesTime}}</paper-button>
+         </section>
+       </div>
+
+       <div>
+         <h4>Step</h4>
+         <section class="horizontal-section">
+           <div class="">
+             <paper-slider data-slider="step" min="1" max="60" value="{{currentStep}}" pin></paper-slider>
+           </div>
+           <paper-button data-dialog="step" raised on-transitionend="openTimepicker">{{stepTime}}</paper-button>
+         </section>
+       </div>
+
+       <div>
+         <h4>timeFormat</h4>
+         <section class="horizontal-section">
+           <div class="">
+             <paper-slider data-slider="format" min="12" max="24" step="12" value="{{currentFormat}}" pin on-change="updateTime"></paper-slider>
+           </div>
+           <paper-button data-dialog="format" raised on-transitionend="openTimepicker">{{formatTime}}</paper-button>
          </section>
        </div>
       </div>
 
-      <!-- <section> -->
-        <compound-timepicker-dialog id="dialog" with-backdrop time="{{chosenTime}}"></compound-timepicker-dialog>
-        <!-- <paper-dialog id="dialog" class="layout vertical" with-backdrop>
-          <compound-timepicker></compound-timepicker>
-          <div class="buttons">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm autofocus>OK</paper-button>
-          </div>
-        </paper-dialog> -->
-      <!-- </section> -->
+      <div class="">
+        <compound-timepicker-dialog id="simple" with-backdrop time="{{simpleTime}}"></compound-timepicker-dialog>
+        <compound-timepicker-dialog id="hours" with-backdrop time="{{hoursTime}}" hours="{{currentHours}}"></compound-timepicker-dialog>
+        <compound-timepicker-dialog id="minutes" with-backdrop time="{{minutesTime}}" minutes="{{currentMinutes}}"></compound-timepicker-dialog>
+        <compound-timepicker-dialog id="step" with-backdrop time="{{stepTime}}" step="{{currentStep}}"></compound-timepicker-dialog>
+        <compound-timepicker-dialog id="format" with-backdrop time="{{formatTime}}" time-format="{{currentFormat}}"></compound-timepicker-dialog>
+      </div>
     </template>
 
     <script>
       var timepicker = document.querySelector('#timepicker');
 
+      timepicker.currentHours = function() {
+        return new Date().getHours();
+      }();
+
+      timepicker.currentMinutes = function() {
+        return new Date().getMinutes();
+      }();
+
+      timepicker.currentStep = 1;
+      timepicker.currentFormat = 12;
+
       timepicker.openTimepicker = function(ev) {
-        var dialog = document.querySelector('#dialog');
-        if (dialog) {
-          dialog.open();
+        var _id,
+            dialog,
+            _target = ev.target;
+
+        while(_target.tagName !== 'PAPER-BUTTON') {
+          _target = _target.parentElement;
+
+        }
+        if (_target.hasAttribute('data-dialog')) {
+          _id = _target.getAttribute('data-dialog');
+          dialog = document.querySelector('compound-timepicker-dialog#' + _id);
+
+          if (dialog) {
+            dialog.open();
+          }
+        }
+      };
+
+      timepicker.updateTime = function(ev) {
+        var _id,
+            dialog,
+            _target = ev.target;
+
+        while(_target && _target.tagName !== 'PAPER-SLIDER') {
+          _target = _target.parentElement;
+        }
+
+        if (_target.hasAttribute('data-slider')) {
+          _id = _target.getAttribute('data-slider');
+          dialog = document.querySelector('compound-timepicker-dialog#' + _id);
+
+          if (dialog) {
+            dialog.notifyTimeUpdate();
+          }
         }
       }
     </script>

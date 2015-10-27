@@ -462,7 +462,7 @@ Custom property | Description | Default
       this._startRing = null;
       this.set('_down', false);
       // once release touch/ mouse, fire output.
-      this.time = this._selectedTime(this.hours, this._minutes, this._dayNight, this.timeFormat);
+      this.time = this._selectedTime(this._hours, this._minutes, this._dayNight, this.timeFormat);
     },
 
     // Update touch/ mouse tracking position and convert it to angle for rotation.
@@ -710,11 +710,17 @@ Custom property | Description | Default
       } else if (_f === 24) {
         // convert 12- to 24- when it's night.
         if (!_d) {
-          // 12 is always 12 at noon.
+          // 1pm until 11pm goes here.
           if (_h < 12) {
             return ((parseInt(_h) + 12) % 24) + ':' + _m;
           }
+        }else {
+          // 12 is always 00 at midnight.
+          if (_h == 12) {
+            return '00:' + _m;
+          }
         }
+        // return all daytime except 12am but not 12pm.
         return _h + ':' + _m;
       }
     },

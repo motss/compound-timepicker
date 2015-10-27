@@ -706,7 +706,8 @@ Custom property | Description | Default
     // Return selected hours and minutes.
     _selectedTime: function(_h, _m, _d, _f) {
       if (_f === 12) {
-        return _h + ':' + _m + ' ' + (_d ? 'AM' : 'PM');
+        // no leading zero in hours.
+        return this.hours + ':' + _m + ' ' + (_d ? 'AM' : 'PM');
       } else if (_f === 24) {
         // convert 12- to 24- when it's night.
         if (!_d) {

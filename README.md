@@ -60,3 +60,7 @@ For `compound-timepicker-dialog`,
 ```html
 <link rel="import" href="path-to-bower-components/compound-timepicker/compound-timepicker-dialog.html">
 ```
+
+## License
+
+[MIT License](http://motss.mit-license.org/) © Rong Sen Ng

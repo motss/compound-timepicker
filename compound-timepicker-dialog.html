@@ -35,8 +35,8 @@ Example:
 
       <!-- Dialog buttons -->
       <div class="buttons layout horizontal">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm autofocus>OK</paper-button>
+        <paper-button dialog-dismiss on-tap="_revertChange">Cancel</paper-button>
+        <paper-button dialog-confirm autofocus on-tap="_updateRevert">OK</paper-button>
       </div>
     </div>
 
@@ -78,7 +78,15 @@ Example:
       /**
        * 12/ 24 hours time format.
        */
-      timeFormat: Number
+      timeFormat: Number,
+
+      // stores time before opening the dialog.
+      _revert: {
+        type: Object,
+        value: function() {
+          return {};
+        }
+      },
     },
 
     behaviors: [
@@ -112,11 +120,56 @@ Example:
       }
     },
 
+    // store selected time on attached.
+    attached: function() {
+      this._revert = this._storeTime(this.$.timepicker.hours,
+                                     this.$.timepicker.minutes,
+                                     this.$.timepicker.timeFormat,
+                                     this.$.timepicker.time);
+    },
+
     /**
      * Force update the selected time from the compound-timepicker.
      */
     notifyTimeUpdate: function () {
       this.$.timepicker.notifyTimeUpdate();
+    },
+
+    // store selected Time before dialog opened.
+    _storeTime: function(_h, _m, _f, _t) {
+      var _r = {};
+
+      if (_f === 12) {
+        if (_t.slice(-2, -1) === 'P') {
+          _h = (_h + 12) % 24;
+        }
+      }else {
+        _h = parseInt(_t.slice(0, 2));
+      }
+
+      _r.hours = _h;
+      _r.minutes = _m;
+      _r.timeFormat = _f;
+      _r.time = _t;
+
+      return _r;
+    },
+
+    // revert selected time.
+    _revertChange: function () {
+      this.$.timepicker.hours = 'a';
+      this.$.timepicker.timeFormat = this._revert.timeFormat;
+      this.$.timepicker.hours = this._revert.hours;
+      this.$.timepicker.minutes = this._revert.minutes;
+      this.$.timepicker.notifyTimeUpdate();
+    },
+
+    // update revert time.
+    _updateRevert: function () {
+      this._revert = this._storeTime(this.$.timepicker.hours,
+                                     this.$.timepicker.minutes,
+                                     this.$.timepicker.timeFormat,
+                                     this.$.timepicker.time);
     }
   });
 

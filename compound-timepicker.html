@@ -245,10 +245,9 @@ Custom property | Description | Default
       // Sets true for day else it's night.
       _dayNight: {
         type: Boolean,
-        value: false
-        // function() {
-        //   return new Date().getHours() < 12;
-        // }
+        value: function() {
+          return new Date().getHours() < 12;
+        }
       },
       // hours check flag
       _isHours: {
@@ -381,6 +380,13 @@ Custom property | Description | Default
 
         // style selected minute at start.
         if (_m2) {
+          // clear previously styled clock number.
+          // problem 1510290439: caused by setting attributes imperatively.
+          if (this._textStyled) {
+            this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
+            this.$.minute.classList.remove('number-selected');
+          }
+
           var _child = _m/30;
           this._textStyled = _child;
           this.$.numbers.childNodes[_child].classList.add('text-selected');
@@ -663,7 +669,6 @@ Custom property | Description | Default
           }
           break;
         case 24:
-        console.log('24');
           // making sure that newVal is valid.
           if (newVal >= 0 && newVal  <= 23) {
             // before clock show and no interaction from the user.

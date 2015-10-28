@@ -157,6 +157,14 @@ Custom property | Description | Default
        */
 
       /**
+       * 12/ 24 hours time format. It can be either 12 or 24.
+       */
+      timeFormat: {
+        type: Number,
+        value: 12,
+        reflectToAttribute: true
+      },
+      /**
        * Clock hours, any number between 0 and 23.
        */
       hours: {
@@ -194,14 +202,6 @@ Custom property | Description | Default
       time : {
         type: String,
         notify: true
-      },
-      /**
-       * 12/ 24 hours time format. It can be either 12 or 24.
-       */
-      timeFormat: {
-        type: Number,
-        value: 12,
-        reflectToAttribute: true
       },
       // multiple step by 6 for minute hand tracking.
       _dragStep: {
@@ -245,9 +245,10 @@ Custom property | Description | Default
       // Sets true for day else it's night.
       _dayNight: {
         type: Boolean,
-        value: function() {
-          return new Date().getHours() < 12;
-        }
+        value: false
+        // function() {
+        //   return new Date().getHours() < 12;
+        // }
       },
       // hours check flag
       _isHours: {
@@ -631,7 +632,6 @@ Custom property | Description | Default
     _validateStep: function(newVal, oldVal) {
       // Polymer seemed to have changed the way observer works.
       if (newVal >= 1 && newVal <= 60) {
-        return;
       }else {
         this.set('step', 1);
       }
@@ -639,24 +639,47 @@ Custom property | Description | Default
 
     // Check if passed in value is valid and update when needed.
     _validateHours: function(newVal, oldVal) {
-      // Polymer seemed to have changed the way observer works.
-      if (newVal >= 0 && newVal <= 23) {
-        // set _dayNight for every changes when first start.
-        if (!this._down) {
-          /**
-           * if 12-hours, set shifted hours and _dayNight.
-           * else set hours and _dayNight.
-           */
-          if (this.timeFormat === 12) {
-            this.set('hours', this._computeHours(newVal));
-            this.set('_dayNight', newVal < 12);
+      // always get new hours since you don't need more than an hour to get hours.
+      var _hours = new Date().getHours();
+      // always make sure timeFormat is properly set.
+      // timeFormat has the highest priority.
+      switch (this.timeFormat) {
+        case 12:
+          // to ensure that valid newVal.
+          if (newVal >= 0 && newVal <= 23) {
+            // for first time init, set _dayNight and hours.
+            if (!this._down) {
+              this.set('hours', this._computeHours(newVal));
+              /**
+               * due to minor race, only set _dayNight here,
+               * as long as there is change of value in newVal all will be
+               * redirected to here eventually.
+               */
+              this.set('_dayNight', newVal < 12);
+            }
           }else {
-            this.set('hours', newVal);
-            this.set('_dayNight', newVal < 12);
+            // invalid hours goes here.
+            this.set('hours', this._computeHours(_hours));
           }
-        }
-      }else {
-        this.set('hours', new Date().getHours());
+          break;
+        case 24:
+        console.log('24');
+          // making sure that newVal is valid.
+          if (newVal >= 0 && newVal  <= 23) {
+            // before clock show and no interaction from the user.
+            if (!this._down) {
+              this.set('_dayNight', newVal < 12);
+            }
+          }else {
+            // invalid hours goes here.
+            this.set('hours', _hours);
+          }
+          break;
+        default:
+          // if timeFormat is not properly set.
+          this.set('timeFormat', 12);
+          this.set('hours', this._computeHours(_hours));
+          this.set('_dayNight', _hours < 12);
       }
     },
 

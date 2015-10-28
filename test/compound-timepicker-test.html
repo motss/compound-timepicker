@@ -81,7 +81,23 @@
           });
 
           it('should be equal to current time', function () {
-            expect(timepicker.hours).to.be.equal(new Date().getHours());
+            var _format = timepicker.timeFormat,
+                _now = new Date().getHours();
+
+            if (_format >= 24) {
+              expect(timepicker.time.slice(0, 2)).to.be.equal(('0' + _now).slice(-2));
+              expect(timepicker.time).to.not.have.string('M');
+              expect(timepicker.hours).to.be.equal(_now);
+            }else {
+              if (_now < 10) {
+                expect(timepicker.time.slice(0, 1)).to.be.equal(_now.toString());
+                expect(timepicker.hours).to.be.equal(_now);
+              }else {
+                expect(timepicker.time.slice(0, 2)).to.not.be.equal(_now.toString());
+                expect(timepicker.hours).to.be.not.equal(_now);
+              }
+              expect(timepicker.time).to.have.string('M');
+            }
           });
         });
 
@@ -169,7 +185,7 @@
             expect(timepicker.timeFormat).to.be.eql(12);
           });
 
-          it('should not change the time format to 24 hours when set', function () {
+          it('should change the time format to 24 hours when set', function () {
             timepicker.timeFormat = 24;
             expect(timepicker.timeFormat).to.be.at.most(24);
 
@@ -177,10 +193,12 @@
             _nowHours = ('0' + _nowHours).slice(-2);
             timepicker.notifyTimeUpdate();
             expect(timepicker.time.slice(0, 2)).to.be.eql(_nowHours);
+            expect(timepicker.time).to.not.have.string('M');
 
             timepicker.setAttribute('hours', 23);
             timepicker.notifyTimeUpdate();
             expect(timepicker.time.slice(0,2)).to.be.eql(('0' + 23).slice(-2));
+            expect(timepicker.time).to.not.have.string('M');
           });
         });
 

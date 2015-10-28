@@ -8,6 +8,7 @@
         --hour-centroid-strokewidth: 4;
         --centroid-strokewidth: 2;
         --paper-white: #ffffff;
+        --paper-black: #000000;
       }
 
       :host {
@@ -46,7 +47,7 @@
       }
 
       .clock {
-        background: var(--paper-grey-100, --compound-timepicker-clock-bg);
+        background: var(--compound-timepicker-clock-bg, --paper-grey-100);
         padding: 0 24px;
       }
 
@@ -64,6 +65,7 @@
       }
 
       .number {
+        fill: var(--compound-timepicker-numbers, --paper-black);
         pointer-events: none;
         dominant-baseline: central;
         text-anchor: middle;
@@ -72,74 +74,74 @@
 
       /* rings-related mixins */
       .rings {
-        fill: var(--paper-grey-200, --compound-timepicker-rings);
+        fill: var(--compound-timepicker-rings, --paper-grey-200);
       }
 
       .minute-ring {
-        fill: var(--paper-grey-200, --compound-timepicker-minute-ring);
+        fill: var(--compound-timepicker-minute-ring, --paper-grey-200);
         cursor: pointer;
       }
 
       .hour-ring {
-        fill: var(--paper-grey-200, --compound-timepicker-hour-ring);
+        fill: var(--compound-timepicker-hour-ring, --paper-grey-200);
         cursor: pointer;
       }
 
       .center {
-        fill: var(--paper-grey-300, --compound-timepicker-center);
+        fill: var(--compound-timepicker-center, --paper-grey-300);
         pointer-events: none;
       }
 
       /* hour-related mixins */
       .hour {
-        fill: var(--paper-green-100, --compound-timepicker-hour);
+        fill: var(--compound-timepicker-hour, --paper-green-100);
         cursor: pointer;
       }
 
       .hour-centroid {
-        fill: var(--paper-green-500, --compound-timepicker-hour-centroid);
-        stroke-width: var(--hour-centroid-strokewidth, --compound-timepicker-strokewidth-hour-centroid);
+        fill: var(--compound-timepicker-hour-centroid, --paper-green-500);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-centroid, --hour-centroid-strokewidth);
         cursor: pointer;
         pointer-events: none;
       }
 
       .hour-hand {
-        stroke: var(--paper-green-500, --compound-timepicker-stroke-hour-hand);
-        stroke-width: var(--hour-hand-strokewidth, --compound-timepicker-strokewidth-hour-hand);
+        stroke: var(--compound-timepicker-stroke-hour-hand, --paper-green-500);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-hand, --hour-hand-strokewidth);
         pointer-events: none;
       }
 
       /* minute-related mixins */
       .minute {
-        fill: var(--paper-teal-100, --compound-timepicker-minute);
+        fill: var(--compound-timepicker-minute, --paper-teal-100);
         cursor: pointer;
       }
 
       .minute-centroid {
-        fill: var(--paper-teal-500, --compound-timepicker-minute-centroid);
-        stroke-width: var(--minute-centroid-strokewidth, --compound-timepicker-strokewidth-minute-centroid);
+        fill: var(--compound-timepicker-minute-centroid, --paper-teal-500);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-centroid, --minute-centroid-strokewidth);
         pointer-events: none;
       }
 
       .minute-hand {
-        stroke: var(--paper-teal-500, --compound-timepicker-stroke-minute-hand);
-        stroke-width: var(--minute-hand-strokewidth, --compound-timepicker-strokewidth-minute-hand);
+        stroke: var(--compound-timepicker-stroke-minute-hand, --paper-teal-500);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-hand, --minute-hand-strokewidth);
         pointer-events: none;
       }
 
       .centroid {
-        stroke: var(--paper-teal-500, --compound-timepicker-stroke-centroid);
-        stroke-width: var(--centroid-strokewidth, --compound-timepicker-strokewidth-centroid);
-        fill: var(--paper-teal-500, --compound-timepicker-centroid);
+        fill: var(--compound-timepicker-centroid, --paper-teal-500);
+        stroke: var(--compound-timepicker-stroke-centroid, --paper-teal-500);
+        stroke-width: var(--compound-timepicker-strokewidth-centroid, --centroid-strokewidth);
         pointer-events:none;
       }
 
       .minute.number-selected {
-        fill: var(--paper-teal-500, --compound-timepicker-minute-selected);
+        fill: var(--compound-timepicker-minute-selected, --paper-teal-500);
       }
 
       .text-selected {
-        fill: var(--paper-white, --compound-timepicker-text-selected);
+        fill: var(--compound-timepicker-text-selected, --paper-white);
       }
 
       /* mobile-small */

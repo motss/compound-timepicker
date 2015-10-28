@@ -41,6 +41,7 @@ The following custom properties and mixins are also available for styling:
 Custom property | Description | Default
 ----------------|-------------|----------
 `--compound-timepicker` | Mixin applied to the timepicker | `{}`
+`--compound-timepicker-numbers` | Fill color of the clock numbers | `--paper-black`
 `--compound-timepicker-clock-bg` | Background color of the clock face | `--paper-grey-100`
 ||
 `--compound-timepicker-rings` | Background color of the all rings | `--paper-grey-200`
@@ -66,7 +67,8 @@ Custom property | Description | Default
 ||
 `--compound-timepicker-minute-selected` | Fill color of the minute selector on clock number | `--paper-teal-500`
 `--compound-timepicker-text-selected` | Fill color of the clock number when selected | `--paper-white
-
+||
+--compound-timepicker-buttons | Button color in dialog | --paper-teal-500
 
 @compound compound-timepicker
 @demo demo/index.html
@@ -102,13 +104,13 @@ Custom property | Description | Default
               <circle id="center" cx="100" cy="100" r="32" class="center"/>
             </g>
 
-            <g id="hourGroup" transform="rotate(0, 100, 100)">
+            <g id="hourGroup" transform="rotate(0, 100, 100)" class="dragging">
               <circle id="hour" cx="100" cy="51" r="15" class="hour"/>
               <circle id="hourCentroid" cx="100" cy="51" r="4" class="hour-centroid"/>
               <line id="hourHand" x1="100" y1="100" x2="100" y2="51" class="hour-hand"/>
             </g>
 
-            <g id="minuteGroup" transform="rotate(0, 100, 100)">
+            <g id="minuteGroup" transform="rotate(0, 100, 100)" class="dragging">
               <circle id="minute" cx="100" cy="17" r="15" class="minute"/>
               <circle id="minuteCentroid" cx="100" cy="17" r="4" class="minute-centroid"/>
               <line id="minuteHand" x1="100" y1="100" x2="100" y2="17" class="minute-hand"/>
@@ -552,9 +554,9 @@ Custom property | Description | Default
 
       function _factorise(_degree, _step) {
         var _factor = _degree / _step,
-            _max = Math.ceil(_factor) * _step,
+            _max = Math.ceil(_factor) / (1/ _step),
             _th = _max - 3,
-            _min = Math.floor(_factor) * _step;
+            _min = Math.floor(_factor) / (1/ _step);
 
         // when clock step !== 6, reset to 0 instead of modulus by 360.
         _max = _max > 359 ? 0 : _max;

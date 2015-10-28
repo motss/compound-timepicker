@@ -63,6 +63,78 @@
         @apply(--layout-justified);
         @apply(--layout-flex-auto);
       }
+
+      .dark-theme {
+        background: #424242;
+        color: #80CBC4;
+      }
+
+      .goog-clk {
+        background: #212121;
+        color: #DA4336;
+      }
+
+      compound-timepicker-dialog#darker {
+        background: #424242;
+        --compound-timepicker-numbers: #D4D4D4;
+        --compound-timepicker-clock-bg: #424242;
+
+        --compound-timepicker-rings: #555555;
+        --compound-timepicker-minute-ring: #555555;
+        --compound-timepicker-hour-ring: #555555;
+        --compound-timepicker-center: #555555;
+
+        --compound-timepicker-hour: #009688;
+        --compound-timepicker-hour-centroid: #80CBC4;
+        --compound-timepicker-strokewidth-hour-centroid: 2;
+        --compound-timepicker-stroke-hour-hand: #80CBC4;
+        --compound-timepicker-strokewidth-hour-hand: 2;
+
+        --compound-timepicker-minute: #009688;
+        --compound-timepicker-minute-centroid: #80CBC4;
+        --compound-timepicker-strokewidth-minute-centroid: 2;
+        --compound-timepicker-stroke-minute-hand: #80CBC4;
+        --compound-timepicker-strokewidth-minute-hand: 2;
+
+        --compound-timepicker-stroke-centroid: #80CBC4;
+        --compound-timepicker-strokewidth-centroid: 4;
+        --compound-timepicker-centroid: #80CBC4;
+
+        --compound-timepicker-minute-selected: #80CBC4;
+        --compound-timepicker-text-selected: #263238;
+        --compound-timepicker-buttons: #80CBC4;
+      }
+
+      compound-timepicker-dialog#goog {
+        background: #212121;
+        --compound-timepicker-numbers: #FFFFFF;
+        --compound-timepicker-clock-bg: #212121;
+
+        --compound-timepicker-rings: #212121;
+        --compound-timepicker-minute-ring: #212121;
+        --compound-timepicker-hour-ring: #212121;
+        --compound-timepicker-center: #212121;
+
+        --compound-timepicker-hour: #4C2926;
+        --compound-timepicker-hour-centroid: #DA4336;
+        --compound-timepicker-strokewidth-hour-centroid: 1;
+        --compound-timepicker-stroke-hour-hand: #DA4336;
+        --compound-timepicker-strokewidth-hour-hand: 1;
+
+        --compound-timepicker-minute: #4C2926;
+        --compound-timepicker-minute-centroid: #DA4336;
+        --compound-timepicker-strokewidth-minute-centroid: 1;
+        --compound-timepicker-stroke-minute-hand: #DA4336;
+        --compound-timepicker-strokewidth-minute-hand: 1;
+
+        --compound-timepicker-stroke-centroid: #D9D9D9;
+        --compound-timepicker-strokewidth-centroid: 1;
+        --compound-timepicker-centroid: #D9D9D9;
+
+        --compound-timepicker-minute-selected: #DA4336;
+        --compound-timepicker-text-selected: #FFFFFF;
+        --compound-timepicker-buttons: #DA4336;
+      }
     </style>
   </head>
   <body unresolved>
@@ -71,7 +143,15 @@
        <div>
          <h4>Simple</h4>
          <section class="horizontal-section">
-           <paper-button data-dialog="simple" raised on-transitionend="openTimepicker">{{simpleTime}}</paper-button>
+           <div class="copy-attr">
+             <paper-button data-dialog="simple" raised on-transitionend="openTimepicker">{{simpleTime}}</paper-button>
+           </div>
+           <div class="copy-attr">
+             <paper-button class="dark-theme" data-dialog="darker" raised on-transitionend="openTimepicker">{{darkerTime}}</paper-button>
+           </div>
+           <div class="copy-attr">
+             <paper-button class="goog-clk" data-dialog="goog" raised on-transitionend="openTimepicker">{{googTime}}</paper-button>
+           </div>
          </section>
        </div>
 
@@ -157,6 +237,8 @@
 
       <div class="">
         <compound-timepicker-dialog id="simple" with-backdrop time="{{simpleTime}}"></compound-timepicker-dialog>
+        <compound-timepicker-dialog id="darker" with-backdrop time="{{darkerTime}}"></compound-timepicker-dialog>
+        <compound-timepicker-dialog id="goog" with-backdrop time="{{googTime}}"></compound-timepicker-dialog>
         <compound-timepicker-dialog id="hours" with-backdrop time="{{hoursTime}}" hours="{{currentHours}}"></compound-timepicker-dialog>
         <compound-timepicker-dialog id="minutes" with-backdrop time="{{minutesTime}}" minutes="{{currentMinutes}}"></compound-timepicker-dialog>
         <compound-timepicker-dialog id="step" with-backdrop time="{{stepTime}}" step="{{currentStep}}"></compound-timepicker-dialog>

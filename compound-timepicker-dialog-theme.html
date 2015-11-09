@@ -8,6 +8,7 @@
         -webkit-user-select: none;
         -ms-user-select: none;
         display: block;
+        position: fixed !important;
         box-sizing: border-box;
         @apply(--layout-vertical);
       }
@@ -74,8 +75,8 @@
         :host {
           margin-top: 6px;
           margin-bottom: 6px;
-          @apply(--layout-fit);
           min-height: 268px;
+          @apply(--layout-fit);
         }
       }
       /* mobile-large-landscape */
@@ -93,7 +94,6 @@
           min-height: 360px;
         }
       }
-
     </style>
 
   </template>

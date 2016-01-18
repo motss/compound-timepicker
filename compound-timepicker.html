@@ -1,9 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="compound-timepicker-theme.html">
-<link rel="import" href="../paper-styles/paper-styles.html">
-<link rel="import" href="../iron-media-query/iron-media-query.html">
-<link rel="import" href="../paper-ripple/paper-ripple.html">
 
+<link rel="import" href="../paper-ripple/paper-ripple.html">
 <!--
 Compound is composed of two or more separate elements and `compound-timepicker` happens to be under this category.
 
@@ -44,59 +41,218 @@ Custom property | Description | Default
 `--compound-timepicker-numbers` | Fill color of the clock numbers | `--paper-black`
 `--compound-timepicker-clock-bg` | Background color of the clock face | `--paper-grey-100`
 ||
-`--compound-timepicker-rings` | Background color of the all rings | `--paper-grey-200`
-`--compound-timepicker-minute-ring` | Background color of the minute ring | `--paper-grey-200`
-`--compound-timepicker-hour-ring` | Background color of the hour ring | `--paper-grey-200`
-`--compound-timepicker-center` | Background color of the center ring | `--paper-grey-300`
+`--compound-timepicker-rings` | Background color of the all rings | `#eee`
+`--compound-timepicker-minute-ring` | Background color of the minute ring | `#eee`
+`--compound-timepicker-hour-ring` | Background color of the hour ring | `#eee`
+`--compound-timepicker-center` | Background color of the center ring | `#e0e0e0`
 ||
-`--compound-timepicker-hour` | Fill color of the hour selector | `--paper-green-100`
-`--compound-timepicker-hour-centroid` | Fill color of the centroid of hour selector | `--paper-green-500`
+`--compound-timepicker-hour` | Fill color of the hour selector | `#c8e6c9`
+`--compound-timepicker-hour-centroid` | Fill color of the centroid of hour selector | `#4caf50`
 `--compound-timepicker-strokewidth-hour-centroid` | Stroke width of the centroid of hour selector | `4`
-`--compound-timepicker-hour-hand` | Fill color of the hour hand | `--paper-green-500`
+`--compound-timepicker-hour-hand` | Fill color of the hour hand | `#4caf50`
 `--compound-timepicker-strokewidth-hour-hand` | Stroke width of the hour hand | `2`
 ||
-`--compound-timepicker-minute` | Fill color of the minute selector | `--paper-teal-100`
-`--compound-timepicker-minute-centroid` | Fill color of the centroid of minute selector | `--paper-teal-500`
+`--compound-timepicker-minute` | Fill color of the minute selector | `#b2dfdb`
+`--compound-timepicker-minute-centroid` | Fill color of the centroid of minute selector | `#009688`
 `--compound-timepicker-strokewidth-minute-centroid` | Stroke width of the centroid of minute selector | `4`
-`--compound-timepicker-minute-hand` | Fill color of the minute hand | `--paper-teal-500`
+`--compound-timepicker-minute-hand` | Fill color of the minute hand | `#009688`
 `--compound-timepicker-strokewidth-minute-hand` | Stroke width of the minute hand | `2`
 ||
-`--compound-timepicker-stroke-centroid` | Stroke color of the centroid of clock face | `--paper-teal-500`
+`--compound-timepicker-stroke-centroid` | Stroke color of the centroid of clock face | `#009688`
 `--compound-timepicker-strokewidth-centroid` | Stroke width of the centroid of clock face | `2`
-`--compound-timepicker-centroid` | Fill color of the centroid of clock face | `--paper-teal-500`
+`--compound-timepicker-centroid` | Fill color of the centroid of clock face | `#009688`
 ||
-`--compound-timepicker-minute-selected` | Fill color of the minute selector on clock number | `--paper-teal-500`
+`--compound-timepicker-minute-selected` | Fill color of the minute selector on clock number | `#009688`
 `--compound-timepicker-text-selected` | Fill color of the clock number when selected | `--paper-white
 ||
---compound-timepicker-buttons | Button color in dialog | --paper-teal-500
+--compound-timepicker-buttons | Button color in dialog | #009688
 
 @compound compound-timepicker
 @demo demo/index.html
 -->
 <dom-module id="compound-timepicker">
+  <template strip-whitespace>
+    <style>
+      :root {
+        --minute-hand-strokewidth: 1;
+        --hour-hand-strokewidth: 1;
+        --minute-centroid-strokweidth: 4;
+        --hour-centroid-strokewidth: 4;
+        --centroid-strokewidth: 1;
+      }
 
-  <template>
-    <style include="compound-timepicker-theme"></style>
+      :host {
+        user-select: none;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+        -webkit-tap-highlight-color: transparent;
 
-    <!-- Main codes starts here -->
-    <!-- portrait's mq -->
-    <iron-media-query query="(orientation: portrait)" query-matches="{{_portrait}}">
-    </iron-media-query>
+        display: block;
+      }
 
-    <!-- clock itself here -->
-    <div class$="{{_computeContentCls(_portrait)}}">
-        <div id="ampm" class="day-night flex-1 layout horizontal center-center end-justified relative" on-tap="_toggleDayNight">
-          <!-- display time with day/ night background -->
-          <div class="clock-time flex-auto">
-            <span>{{_hours}}</span>
-            <span>:</span>
-            <span>{{_minutes}}</span>
-          </div>
-          <paper-ripple on-transitionend="_switchDay"></paper-ripple>
-        </div>
+      *, *:before, *:after {
+        box-sizing: inherit;
+      }
 
-        <!-- clock face here -->
-        <div class="clock flex-2 layout vertical center-center">
+      div.timepicker {
+				width: 248px;
+        max-width: 248px;
+        max-height: calc(248px + 84px + 32px + 57px);
+        @apply(--layout-vertical);
+      }
+
+      /* clock time related */
+      .day-night {
+        position: relative;
+        width: 100%;
+        max-width: 248px;
+        max-height: calc(84px + 32px);
+        padding: 24px;
+        background: url(img/day-compressed.svg) no-repeat;
+        font-size: 56px;
+        text-align: right;
+        cursor: pointer;
+      }
+      .night-day {
+        color: #1E88E5;
+        background: url(img/night-compressed.svg) no-repeat;
+      }
+      .clock-time {
+        padding-right: 24px;
+        font-weight: 500;
+      }
+      .clock-time span:nth-of-type(1) {
+        margin-right: -14px;
+      }
+      .clock-time span:nth-of-type(3) {
+        margin-left: -14px;
+      }
+
+      /* clock related */
+      .clock {
+        height: 100%;
+        background: var(--compound-timepicker-clock-bg, #f5f5f5);
+        @apply(--layout-vertical);
+      }
+      .fullclock {
+        height: 248px;
+        width: 248px;
+        margin-left: auto;
+        margin-right: auto;
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
+      .number {
+        fill: var(--compound-timepicker-numbers, #000);
+        pointer-events: none;
+        dominant-baseline: central;
+        text-anchor: middle;
+      }
+
+      /* rings-related */
+      .rings {
+        fill: var(--compound-timepicker-rings, #eee);
+      }
+      .minute-ring {
+        fill: var(--compound-timepicker-minute-ring, #eee);
+        cursor: pointer;
+      }
+      .hour-ring {
+        fill: var(--compound-timepicker-hour-ring, #eee);
+        cursor: pointer;
+      }
+      .center {
+        fill: var(--compound-timepicker-center, #e0e0e0);
+        pointer-events: none;
+      }
+
+      /* hour-related */
+      .hour {
+        fill: var(--compound-timepicker-hour, #c8e6c9);
+        cursor: pointer;
+      }
+      .hour-centroid {
+        fill: var(--compound-timepicker-hour-centroid, #4caf50);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-centroid, --hour-centroid-strokewidth);
+        cursor: pointer;
+        pointer-events: none;
+      }
+      .hour-hand {
+        stroke: var(--compound-timepicker-stroke-hour-hand, #4caf50);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-hand, --hour-hand-strokewidth);
+        pointer-events: none;
+      }
+
+      /* minute-related */
+      .minute {
+        fill: var(--compound-timepicker-minute, #b2dfdb);
+        cursor: pointer;
+      }
+      .minute-centroid {
+        fill: var(--compound-timepicker-minute-centroid, #009688);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-centroid, --minute-centroid-strokewidth);
+        pointer-events: none;
+      }
+      .minute-hand {
+        stroke: var(--compound-timepicker-stroke-minute-hand, #009688);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-hand, --minute-hand-strokewidth);
+        pointer-events: none;
+      }
+
+      /* misc related */
+      .centroid {
+        fill: var(--compound-timepicker-centroid, #009688);
+        stroke: var(--compound-timepicker-stroke-centroid, #009688);
+        stroke-width: var(--compound-timepicker-strokewidth-centroid, --centroid-strokewidth);
+        pointer-events:none;
+      }
+      .minute.number-selected {.fullclock
+        fill: var(--compound-timepicker-minute-selected, #009688);
+      }
+      .text-selected {
+        fill: var(--compound-timepicker-text-selected, #fff);
+      }
+
+      /* buttons inside content tag */
+      div.clock > ::content > .buttons {
+        color: var(--compound-timepicker-button-color, #009688);
+        position: relative;
+        padding: 8px 8px 8px 24px;
+        margin-left: auto;
+        margin-right: 0;
+      }
+
+      /* landscape mode */
+      @media all and (orientation: landscape) {
+        div.timepicker {
+					width: initial;
+          max-width: 512px;
+          max-height: 288px;
+          @apply(--layout-horizontal);
+        }
+
+        div.day-night {
+					width: 224px;
+					padding: 16px 24px 0 0;
+          max-width: 248px;
+          max-height: 512px;
+        }
+
+        div.fullclock {
+          height: 216px;
+          width: 272px;
+        }
+      }
+    </style>
+
+    <div class="timepicker">
+      <div id="ampm" class="day-night" on-tap="_toggleDayNight">
+        <span>{{_hours}}</span>:<span>{{_minutes}}</span>
+        <paper-ripple on-transitionend="_switchDay"></paper-ripple>
+      </div>
+
+      <div class="clock">
+        <div class="fullclock">
           <svg width="200" height="200" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
             <g class="rings">
               <circle id="minuteRing" cx="100" cy="100" r="100" class="minute-ring"/>
@@ -117,659 +273,14 @@ Custom property | Description | Default
             </g>
 
             <circle id="centroid" cx="100" cy="100" r="2" class="centroid"/>
-
             <g id="numbers"></g>
           </svg>
         </div>
+
+        <content select=".buttons"></content>
+      </div>
     </div>
   </template>
 
+	<script src="compound-timepicker.js"></script>
 </dom-module>
-
-<script>
-  /**
-   * CONSTANTS needed for rendering clock.
-   */
-  var HOUR_OUTER_RADIUS = 66,
-      HOUR_INNER_RADIUS = 32,
-      MINUTE_OUTER_RADIUS = 100,
-      MINUTE_INNER_RADIUS = 66,
-      CENTER_OF_CIRCLE_X = 100,
-      CENTER_OF_CIRCLE_Y = 100,
-      STARTING_POS_OF_FIRST_NUMBER_X = 100,
-      STARTING_POS_OF_FIRST_NUMBER_Y = 17,
-      MINUTE_CIRCLE_X = 100,
-      MINUTE_CIRCLE_Y = 17,
-      HOUR_CIRCLE_X = 100,
-      HOUR_CIRCLE_Y = 51,
-      THETA_BETWEEN_HOURS = 30;
-
-  Polymer({
-
-    is: 'compound-timepicker',
-
-    properties: {
-      /**
-       * Describes the author of the element, but is really just an excuse to
-       * show off JSDoc annotations.
-       *
-       * @type {{name: string, image: string}}
-       */
-
-      /**
-       * 12/ 24 hours time format. It can be either 12 or 24.
-       */
-      timeFormat: {
-        type: Number,
-        value: 12,
-        reflectToAttribute: true
-      },
-      /**
-       * Clock hours, any number between 0 and 23.
-       */
-      hours: {
-        type: Number,
-        value: function() {
-          return new Date().getHours();
-        },
-        observer: '_validateHours',
-        reflectToAttribute: true
-      },
-      /**
-       * Clock minutes, any number between 0 and 59.
-       */
-      minutes: {
-        type: Number,
-        value: function() {
-          return new Date().getMinutes();
-        },
-        observer: '_validateMinutes',
-        reflectToAttribute: true
-      },
-      /**
-       * Clock step, any number between 1 and 60.
-       * Default is 1 which means that each minute is selectable.
-       */
-      step: {
-        type: Number,
-        value: 1,
-        observer: '_validateStep',
-        reflectToAttribute: true
-      },
-      /**
-       * Returns selected time.
-       */
-      time : {
-        type: String,
-        notify: true
-      },
-      // multiple step by 6 for minute hand tracking.
-      _dragStep: {
-        type: Number,
-        computed: '_dragStepAngleify(step)'
-      },
-      // Set true to enable tracking.
-      _tracking: {
-        type: Boolean,
-        value: false
-      },
-      // Set true if touchstart/ mousedown.
-      _down: {
-        type: Boolean,
-        value: false
-      },
-      // Stores selected ring's ID from touch or mouse.
-      _startRing: String,
-      // Stores last value of touch/ mouse position when _tracking sets true.
-      _lastTrackingPos: {
-        type: Object,
-        value: function () {
-          return {};
-        }
-      },
-      // Previously styled clock number when selected.
-      _textStyled: {
-        type: Number,
-        value: 0
-      },
-      // Being used to display selected hours.
-      _hours: {
-        type: String,
-        computed: '_textify(hours, _isHours)'
-      },
-      // Being used to display selected minutes.
-      _minutes: {
-        type: String,
-        computed: '_textify(minutes)'
-      },
-      // Sets true for day else it's night.
-      _dayNight: {
-        type: Boolean,
-        value: function() {
-          return new Date().getHours() < 12;
-        }
-      },
-      // hours check flag
-      _isHours: {
-        type: Boolean,
-        value: true
-      },
-      // clock numbers ready check flag
-      _hasClockNumbersReady: {
-        type: Boolean,
-        value: false
-      }
-    },
-
-    // init clock whenever [hours, minutes, _dragStep] encounters value change.
-    observers: [
-      '_initClock(hours, minutes, _dragStep)'
-    ],
-
-    // Element Lifecycle
-
-    ready: function() {
-      // generate all clock numbers on the clock face.
-      this._clockNumberify();
-      // init clock with current time by adjusting angle of all clock hands.
-      this._initClock(this.hours, this.minutes, this._dragStep);
-      // set initial time just in case no time is beng selected.
-      this.time = this._selectedTime(this._hours, this._minutes, this._dayNight, this.timeFormat);
-    },
-
-    attached: function() {
-      // `attached` fires once the element and its parents have been inserted
-      // into a document.
-      //
-      // This is a good place to perform any work related to your element's
-      // visual state or active behavior (measuring sizes, beginning animations,
-      // loading resources, etc).
-    },
-
-    detached: function() {
-      // The analog to `attached`, `detached` fires when the element has been
-      // removed from a document.
-      //
-      // Use this to clean up anything you did in `attached`.
-    },
-
-    // Element Behavior
-
-    // Populate clock numbers.
-    _clockNumberify: function() {
-      var _x = STARTING_POS_OF_FIRST_NUMBER_X, // 100
-          _y = STARTING_POS_OF_FIRST_NUMBER_Y, // 17
-          _cx = CENTER_OF_CIRCLE_X, // 100
-          _cy = CENTER_OF_CIRCLE_Y, // 100
-          _theta = THETA_BETWEEN_HOURS; // 30
-
-      for(var i = 0; i < 12; i++) {
-        var _i = i == 0 ? 12: i,
-            __theta = _theta * i,
-            _temp = document.createElementNS('http://www.w3.org/2000/svg', 'text'), // up to 30% faster.
-            __xy = this._textNumberClockwisify(__theta, _y, _x, _cy, _cx);
-        this.$.numbers.appendChild(this._textNumberify(_temp, _i, __xy.x, __xy.y));
-      }
-      this.set('_hasClockNumbersReady', true);
-    },
-
-    // Convert clock number into text.
-    _textNumberify: function(_svg, _number, _x, _y) {
-      var _text = _svg;
-      _text.textContent = _number.toString();
-      _text.setAttribute('x', _x);
-      _text.setAttribute('y', _y);
-      _text.classList.add('number');
-
-      // if (!Polymer.Settings.useNativeShadow) {
-        _text.classList.add('style-scope');
-        _text.classList.add('compound-timepicker');
-      // }
-
-      return _text;
-    },
-
-    // Return rotated params for each clock text.
-    _textNumberClockwisify: function(_theta, _y, _x, _cy, _cx) {
-      var rotXY = {}, __theta;
-
-      function toRad(_theta) {
-        return _theta / 180 * Math.PI;
-      }
-
-      function sin(_theta, _xy, _cxy) {
-        return Math.sin(_theta) * (_xy - _cxy);
-      }
-
-      function cos(_theta, _xy, _cxy) {
-        return Math.cos(_theta) * (_xy - _cxy);
-      }
-
-      function rotatedX(_theta, _x, _y, _cx, cy) {
-        return (cos(_theta, _x, _cx) - sin(_theta, _y, _cy)) + _cx;
-      }
-
-      function rotatedY(_theta, _x, _y, _cx, _cy) {
-        return (cos(_theta, _y, _cy) + sin(_theta, _x, _cx)) + _cy;
-      }
-
-      __theta = toRad(_theta);
-      rotXY.x = rotatedX(__theta, _x, _y, _cx, _cy).toFixed(1);
-      rotXY.y = rotatedY(__theta, _x, _y, _cx, _cy).toFixed(1);
-
-      return rotXY;
-    },
-
-    // Rotate minute/ hand clock hand during tracking.
-    _rotatify: function(_angle) {
-      this.transform.baseVal.getItem(0).setRotate(_angle, 100, 100);
-    },
-
-    // Initialize the clock with predefined config.
-    _initClock: function(_hr, _min, _dragStep) {
-      /**
-       * - init clock when and only when there are clock numbers.
-       * - init clock won't trigger to mouse/ touch.
-       * - problem (1510280120) when minutes was being set on-the-fly.
-       * - problem (1510280159) when hours changes with mouse/ touch.
-       */
-      if (this._hasClockNumbersReady && !this._down) {
-        var _h = (_hr%12) * 30,
-            _m = (_min%60) * 6,
-            _m2 = _m%30 === 0;
-
-        // style selected minute at start.
-        if (_m2) {
-          // clear previously styled clock number.
-          // problem 1510290439: caused by setting attributes imperatively.
-          if (this._textStyled) {
-            this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
-            this.$.minute.classList.remove('number-selected');
-          }
-
-          var _child = _m/30;
-          this._textStyled = _child;
-          this.$.numbers.childNodes[_child].classList.add('text-selected');
-          this.$.minute.classList.add('number-selected');
-        }else {
-          // to tacle problem 1510280120: remove all selected class.
-          this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
-          this.$.minute.classList.remove('number-selected');
-        }
-
-        // hours will determine _dayNight and here update the class.
-        if (this._dayNight) {
-          this.$.ampm.classList.remove('night-day');
-        }else {
-          this.$.ampm.classList.add('night-day');
-        }
-
-        // rotate whatever needs to be rotated.
-        this._rotatify.call(this.$.hourGroup, _h);
-        this._rotatify.call(this.$.minuteGroup, _m);
-      }
-    },
-
-    // Update tracking position and rotate clock hand.
-    _updateTracking: function() {
-      if (!this._tracking) {
-        requestAnimationFrame(this._draggingClockHand.bind(this, this._lastTrackingPos));
-        this.set('_tracking', true);
-      }
-    },
-
-    // What need to be done for touchstart/ mousedown.
-    _selectHand: function(ev) {
-      var _id = ev.target.id, _xy = {};
-      ev.preventDefault();
-      /**
-       * - 400 times faster using switch compared to multi if statements.
-       * - switch case up to ~10ms.
-       * - multi if statements up to ~4000ms.
-       */
-      switch (_id) {
-        case 'hour':
-        case 'minute':
-        case 'hourRing':
-        case 'minuteRing':
-          this._startRing = _id;
-          _xy.y = ev.detail.y;
-          _xy.x = ev.detail.x;
-          this._lastTrackingPos = _xy;
-          this.set('_down', true);
-          this._updateTracking();
-          break;
-        default:
-          // console.log('not-inside-ring');
-      }
-    },
-
-    // What need to be done for touchmove/ mousemove.
-    _dragHand: function(ev) {
-      switch (ev.detail.state) {
-        case 'start':
-          if (!this._down) {
-            this.set('_down', true);
-          }
-          break;
-        case 'track':
-          var _xy = {};
-          // keep updating last tracking position before rAF.
-          _xy.y = ev.detail.y; _xy.x = ev.detail.x;
-          this._lastTrackingPos = _xy;
-
-          this._updateTracking();
-          break;
-        case 'end':
-          break;
-      }
-    },
-
-    // Update time and clear things up when touchend/ mouseup.
-    _releaseHand: function(ev) {
-      cancelAnimationFrame(this._updateTracking);
-      this._startRing = null;
-      this.set('_down', false);
-      // once release touch/ mouse, fire output.
-      this.time = this._selectedTime(this._hours, this._minutes, this._dayNight, this.timeFormat);
-    },
-
-    // Update touch/ mouse tracking position and convert it to angle for rotation.
-    _draggingClockHand: function(_xy) {
-      var _translatedXY = {},
-          _rotatedXY = {},
-          _angle,
-          _minuteRingParam = this.$.minuteRing.getBoundingClientRect(),
-          _ctr = this.$.centroid.getBoundingClientRect();
-
-      // 4 times faster after heavy optimization of codes.
-      switch (this._startRing) {
-        case 'hourRing':
-        case 'hour':
-        case 'hourHand':
-        case 'hourCentroid':
-          if (this._isInner(_xy, _ctr, HOUR_INNER_RADIUS) &&
-              this._isOuter(_xy, _ctr, HOUR_OUTER_RADIUS)) {
-            _translatedXY = this._translateToOrigin(_minuteRingParam, _xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-            _angle = this._angleify(_translatedXY.y, _translatedXY.x, THETA_BETWEEN_HOURS);
-            if (_angle >= 0) {
-              _rotatedXY = this._textNumberClockwisify(_angle, HOUR_CIRCLE_Y, HOUR_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-
-              // roatate everything.
-              this._rotatify.call(this.$.hourGroup, _angle);
-              // update hours.
-              this.hours = _angle === 0 ? 12 : _angle / 30;
-            }
-          }
-          break;
-        case 'minuteRing':
-        case 'minute':
-        case 'minuteHand':
-        case 'minuteCentroid':
-          if (this._isInner(_xy, _ctr, MINUTE_INNER_RADIUS) &&
-              this._isOuter(_xy, _ctr, MINUTE_OUTER_RADIUS)) {
-            _translatedXY = this._translateToOrigin(_minuteRingParam, _xy, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-            _angle = this._angleify(_translatedXY.y, _translatedXY.x, this._dragStep);
-
-            if (_angle >= 0) {
-              var _numbers = this.$.numbers,
-                  _minute = this.$.minute,
-                  _minuteCentroid = this.$.minuteCentroid,
-                  _minuteHand = this.$.minuteHand;
-              if (_angle%30 === 0) {
-                // remove previous selected clock number.
-                _numbers.children[this._textStyled].classList.remove('text-selected');
-                // assign new value to _textStyled.
-                this._textStyled = Math.floor(_angle/30);
-
-                // add class to minute circle.
-                _minute.classList.add('number-selected');
-                // add class to selecte clock number.
-                _numbers.children[this._textStyled].classList.add('text-selected');
-              } else {
-                // for everything just remove all previously added classes.
-                if (_numbers.children[this._textStyled].classList.contains('text-selected') ||
-                    _minute.classList.contains('numberselected')) {
-                  _minute.classList.remove('number-selected');
-                  _numbers.children[this._textStyled].classList.remove('text-selected');
-                }
-              }
-
-              _rotatedXY = this._textNumberClockwisify(_angle, MINUTE_CIRCLE_Y, MINUTE_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
-
-              // rotate everything.
-              this._rotatify.call(this.$.minuteGroup, _angle);
-              // update minutes.
-              this.minutes = _angle / 6;
-            }
-          }
-          break;
-        default:
-          // console.log('outside-HOUR-ring');
-      }
-      // release _tracking for next frame.
-      this.set('_tracking', false);
-    },
-
-    // Convert passed in positions into angle.
-    _angleify: function(_y, _x, _step) {
-      /**
-       * Normal: Math.atan2(y, x) - angle from +ve X axis;
-       * Here: Math.atan2(x, -y) - angle from +ve Y axis;
-       */
-      var _degree = Math.round(Math.atan2(_x, -_y)/Math.PI*180);
-
-      function _factorise(_degree, _step) {
-        var _factor = _degree / _step,
-            _max = Math.ceil(_factor) / (1/ _step),
-            _th = _max - 3,
-            _min = Math.floor(_factor) / (1/ _step);
-
-        // when clock step !== 6, reset to 0 instead of modulus by 360.
-        _max = _max > 359 ? 0 : _max;
-        _min = _min > 359 ? 0 : _min;
-
-        // negate negative values.
-        _th = _th < 0 ? 360 + _th : _th;
-
-        /**
-         * - check if computed value >= threshold value.
-         * - if true, return max angle; else return min one.
-         */
-        return _degree >= _th ? _max : _min;
-      }
-
-      /**
-       * - atan2 returns value from -pi to +pi;
-       * - convert the return value to value in between 0 and 2pi;
-       */
-      function _convertFullPie(_degree) {
-        /**
-         * - Fallback to zero instead of to the 1st value
-         * which is 1*this.step*6;
-         * - If so, zero (00 @ 360 degree) can never be selected.
-         * - To avoid this from happening, 00 must be selectable.
-         *
-         */
-        return _degree <= 0? (360 + _degree): _degree;
-      }
-
-      return _factorise(_convertFullPie(_degree), _step);
-    },
-
-    // Calculate the radius based on passed in position.
-    _radiusify: function(_y, _x, _cy, _cx) {
-      function deltaXY(_xy, _cxy) {
-        return Math.pow((_xy - _cxy), 2);
-      }
-
-      return Math.sqrt(deltaXY(_y, _cy) + deltaXY(_x, _cx));
-    },
-
-    // Check if current position is inside the inner selectable area.
-    _isInner: function(_xy, _ctr, _radius) {
-      return this._radiusify(_xy.y, _xy.x, _ctr.top, _ctr.left) > _radius;
-    },
-
-    // Check if current position is inside the outer seleectable area.
-    _isOuter: function(_xy, _ctr, _radius) {
-      return this._radiusify(_xy.y, _xy.x, _ctr.top, _ctr.left) < _radius;
-    },
-
-    // Translation needed to make everything based from origin.
-    _translateToOrigin: function(_clockPos, _xy, _cy, _cx) {
-      var __xy = {};
-
-      function _translateToOriginy(_clockPos, _xy, _cy) {
-        return (_xy.y - _clockPos.top) - _cy;
-      }
-
-      function _translateToOriginx(_clockPos, _xy, _cx) {
-        return (_xy.x - _clockPos.left) - _cx;
-      }
-
-      __xy.y = _translateToOriginy(_clockPos, _xy, _cy);
-      __xy.x = _translateToOriginx(_clockPos, _xy, _cx);
-
-      return __xy;
-    },
-
-    // Check if passed in value is valid.
-    _validateStep: function(newVal, oldVal) {
-      // Polymer seemed to have changed the way observer works.
-      if (newVal >= 1 && newVal <= 60) {
-      }else {
-        this.set('step', 1);
-      }
-    },
-
-    // Check if passed in value is valid and update when needed.
-    _validateHours: function(newVal, oldVal) {
-      // always get new hours since you don't need more than an hour to get hours.
-      var _hours = new Date().getHours();
-      // always make sure timeFormat is properly set.
-      // timeFormat has the highest priority.
-      switch (this.timeFormat) {
-        case 12:
-          // to ensure that valid newVal.
-          if (newVal >= 0 && newVal <= 23) {
-            // for first time init, set _dayNight and hours.
-            if (!this._down) {
-              this.set('hours', this._computeHours(newVal));
-              /**
-               * due to minor race, only set _dayNight here,
-               * as long as there is change of value in newVal all will be
-               * redirected to here eventually.
-               */
-              this.set('_dayNight', newVal < 12);
-            }
-          }else {
-            // invalid hours goes here.
-            this.set('hours', this._computeHours(_hours));
-          }
-          break;
-        case 24:
-          // making sure that newVal is valid.
-          if (newVal >= 0 && newVal  <= 23) {
-            // before clock show and no interaction from the user.
-            if (!this._down) {
-              this.set('_dayNight', newVal < 12);
-            }
-          }else {
-            // invalid hours goes here.
-            this.set('hours', _hours);
-          }
-          break;
-        default:
-          // if timeFormat is not properly set.
-          this.set('timeFormat', 12);
-          this.set('hours', this._computeHours(_hours));
-          this.set('_dayNight', _hours < 12);
-      }
-    },
-
-    // Check if passed in value is valid.
-    _validateMinutes: function (newVal, oldVal) {
-      // Polymer seemed to have changed the way observer works.
-      if (newVal >= 0 && newVal <= 59) {
-      }else {
-        this.set('minutes', new Date().getMinutes());
-      }
-    },
-
-    // Convert step into angle.
-    _dragStepAngleify: function(step) {
-      return step * 6;
-    },
-
-    // Convert everything into string.
-    _textify: function(_number, _hours) {
-      // hours check flag
-      if (_hours) {
-        _number = this._computeHours(_number);
-      }
-      return String.prototype.slice.call(('0' + _number), -2);
-    },
-
-    // Calculate class based on screen orientation.
-    _computeContentCls: function(_portrait) {
-      var _cls = 'layout flex-auto content ';
-
-      _cls += _portrait ? 'vertical' : 'horizontal';
-
-      return _cls;
-    },
-
-    // Update AM/ PM value.
-    _toggleDayNight: function() {
-      this._dayNight = !this._dayNight;
-      // update time when dayNight being switched between.
-      this.time = this._selectedTime(this._hours, this._minutes, this._dayNight, this.timeFormat);
-    },
-
-    // Update background SVG based on AM/ PM value.
-    _switchDay: function() {
-      if (this._dayNight) {
-        this.$.ampm.classList.remove('night-day');
-      }else {
-        this.$.ampm.classList.add('night-day');
-      }
-    },
-
-    // Return selected hours and minutes.
-    _selectedTime: function(_h, _m, _d, _f) {
-      if (_f === 12) {
-        // no leading zero in hours.
-        return this.hours + ':' + _m + ' ' + (_d ? 'AM' : 'PM');
-      } else if (_f === 24) {
-        // convert 12- to 24- when it's night.
-        if (!_d) {
-          // 1pm until 11pm goes here.
-          if (_h < 12) {
-            return ((parseInt(_h) + 12) % 24) + ':' + _m;
-          }
-        }else {
-          // 12 is always 00 at midnight.
-          if (_h == 12) {
-            return '00:' + _m;
-          }
-        }
-        // return all daytime except 12am but not 12pm.
-        return _h + ':' + _m;
-      }
-    },
-
-    // Return shifted hours.
-    _computeHours: function (_hours) {
-      var _h = _hours % 12;
-
-      return _h === 0 ? 12 : _h;
-    },
-
-    // Force update selected time.
-    notifyTimeUpdate: function() {
-      this.time = this._selectedTime(this._hours, this._minutes, this._dayNight, this.timeFormat);
-    }
-  });
-
-</script>

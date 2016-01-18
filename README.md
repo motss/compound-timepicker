@@ -39,7 +39,7 @@ Example:
 Style the timepicker with CSS as you would a normal DOM element.
 Click [here](http://motss.github.io/compound-timepicker/components/compound-timepicker/index.html#styling) to learn more.
 
-## Generating your own boilerplate code of the compounds
+## Coming Soon! Generating your own boilerplate code of the compounds
 
 At the end of the demo, there is a section where user can play around with to generate your own boilerplate code with the attributes provided.
 

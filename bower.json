@@ -1,6 +1,6 @@
 {
   "name": "compound-timepicker",
-  "version": "0.3.7",
+  "version": "0.3.8",
   "authors": [
     "motss <wes_ngrongsen@hotmail.com>"
   ],
@@ -26,15 +26,15 @@
   ],
   "dependencies": {
     "polymer": "Polymer/polymer#^1.2.0",
-    "neon-animation": "PolymerElements/neon-animation#~1.0.6",
-    "test-fixture": "PolymerElements/test-fixture#~1.0.0",
-    "iron-test-helpers": "PolymerElements/iron-test-helpers#~1.0.5",
-    "paper-button": "PolymerElements/paper-button#~1.0.11",
-    "paper-ripple": "PolymerElements/paper-ripple#~1.0.5",
-    "paper-dialog-behavior": "PolymerElements/paper-dialog-behavior#~1.1.0"
+    "neon-animation": "PolymerElements/neon-animation#^1.0.6",
+    "paper-button": "PolymerElements/paper-button#^1.0.11",
+    "paper-ripple": "PolymerElements/paper-ripple#^1.0.5",
+    "paper-dialog-behavior": "PolymerElements/paper-dialog-behavior#^1.1.0"
   },
   "devDependencies": {
     "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
-    "web-component-tester": "*"
+    "web-component-tester": "^4.1.0",
+    "test-fixture": "polymerelements/test-fixture#^1.1.0",
+    "iron-test-helpers": "polymerelements/iron-test-helpers#^1.1.3"
   }
 }

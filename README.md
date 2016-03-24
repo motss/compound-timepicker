@@ -1,5 +1,6 @@
 [![GitHub version](https://badge.fury.io/gh/motss%2Fcompound-timepicker.svg)](https://badge.fury.io/gh/motss%2Fcompound-timepicker)
 [![Bower version](https://badge.fury.io/bo/compound-timepicker.svg)](https://badge.fury.io/bo/compound-timepicker)
+[![Build Status](https://travis-ci.org/motss/compound-timepicker.svg?branch=master)](https://travis-ci.org/motss/compound-timepicker)
 
 compound-timepicker
 ============

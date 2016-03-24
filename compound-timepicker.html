@@ -426,6 +426,8 @@ Custom property | Description | Default
           value: false
         },
 
+        _isIE: Boolean,
+
       },
 
       // init clock whenever [hours, minutes, _dragStep] encounters value change.
@@ -439,6 +441,17 @@ Custom property | Description | Default
       // Element Lifecycle
 
       ready: function() {
+        // workaround to get classList to work on IEs...
+        var ie = (function (){
+            if (window.ActiveXObject === undefined) return null;
+            if (!document.querySelector) return 7;
+            if (!document.addEventListener) return 8;
+            if (!window.atob) return 9;
+            if (!document.__proto__) return 10;
+            return 11;
+        })();
+        this.set('_isIE', ie);
+
         // generate all clock numbers on the clock face.
         this._clockNumberify();
         // init clock with current time by adjusting angle of all clock hands.
@@ -500,11 +513,14 @@ Custom property | Description | Default
         _text.textContent = _number.toString();
         _text.setAttribute('x', _x);
         _text.setAttribute('y', _y);
-        _text.classList.add('number');
+        // _text.classList.add('number');
+        this._classListShim(_text, 'add', 'number', this._isIE);
 
         // if (!Polymer.Settings.useNativeShadow) {
-          _text.classList.add('style-scope');
-          _text.classList.add('compound-timepicker');
+          // _text.classList.add('style-scope');
+          // _text.classList.add('compound-timepicker');
+          this._classListShim(_text, 'add', 'style-scope', this._isIE);
+          this._classListShim(_text, 'add', 'compound-timepicker', this._isIE);
         // }
 
         return _text;
@@ -548,6 +564,13 @@ Custom property | Description | Default
 
       // Initialize the clock with predefined config.
       _initClock: function(_hr, _min, _dragStep) {
+        // Always check inputs to see if they are of type String or less than an integer that it should be.
+        if (typeof _hr === 'string' || _hr < 0 || _hr > 23) {
+          _hr = new Date().getHours();
+          this.set('hours', _hr);
+        }
+        _min = this._validateMinutes(_min, !0);
+
         /**
          * - init clock when and only when there are clock numbers.
          * - init clock won't trigger to mouse/ touch.
@@ -558,29 +581,47 @@ Custom property | Description | Default
           var _h = (_hr%12) * 30,
               _m = (_min%60) * 6,
               _m2 = _m%30 === 0;
+          var _numberNode;
+          var _minuteNode;
 
           // style selected minute at start.
           if (_m2) {
             // clear previously styled clock number.
             // problem 1510290439: caused by setting attributes imperatively.
             if (this._textStyled) {
-              this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
-              this.$.minute.classList.remove('number-selected');
+              // this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
+              // this.$.minute.classList.remove('number-selected');
+              _numberNode = this.$.numbers.childNodes[this._textStyled];
+              _minuteNode = this.$.minute;
+              this._classListShim(_numberNode, 'remove', 'text-selected', this._isIE);
+              this._classListShim(_minuteNode, 'remove', 'number-selected', this._isIE);
             }
 
             var _child = _m/30;
             this.set('_textStyled', _child);
-            this.$.numbers.childNodes[_child].classList.add('text-selected');
-            this.$.minute.classList.add('number-selected');
+            // this.$.numbers.childNodes[_child].classList.add('text-selected');
+            // this.$.minute.classList.add('number-selected');
+            _numberNode = this.$.numbers.childNodes[_child];
+            _minuteNode = this.$.minute;
+            this._classListShim(_numberNode, 'add', 'text-selected', this._isIE);
+            this._classListShim(_minuteNode, 'add', 'number-selected', this._isIE);
           }else {
             // to tacle problem 1510280120: remove all selected class.
-            this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
-            this.$.minute.classList.remove('number-selected');
+            // this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
+            // this.$.minute.classList.remove('number-selected');
+            _numberNode = this.$.numbers.childNodes[this._textStyled];
+            _minuteNode = this.$.minute;
+            this._classListShim(_numberNode, 'remove', 'text-selected', this._isIE);
+            this._classListShim(_minuteNode, 'remove', 'number-selected', this._isIE);
           }
 
           // hours will determine _dayNight and here update the class.
-          this._dayNight ? this.$.ampm.classList.remove('night-day') :
-            this.$.ampm.classList.add('night-day')
+          // this._dayNight ? this.$.ampm.classList.remove('night-day') :
+          //   this.$.ampm.classList.add('night-day')
+          var _ampmNode = this.$.ampm;
+          this._dayNight ?
+            this._classListShim(_ampmNode, 'remove', 'night-day', this._isIE) :
+            this._classListShim(_ampmNode, 'add', 'night-day', this._isIE);
 
           // rotate whatever needs to be rotated.
           this._rotatify.call(this.$.hourGroup, _h);
@@ -701,20 +742,28 @@ Custom property | Description | Default
                     _minuteHand = this.$.minuteHand;
                 if (_angle%30 === 0) {
                   // remove previous selected clock number.
-                  _numbers.children[this._textStyled].classList.remove('text-selected');
+                  // _numbers.children[this._textStyled].classList.remove('text-selected');
+                  this._classListShim(_numbers.children[this._textStyled], 'remove', 'text-selected', this._isIE);
                   // assign new value to _textStyled.
                   this.set('_textStyled', Math.floor(_angle/30));
 
                   // add class to minute circle.
-                  _minute.classList.add('number-selected');
+                  // _minute.classList.add('number-selected');
+                  this._classListShim(_minute, 'add', 'number-selected', this._isIE);
                   // add class to selecte clock number.
-                  _numbers.children[this._textStyled].classList.add('text-selected');
+                  // _numbers.children[this._textStyled].classList.add('text-selected');
+                  this._classListShim(_numbers.children[this._textStyled], 'add', 'text-selected', this._isIE);
                 } else {
                   // for everything just remove all previously added classes.
-                  if (_numbers.children[this._textStyled].classList.contains('text-selected') ||
-                      _minute.classList.contains('numberselected')) {
-                    _minute.classList.remove('number-selected');
-                    _numbers.children[this._textStyled].classList.remove('text-selected');
+                  // if (_numbers.children[this._textStyled].classList.contains('text-selected') ||
+                  //     _minute.classList.contains('numberselected')) {
+                  //   _minute.classList.remove('number-selected');
+                  //   _numbers.children[this._textStyled].classList.remove('text-selected');
+                  // }
+                  if (this._classListShim(_numbers.children[this._textStyled], 'contains', 'text-selected', this._isIE) ||
+                      this._classListShim(_minute, 'contains', 'number-selected', this._isIE)) {
+                    this._classListShim(_minute, 'remove', 'number-selected', this._isIE);
+                    this._classListShim(_numbers.children[this._textStyled], 'remove', 'text-selected', this._isIE);
                   }
                 }
 
@@ -827,7 +876,7 @@ Custom property | Description | Default
       },
 
       // Check if passed in value is valid and update when needed.
-      _validateHours: function(_hours) {
+      _validateHours: function(_hours, _isReturn) {
         // always get new hours since you don't need more than an hour to get hours.
         var _hr = new Date().getHours();
         // always make sure timeFormat is properly set.
@@ -866,16 +915,27 @@ Custom property | Description | Default
           default:
             // if timeFormat is not properly set.
             this.set('timeFormat', 12);
-            this.set('hours', this._computeHours(_hr));
+            _hr = this._computeHours(_hr);
+            this.set('hours', _hr);
             this.set('_dayNight', _hr < 12);
+        }
+
+        if (_isReturn) {
+          return _hr;
         }
       },
 
       // Check if passed in value is valid.
-      _validateMinutes: function (_minutes) {
+      _validateMinutes: function (_minutes, _isReturn) {
         // Polymer seemed to have changed the way observer works.
-        if (_minutes < 0 && _minutes > 59) {
-          this.set('minutes', new Date().getMinutes());
+        var _min = _minutes;
+        if (_minutes < 0 || _minutes > 59 || typeof _minutes === 'string') {
+          _min = new Date().getMinutes();
+          this.set('minutes', _min);
+        }
+
+        if (_isReturn) {
+          return _min;
         }
       },
 
@@ -887,6 +947,7 @@ Custom property | Description | Default
       // Convert everything into string.
       _textify: function(_number, _hours) {
         // hours check flag
+        _number = typeof _number === 'string' ? new Date().getMinutes() : _number;
         return ('0' + (_hours ? this._computeHours(_number) : _number)).slice(-2);
       },
 
@@ -897,8 +958,11 @@ Custom property | Description | Default
 
       // Update background SVG based on AM/ PM value.
       _switchDay: function() {
-        this._dayNight ? this.$.ampm.classList.remove('night-day') :
-          this.$.ampm.classList.add('night-day');
+        // this._dayNight ? this.$.ampm.classList.remove('night-day') :
+        //   this.$.ampm.classList.add('night-day');
+        this._dayNight ?
+          this._classListShim(this.$.ampm, 'remove', 'night-day', this._isIE) :
+          this._classListShim(this.$.ampm, 'add', 'night-day', this._isIE);
       },
 
       // Return selected hours and minutes.
@@ -944,10 +1008,40 @@ Custom property | Description | Default
       },
 
       // Force update selected time.
-      // notifyTimeUpdate: function() {
-      //   this.set('time', this._selectedTime(this._hours, this._minutes,
-      //     this._dayNight, this.timeFormat));
-      // }
+      notifyTimeUpdate: function() {
+        this.set('time', this._selectedTime(this._hours, this._minutes,
+          this._dayNight, this.timeFormat));
+      },
+
+      _classListShim: function(_node, _action, _cls, _isIE) {
+        var _classList;
+        if (_isIE) {
+          _classList = _node.getAttribute('class')
+          if (_classList) {
+            if (_action === 'contains') {
+              return _classList.split(/\s/).indexOf(_cls);
+            }else if(_action === 'add') {
+              var _tempCls = _classList.split(/\s/);
+              _tempCls.push(_cls);
+              _node.setAttribute('class', _tempCls.join(' '));
+            }else if (_action === 'remove') {
+              var _tempCls = _classList.split(/\s/);
+              var _clsIdx = _tempCls.indexOf(_cls);
+              _tempCls.splice(_clsIdx, 1);
+            }
+          }
+
+        }else {
+          if (_action === 'contains') {
+            return _node.classList.contains(_cls);
+          }else if (_action === 'add') {
+            _node.classList.add(_cls);
+          }else if (_action = 'remove') {
+            _node.classList.remove(_cls);
+          }
+        }
+      },
+
     });
 
   </script>

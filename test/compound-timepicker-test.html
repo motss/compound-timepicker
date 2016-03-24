@@ -117,7 +117,7 @@
             }
           });
 
-          it('should not accpet String-typed arguments', function () {
+          it('should not accept String-typed arguments', function () {
             var _str = 'this is a string!!!!'
             timepicker.minutes = _str;
             expect(timepicker.minutes).to.not.be.eql(_str);
@@ -204,8 +204,8 @@
 
         context('test for changes in background SVG when tapping the time', function () {
           it('should show correct AM/ PM when first init', function () {
-            var _dayNight = timepicker.querySelector('.day-night'),
-                _currentTime = new Date().getHours();
+            var _dayNight = Polymer.dom(timepicker.root).querySelector('.day-night');
+            var _currentTime = new Date().getHours();
 
             if (_currentTime >= 12 && _currentTime <= 23) {
               expect(_dayNight.classList.contains('night-day')).to.be.true;
@@ -215,10 +215,11 @@
           });
 
           it ('should show PM when background SVG is tapped to change to night', function (done) {
-            var _dayNight = timepicker.querySelector('.day-night'),
-                _isNight = timepicker.time.slice(-2);
+            var _dayNight = Polymer.dom(timepicker.root).querySelector('.day-night');
+            var _isNight = timepicker.time.slice(-2);
 
-            _dayNight.addEventListener('click', function() {
+            _dayNight.addEventListener('tap', function() {
+              timepicker.notifyTimeUpdate();
               expect(timepicker.time.slice(-2)).to.not.be.equal(_isNight);
               done();
             });

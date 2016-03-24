@@ -7,9 +7,9 @@ compound-timepicker
 ![dark-themed-compound-timepicker-portrait](https://cloud.githubusercontent.com/assets/10607759/10778479/b10e64b6-7d61-11e5-992a-cf0fd0fb8563.png)
 ![google-clock-themed-compound-timepicker-portrait](https://cloud.githubusercontent.com/assets/10607759/10778483/b15857ce-7d61-11e5-8321-c05ae856acea.png)
 ![light-themed-compound-timepicker-portrait](https://cloud.githubusercontent.com/assets/10607759/10778482/b11911d6-7d61-11e5-8637-9f8bcc2d4ffb.png)
-![dark-themed-compound-timepicker](https://cloud.githubusercontent.com/assets/10607759/10778478/b10ac90a-7d61-11e5-8109-da9604aebfbc.png)
+<!-- ![dark-themed-compound-timepicker](https://cloud.githubusercontent.com/assets/10607759/10778478/b10ac90a-7d61-11e5-8109-da9604aebfbc.png)
 ![google-clock-themed-compound-timepicker](https://cloud.githubusercontent.com/assets/10607759/10778480/b1169a3c-7d61-11e5-9213-ac88ff999028.png)
-![light-themed-compound-timepicker](https://cloud.githubusercontent.com/assets/10607759/10778481/b1175314-7d61-11e5-8bae-f0f2ae0d7c26.png)
+![light-themed-compound-timepicker](https://cloud.githubusercontent.com/assets/10607759/10778481/b1175314-7d61-11e5-8bae-f0f2ae0d7c26.png) -->
 
 Compound is composed of two or more separate elements and `compound-timepicker` happens to be under this category.
 

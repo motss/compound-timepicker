@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>compound-timepicker Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
-    <!-- <link rel="import" href="../compound-timepicker.html"> -->
     <link rel="import" href="../compound-timepicker-dialog.html">
 
     <link rel="import" href="../../paper-styles/demo-pages.html">
@@ -19,7 +18,6 @@
     <!-- Don't forget to set is=custom-style -->
     <style is="custom-style">
       body {
-        margin: 0;
         box-sizing: border-box;
         -moz-user-select: none;
         -webkit-user-select: none;
@@ -29,14 +27,20 @@
         -webkit-tap-highlight-color: transparent;
       }
 
+      * {
+        box-sizing: border-box;
+      }
+
 			div.vertical-section {
 				margin-left: 0;
 				margin-right: 0;
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
 			}
 			div.time-picker {
+        margin: 16px;
 				@apply(--layout-horizontal);
 				@apply(--layout-center-center);
-				margin: 16px;
 			}
 
       .dark-theme {

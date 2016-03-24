@@ -228,16 +228,17 @@ Custom property | Description | Default
         color: var(--compound-timepicker-button-color, #009688);
         font-size: 12px;
         font-weight: 500;
-        margin-left: auto;
-        margin-right: 0;
         padding: 8px 8px 8px 24px;
         position: relative;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-end-justified);
       }
 
       /* landscape mode */
       @media all and (orientation: landscape) {
         div.timepicker {
-  				width: initial;
+  				width: auto;
           max-width: 512px;
           max-height: 288px;
           @apply(--layout-horizontal);
@@ -279,7 +280,7 @@ Custom property | Description | Default
             </g>
 
             <g id="minuteGroup" transform="rotate(0, 100, 100)" class="dragging">
-              <circle id="minute" cx="100" cy="17" r="15" class="minute"/>
+              <circle id="minute" cx="100" cy="17" r="15" class="minute compound-timepicker"/>
               <circle id="minuteCentroid" cx="100" cy="17" r="4" class="minute-centroid"/>
               <line id="minuteHand" x1="100" y1="100" x2="100" y2="17" class="minute-hand"/>
             </g>
@@ -450,7 +451,7 @@ Custom property | Description | Default
             if (!document.__proto__) return 10;
             return 11;
         })();
-        this.set('_isIE', ie);
+        this.set('_isIE', !!ie);
 
         // generate all clock numbers on the clock face.
         this._clockNumberify();
@@ -502,25 +503,26 @@ Custom property | Description | Default
               __theta = _theta * i,
               _temp = document.createElementNS('http://www.w3.org/2000/svg', 'text'),
               __xy = this._textNumberClockwisify(__theta, _y, _x, _cy, _cx);
-          this.$.numbers.appendChild(this._textNumberify(_temp, _i, __xy.x, __xy.y));
+
+          this.$.numbers.appendChild(this._textNumberify(_temp, _i, __xy.x, __xy.y, this._isIE));
         }
         this.set('_hasClockNumbersReady', true);
       },
 
       // Convert clock number into text.
-      _textNumberify: function(_svg, _number, _x, _y) {
+      _textNumberify: function(_svg, _number, _x, _y, _isIE) {
         var _text = _svg;
         _text.textContent = _number.toString();
         _text.setAttribute('x', _x);
         _text.setAttribute('y', _y);
         // _text.classList.add('number');
-        this._classListShim(_text, 'add', 'number', this._isIE);
+        this._classListPolyfill(_text, 'add', 'number', _isIE);
 
         // if (!Polymer.Settings.useNativeShadow) {
           // _text.classList.add('style-scope');
           // _text.classList.add('compound-timepicker');
-          this._classListShim(_text, 'add', 'style-scope', this._isIE);
-          this._classListShim(_text, 'add', 'compound-timepicker', this._isIE);
+          this._classListPolyfill(_text, 'add', 'style-scope', _isIE);
+          this._classListPolyfill(_text, 'add', 'compound-timepicker', _isIE);
         // }
 
         return _text;
@@ -581,38 +583,27 @@ Custom property | Description | Default
           var _h = (_hr%12) * 30,
               _m = (_min%60) * 6,
               _m2 = _m%30 === 0;
-          var _numberNode;
-          var _minuteNode;
+          var _numberNode = this.$.numbers.childNodes[this._textStyled];
+          var _minuteNode = this.$.minute;
 
           // style selected minute at start.
           if (_m2) {
             // clear previously styled clock number.
             // problem 1510290439: caused by setting attributes imperatively.
             if (this._textStyled) {
-              // this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
-              // this.$.minute.classList.remove('number-selected');
-              _numberNode = this.$.numbers.childNodes[this._textStyled];
-              _minuteNode = this.$.minute;
-              this._classListShim(_numberNode, 'remove', 'text-selected', this._isIE);
-              this._classListShim(_minuteNode, 'remove', 'number-selected', this._isIE);
+              this._classListPolyfill(_numberNode, 'remove', 'text-selected', this._isIE);
+              this._classListPolyfill(_minuteNode, 'remove', 'number-selected', this._isIE);
             }
 
             var _child = _m/30;
-            this.set('_textStyled', _child);
-            // this.$.numbers.childNodes[_child].classList.add('text-selected');
-            // this.$.minute.classList.add('number-selected');
             _numberNode = this.$.numbers.childNodes[_child];
-            _minuteNode = this.$.minute;
-            this._classListShim(_numberNode, 'add', 'text-selected', this._isIE);
-            this._classListShim(_minuteNode, 'add', 'number-selected', this._isIE);
+            this._classListPolyfill(_numberNode, 'add', 'text-selected', this._isIE);
+            this._classListPolyfill(_minuteNode, 'add', 'number-selected', this._isIE);
+            this.set('_textStyled', _child);
           }else {
             // to tacle problem 1510280120: remove all selected class.
-            // this.$.numbers.childNodes[this._textStyled].classList.remove('text-selected');
-            // this.$.minute.classList.remove('number-selected');
-            _numberNode = this.$.numbers.childNodes[this._textStyled];
-            _minuteNode = this.$.minute;
-            this._classListShim(_numberNode, 'remove', 'text-selected', this._isIE);
-            this._classListShim(_minuteNode, 'remove', 'number-selected', this._isIE);
+            this._classListPolyfill(_numberNode, 'remove', 'text-selected', this._isIE);
+            this._classListPolyfill(_minuteNode, 'remove', 'number-selected', this._isIE);
           }
 
           // hours will determine _dayNight and here update the class.
@@ -620,8 +611,8 @@ Custom property | Description | Default
           //   this.$.ampm.classList.add('night-day')
           var _ampmNode = this.$.ampm;
           this._dayNight ?
-            this._classListShim(_ampmNode, 'remove', 'night-day', this._isIE) :
-            this._classListShim(_ampmNode, 'add', 'night-day', this._isIE);
+            this._classListPolyfill(_ampmNode, 'remove', 'night-day', this._isIE) :
+            this._classListPolyfill(_ampmNode, 'add', 'night-day', this._isIE);
 
           // rotate whatever needs to be rotated.
           this._rotatify.call(this.$.hourGroup, _h);
@@ -742,28 +733,22 @@ Custom property | Description | Default
                     _minuteHand = this.$.minuteHand;
                 if (_angle%30 === 0) {
                   // remove previous selected clock number.
-                  // _numbers.children[this._textStyled].classList.remove('text-selected');
-                  this._classListShim(_numbers.children[this._textStyled], 'remove', 'text-selected', this._isIE);
+                  this._classListPolyfill(_numbers.childNodes[this._textStyled], 'remove', 'text-selected', this._isIE);
                   // assign new value to _textStyled.
                   this.set('_textStyled', Math.floor(_angle/30));
 
                   // add class to minute circle.
                   // _minute.classList.add('number-selected');
-                  this._classListShim(_minute, 'add', 'number-selected', this._isIE);
+                  this._classListPolyfill(_minute, 'add', 'number-selected', this._isIE);
                   // add class to selecte clock number.
                   // _numbers.children[this._textStyled].classList.add('text-selected');
-                  this._classListShim(_numbers.children[this._textStyled], 'add', 'text-selected', this._isIE);
+                  this._classListPolyfill(_numbers.childNodes[this._textStyled], 'add', 'text-selected', this._isIE);
                 } else {
                   // for everything just remove all previously added classes.
-                  // if (_numbers.children[this._textStyled].classList.contains('text-selected') ||
-                  //     _minute.classList.contains('numberselected')) {
-                  //   _minute.classList.remove('number-selected');
-                  //   _numbers.children[this._textStyled].classList.remove('text-selected');
-                  // }
-                  if (this._classListShim(_numbers.children[this._textStyled], 'contains', 'text-selected', this._isIE) ||
-                      this._classListShim(_minute, 'contains', 'number-selected', this._isIE)) {
-                    this._classListShim(_minute, 'remove', 'number-selected', this._isIE);
-                    this._classListShim(_numbers.children[this._textStyled], 'remove', 'text-selected', this._isIE);
+                  if (this._classListPolyfill(_numbers.childNodes[this._textStyled], 'contains', 'text-selected', this._isIE) ||
+                      this._classListPolyfill(_minute, 'contains', 'number-selected', this._isIE)) {
+                    this._classListPolyfill(_minute, 'remove', 'number-selected', this._isIE);
+                    this._classListPolyfill(_numbers.childNodes[this._textStyled], 'remove', 'text-selected', this._isIE);
                   }
                 }
 
@@ -961,8 +946,8 @@ Custom property | Description | Default
         // this._dayNight ? this.$.ampm.classList.remove('night-day') :
         //   this.$.ampm.classList.add('night-day');
         this._dayNight ?
-          this._classListShim(this.$.ampm, 'remove', 'night-day', this._isIE) :
-          this._classListShim(this.$.ampm, 'add', 'night-day', this._isIE);
+          this._classListPolyfill(this.$.ampm, 'remove', 'night-day', this._isIE) :
+          this._classListPolyfill(this.$.ampm, 'add', 'night-day', this._isIE);
       },
 
       // Return selected hours and minutes.
@@ -1013,25 +998,37 @@ Custom property | Description | Default
           this._dayNight, this.timeFormat));
       },
 
-      _classListShim: function(_node, _action, _cls, _isIE) {
+      // As IEs does not support Element.classList, here's my version of polyfill.
+      _classListPolyfill: function(_node, _action, _cls, _isIE) {
         var _classList;
         if (_isIE) {
-          _classList = _node.getAttribute('class')
+          // Use polyfill for IEs.
+          _classList = _node.getAttribute('class');
           if (_classList) {
+            _classList = _classList.split(/\s/);
             if (_action === 'contains') {
-              return _classList.split(/\s/).indexOf(_cls);
-            }else if(_action === 'add') {
-              var _tempCls = _classList.split(/\s/);
-              _tempCls.push(_cls);
-              _node.setAttribute('class', _tempCls.join(' '));
+              return _classList.indexOf(_cls) >= 0;
+            }else if (_action === 'add') {
+              _classList.push(_cls);
+              _node.setAttribute('class', _classList.join(' '));
             }else if (_action === 'remove') {
-              var _tempCls = _classList.split(/\s/);
-              var _clsIdx = _tempCls.indexOf(_cls);
-              _tempCls.splice(_clsIdx, 1);
+              var _clsIdx = _classList.indexOf(_cls);
+              // Only remove if class is found.
+              if (_clsIdx >= 0) {
+                _classList.splice(_clsIdx, 1);
+                _node.setAttribute('class', _classList.join(' '));
+              }
+            }
+          }else {
+            // If class is empty...
+            if (_action === 'add') {
+              _node.setAttribute('class', _cls);
+            }else if (_action === 'action') {
+              return !1;
             }
           }
-
         }else {
+          // Else use Native's JS.
           if (_action === 'contains') {
             return _node.classList.contains(_cls);
           }else if (_action === 'add') {

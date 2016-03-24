@@ -18,10 +18,10 @@ Compound is composed of two or more separate elements and `compound-timepicker` 
 The selected time is indicated by the filled circle at the end of each clock hand.
 
 ### Update (v0.4.0)
-- Added support for IE11 and Edge.
--- Fixed layout issue on IE11 and Edge.
--- Added my own version of `classList` polyfill for SVG on IE11 and Edge.
--- Minor fix on validation of inputs via properties which caused testing to fail.
+- Added support for IE11 and Edge in this release:
+ - Fixed layout issue on IE11 and Edge.
+ - Added my own version of `classList` polyfill for SVG on IE11 and Edge.
+ - Minor fix on validation of inputs via properties which caused testing to fail.
 
 Example:
 

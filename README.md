@@ -4,6 +4,9 @@
 
 compound-timepicker
 ============
+![timepicker-light-theme](https://cloud.githubusercontent.com/assets/10607759/14107444/cd2f5b8a-f5ea-11e5-8d31-81e71ab7b2d2.png)
+![timepicker-dark-theme](https://cloud.githubusercontent.com/assets/10607759/14107445/cd675a30-f5ea-11e5-8d1d-dcdd6f5785ae.png)
+![timepicker-goog-theme](https://cloud.githubusercontent.com/assets/10607759/14107446/cd897c14-f5ea-11e5-8aab-4f2bfd696a49.png)
 
 <!-- ![dark-themed-compound-timepicker](https://cloud.githubusercontent.com/assets/10607759/10778478/b10ac90a-7d61-11e5-8109-da9604aebfbc.png)
 ![google-clock-themed-compound-timepicker](https://cloud.githubusercontent.com/assets/10607759/10778480/b1169a3c-7d61-11e5-9213-ac88ff999028.png)

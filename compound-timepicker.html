@@ -10,6 +10,8 @@ The selected time is indicated by the filled circle at the end of each clock han
 Example:
 
     <compound-timepicker></compound-timepicker>
+    <compound-timepicker theme="dark-theme"></compound-timepicker>
+    <compound-timepicker view="horizontal"></compound-timepicker>
     <compound-timepicker hours="23"></compound-timepicker>
     <compound-timepicker minutes="59"></compound-timepicker>
     <compound-timepicker step="5"></compound-timepicker>
@@ -20,6 +22,8 @@ On mobile, pickers are best suited for display in a confirmation dialog. The tim
 Example:
 
     <compound-timepicker-dialog></compound-timepicker-dialog>
+    <compound-timepicker-dialog theme="dark-theme"></compound-timepicker-dialog>
+    <compound-timepicker-dialog view="horizontal"></compound-timepicker-dialog>
     <compound-timepicker-dialog hours="23"></compound-timepicker-dialog>
     <compound-timepicker-dialog minutes="59"></compound-timepicker-dialog>
     <compound-timepicker-dialog step="5"></compound-timepicker-dialog>
@@ -65,7 +69,8 @@ Custom property | Description | Default
 `--compound-timepicker-minute-selected` | Fill color of the minute selector on clock number | `#009688`
 `--compound-timepicker-text-selected` | Fill color of the clock number when selected | `--paper-white
 ||
---compound-timepicker-buttons | Button color in dialog | #009688
+--compound-timepicker-button-color | Button color in dialog | #009688
+--compound-timepicker-button-ink-color | Button ink color in dialog | #737373
 
 @compound compound-timepicker
 @demo demo/index.html
@@ -76,8 +81,8 @@ Custom property | Description | Default
       :root {
         --minute-hand-strokewidth: 1;
         --hour-hand-strokewidth: 1;
-        --minute-centroid-strokweidth: 4;
-        --hour-centroid-strokewidth: 4;
+        --minute-centroid-strokweidth: 2;
+        --hour-centroid-strokewidth: 2;
         --centroid-strokewidth: 1;
       }
 
@@ -88,12 +93,11 @@ Custom property | Description | Default
                 user-select: none;
         box-sizing: border-box;
         -webkit-tap-highlight-color: rgba(0,0,0,0);
-        -webkit-tap-highlight-color: transparent;
 
         display: block;
       }
 
-      *, *:before, *:after {
+      * {
         box-sizing: inherit;
       }
 
@@ -111,8 +115,8 @@ Custom property | Description | Default
         width: 100%;
         max-width: 248px;
         max-height: calc(84px + 32px);
-        padding: 24px;
-        background-image: url(img/day-compressed.svg);
+        padding: 16px 24px;
+        background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%22640%22%20viewBox%3D%220%200%20360%20640%22%20width%3D%22360%22%20version%3D%221.1%22%3E%3Crect%20height%3D%22440%22%20width%3D%22360%22%20y%3D%220%22%20x%3D%220%22%20fill%3D%22%23a4f0fe%22%2F%3E%3Cpath%20d%3D%22m0%20445v195h360v-195h-360z%22%20fill%3D%22%230fb4d0%22%2F%3E%3Crect%20height%3D%225%22%20width%3D%22360%22%20y%3D%22440%22%20x%3D%220%22%20fill%3D%22%2363e5ff%22%2F%3E%3Cpath%20fill%3D%22%2397c73d%22%20d%3D%22m337.4%20571.2-31.2%204.5%204%202.5h23.3l3.9-7zM325.8%20560.4%22%2F%3E%3Cpath%20fill-opacity%3D%220.9%22%20fill%3D%22%23fafafa%22%20d%3D%22m325.8%20560.4c-0.2-0.1-14.4%2013.7-14.5%2013.9%202-0.3%209.4-3.5%2014.6-1.3l0.1%200c0-4.5-0.1-12.4-0.2-12.5z%22%2F%3E%3Cg%20transform%3D%22translate%280%20-412.36%29%22%3E%3Cpath%20stroke%3D%22%23fcc930%22%20fill-rule%3D%22evenodd%22%20fill%3D%22%23ffeb3b%22%20d%3D%22m95%20470.4a34.6%2034.6%200%200%201-34.6%2034.6%2034.6%2034.6%200%200%201-34.6-34.6%2034.6%2034.6%200%200%201%2034.6-34.6%2034.6%2034.6%200%200%201%2034.6%2034.6z%22%2F%3E%3C%2Fg%3E%3Cpath%20fill%3D%22%23061736%22%20d%3D%22m303.7%20229.3-29.1%2045.1%2042.3%2051.9%2028.3-37.8-41.5-59.1zm-174.1%2027.9-16.7%2025.5%2051.4%2069.5%2016-21.3-50.7-73.6zM72.3%20227.8l-72.3%20106.3%22%2F%3E%3Cpath%20fill%3D%22%231c6b89%22%20d%3D%22m72.3%20227.8-72.3%20106.3v106h360v-171.4l-43.1%2057.6-69.4-85.3-83.2%20111.2-92-124.4z%22%2F%3E%3Cpath%20d%3D%22m45.8%20580.4c-0.2-0.1-14.4%2013.7-14.5%2013.9%202-0.3%209.4-3.5%2014.6-1.3l0.1%200c0-4.5-0.1-12.4-0.2-12.5z%22%20fill%3D%22%23fafafa%22%20fill-opacity%3D%220.9%22%2F%3E%3Cpath%20fill%3D%22%23fbc02d%22%20d%3D%22m57.4%20591.2-31.2%204.5%204%202.5h23.3l3.9-7z%22%2F%3E%3Cpath%20fill%3D%22%23e53935%22%20d%3D%22m112.4%20551.2-31.2%204.5%204%202.5h23.3l3.9-7zM100.8%20540.4%22%2F%3E%3Cpath%20d%3D%22m100.8%20540.4c-0.2-0.1-14.4%2013.7-14.5%2013.9%202-0.3%209.4-3.5%2014.6-1.3l0.1%200c0-4.5-0.1-12.4-0.2-12.5z%22%20fill%3D%22%23fafafa%22%20fill-opacity%3D%220.9%22%2F%3E%3Cpath%20d%3D%22m82%2077.2a15%2014.7%200%200%200-15%2013.9%2015%2014.7%200%200%200-0.2%200%2015%2014.7%200%200%200-15%2014.1h75.4a15%2014.7%200%200%200-15-14%2015%2014.7%200%200%200-2%200.1%2015%2014.7%200%200%200-12.2-6.2%2015%2014.7%200%200%200-2.6%200.2%2015%2014.7%200%200%200-13.4-8.1zM235.8%20105.3%22%20fill-opacity%3D%220.9%22%20fill%3D%22%23fff%22%2F%3E%3Cpath%20d%3D%22m235.8%20105.3a15%2014.7%200%200%200-15%2013.9%2015%2014.7%200%200%200-0.2%200%2015%2014.7%200%200%200-15%2014.1h75.4a15%2014.7%200%200%200-15-14%2015%2014.7%200%200%200-2%200.1%2015%2014.7%200%200%200-12.2-6.2%2015%2014.7%200%200%200-2.6%200.2%2015%2014.7%200%200%200-13.4-8.1z%22%20fill-opacity%3D%220.9%22%20fill%3D%22%23fff%22%2F%3E%3Cpath%20d%3D%22m89.7%20158.6a15%2014.7%200%200%200-15%2013.9%2015%2014.7%200%200%200-0.2%200%2015%2014.7%200%200%200-15%2014.1h75.4a15%2014.7%200%200%200-15-14%2015%2014.7%200%200%200-2%200.1%2015%2014.7%200%200%200-12.2-6.2%2015%2014.7%200%200%200-2.6%200.2%2015%2014.7%200%200%200-13.4-8.1z%22%20fill-opacity%3D%220.9%22%20fill%3D%22%23fff%22%2F%3E%3Cpath%20d%3D%22m352.6%20121.3a15%2014.7%200%200%200-15%2013.9%2015%2014.7%200%200%200-0.2%200%2015%2014.7%200%200%200-15%2014.1h38.1v-25.7a15%2014.7%200%200%200-8-2.3z%22%20fill-opacity%3D%220.9%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E);
         background-size: cover;
         background-repeat: no-repeat;
         background-origin: border-box;
@@ -121,8 +125,9 @@ Custom property | Description | Default
         cursor: pointer;
       }
       .night-day {
+        background-color: #000;
         color: #1E88E5;
-        background-image: url(img/night-compressed.svg);
+        background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%22640%22%20viewBox%3D%220%200%20360%20640%22%20width%3D%22360%22%20version%3D%221.1%22%3E%3Crect%20fill-opacity%3D%220.94%22%20height%3D%22440%22%20width%3D%22360%22%20y%3D%220%22%20x%3D%220%22%20fill%3D%22%231e2d3f%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20fill%3D%22%23f3eb66%22%20d%3D%22m53.85%2023.77a35%2035%200%200%200-28.6%2034.39%2035%2035%200%200%200%2035%2035%2035%2035%200%200%200%2034.38-28.58%2029%2029%200%200%201-22.37%2010.57%2029%2029%200%200%201-29-29%2029%2029%200%200%201%2010.59-22.38zM303.7%20229.27l-29.06%2045.07%2042.26%2051.92%2028.31-37.84-41.5-59.15M303.7%20229.27l-29.06%2045.07%2042.26%2051.92%2028.31-37.84-41.5-59.15%22%2F%3E%3Cpath%20d%3D%22m303.7%20229.27-29.06%2045.07%2042.26%2051.92%2028.31-37.84-41.5-59.15zm-174.08%2027.88-16.75%2025.46%2051.44%2069.51%2015.97-21.35-50.67-73.62z%22%20fill%3D%22%23061736%22%2F%3E%3Cpath%20d%3D%22m72.27%20227.76-72.27%20106.26v105.99h360v-171.37l-43.11%2057.62-69.42-85.29-83.16%20111.15-92.03-124.36z%22%20fill%3D%22%23252a5a%22%2F%3E%3Cpath%20d%3D%22m0%20445v195h360v-195h-360z%22%20fill%3D%22%233f477d%22%2F%3E%3Crect%20fill-opacity%3D%220.72%22%20height%3D%225%22%20width%3D%22360%22%20y%3D%22440%22%20x%3D%220%22%20fill%3D%22%23707baa%22%2F%3E%3Cpath%20fill-opacity%3D%220.94%22%20fill%3D%22%23bdbdbd%22%20d%3D%22m82.02%2077.16a15%2014.66%200%200%200-14.96%2013.86%2015%2014.66%200%200%200-0.22-0.01%2015%2014.66%200%200%200-14.98%2014.08h75.36a15%2014.66%200%200%200-14.97-14.03%2015%2014.66%200%200%200-1.99%200.15%2015%2014.66%200%200%200-12.25-6.23%2015%2014.66%200%200%200-2.61%200.23%2015%2014.66%200%200%200-13.39-8.05zM235.8%20105.27%20235.8%20105.27%22%2F%3E%3Cpath%20fill-opacity%3D%220.94%22%20fill%3D%22%23bdbdbd%22%20d%3D%22m235.8%20105.27a15%2014.66%200%200%200-14.96%2013.86%2015%2014.66%200%200%200-0.22-0.01%2015%2014.66%200%200%200-14.98%2014.08h75.36a15%2014.66%200%200%200-14.97-14.03%2015%2014.66%200%200%200-1.99%200.15%2015%2014.66%200%200%200-12.25-6.23%2015%2014.66%200%200%200-2.61%200.23%2015%2014.66%200%200%200-13.39-8.05z%22%2F%3E%3Cpath%20fill-opacity%3D%220.94%22%20fill%3D%22%23bdbdbd%22%20d%3D%22m89.7%20158.64a15%2014.66%200%200%200-14.96%2013.86%2015%2014.66%200%200%200-0.22-0.01%2015%2014.66%200%200%200-14.98%2014.08h75.36a15%2014.66%200%200%200-14.97-14.03%2015%2014.66%200%200%200-1.99%200.15%2015%2014.66%200%200%200-12.25-6.23%2015%2014.66%200%200%200-2.61%200.23%2015%2014.66%200%200%200-13.39-8.05z%22%2F%3E%3Cpath%20fill-opacity%3D%220.94%22%20fill%3D%22%23bdbdbd%22%20d%3D%22m352.62%20121.29a15%2014.66%200%200%200-14.96%2013.86%2015%2014.66%200%200%200-0.22-0.01%2015%2014.66%200%200%200-14.98%2014.08h38.13v-25.66a15%2014.66%200%200%200-7.98-2.27z%22%2F%3E%3Cpath%20fill-opacity%3D%220.56%22%20fill-rule%3D%22evenodd%22%20fill%3D%22%23f3eb66%22%20d%3D%22m58.38%20559.39a35%2035%200%200%201-28.6-34.39%2035%2035%200%200%201%2035-35%2035%2035%200%200%201%2034.38%2028.58%2029%2029%200%200%200-22.37-10.57%2029%2029%200%200%200-29%2029%2029%2029%200%200%200%2010.59%2022.38z%22%2F%3E%3C%2Fsvg%3E);
         background-size: cover;
         background-repeat: no-repeat;
         background-origin: border-box;
@@ -195,11 +200,11 @@ Custom property | Description | Default
 
       /* minute-related */
       .minute {
-        fill: var(--compound-timepicker-minute, #b2dfdb);
+        fill: var(--compound-timepicker-minute, #009688);
         cursor: pointer;
       }
       .minute-centroid {
-        fill: var(--compound-timepicker-minute-centroid, #009688);
+        fill: var(--compound-timepicker-minute-centroid, #fff);
         stroke-width: var(--compound-timepicker-strokewidth-minute-centroid, --minute-centroid-strokewidth);
         pointer-events: none;
       }
@@ -216,7 +221,8 @@ Custom property | Description | Default
         stroke-width: var(--compound-timepicker-strokewidth-centroid, --centroid-strokewidth);
         pointer-events:none;
       }
-      .minute.number-selected {
+      .minute.number-selected,
+      .minute.number-selected+.minute-centroid {
         fill: var(--compound-timepicker-minute-selected, #009688);
       }
       .text-selected {
@@ -226,6 +232,7 @@ Custom property | Description | Default
       /* buttons inside content tag */
       div.clock > ::content > .buttons {
         color: var(--compound-timepicker-button-color, #009688);
+        --paper-button-ink-color: var(--compound-timepicker-button-ink-color: #737373);
         font-size: 12px;
         font-weight: 500;
         padding: 8px 8px 8px 24px;
@@ -237,24 +244,146 @@ Custom property | Description | Default
 
       /* landscape mode */
       @media all and (orientation: landscape) {
-        div.timepicker {
+        :host(:not(.horizontal-view)) div.timepicker {
   				width: auto;
           max-width: 512px;
           max-height: 288px;
           @apply(--layout-horizontal);
         }
 
-        div.day-night {
+        :host(:not(.horizontal-view)) div.day-night {
   				width: 224px;
-  				padding: 16px 24px 0 0;
+  				padding: 12px 16px 0 0;
           max-width: 248px;
           max-height: 512px;
         }
 
-        div.fullclock {
+        :host(:not(.horizontal-view)) div.fullclock {
           height: 216px;
           width: 272px;
         }
+      }
+
+      /* horizontal-view */
+      :host(.horizontal-view) div.timepicker {
+        width: auto;
+        max-width: 512px;
+        max-height: 288px;
+        @apply(--layout-horizontal);
+      }
+      :host(.horizontal-view) div.day-night {
+        width: 224px;
+        padding: 12px 16px 0 0;
+        max-width: 248px;
+        max-height: 512px;
+      }
+      :host(.horizontal-view) div.fullclock {
+        height: 216px;
+        width: 272px;
+      }
+
+      /* dark theme */
+      :host(.dark-theme) .clock {
+        background: var(--compound-timepicker-clock-bg, #424242);
+      }
+      :host(.dark-theme) .number {
+        fill: var(--compound-timepicker-numbers, #d4d4d4);
+      }
+      :host(.dark-theme) .rings,
+      :host(.dark-theme) .minute-ring,
+      :host(.dark-theme) .hour-ring,
+      :host(.dark-theme) .center {
+        fill: var(--compound-timepicker-rings, #555);
+      }
+      :host(.dark-theme) .hour {
+        fill: var(--compound-timepicker-hour, #009688);
+      }
+      :host(.dark-theme) .hour-centroid {
+        fill: var(--compound-timepicker-hour-centroid, #80cbc4);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-centroid, 2);
+      }
+      :host(.dark-theme) .hour-hand {
+        stroke: var(--compound-timepicker-stroke-hour-hand, #80cbc4);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-hand, 2);
+      }
+      :host(.dark-theme) .minute {
+        fill: var(--compound-timepicker-minute, #80cbc4);
+      }
+      :host(.dark-theme) .minute-centroid {
+        fill: var(--compound-timepicker-minute-centroid, #fff);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-centroid, 2);
+      }
+      :host(.dark-theme) .minute-hand {
+        stroke: var(--compound-timepicker-stroke-minute-hand, #80cbc4);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-hand, 2);
+      }
+      :host(.dark-theme) .centroid {
+        fill: var(--compound-timepicker-centroid, #80cbc4);
+        stroke: var(--compound-timepicker-stroke-centroid, #80cbc4);
+        stroke-width: var(--compound-timepicker-strokewidth-centroid, 2);
+      }
+      :host(.dark-theme) .minute.number-selected,
+      :host(.dark-theme) .minute.number-selected+.minute-centroid {
+        fill: var(--compound-timepicker-minute-selected, #80cbc4);
+      }
+      :host(.dark-theme) .text-selected {
+        fill: var(--compound-timepicker-text-selected, #555);
+      }
+      :host(.dark-theme) div.clock > ::content > .buttons {
+        color: var(--compound-timepicker-button-color, #80cbc4);
+        --paper-button-ink-color: var(--compound-timepicker-button-ink-color, #bcbcbc);
+      }
+
+      /* goog theme */
+      :host(.goog-theme) .clock {
+        background: var(--compound-timepicker-clock-bg, #212121);
+      }
+      :host(.goog-theme) .number {
+        fill: var(--compound-timepicker-numbers, #fff);
+      }
+      :host(.goog-theme) .rings,
+      :host(.goog-theme) .minute-ring,
+      :host(.goog-theme) .hour-ring,
+      :host(.goog-theme) .center {
+        fill: var(--compound-timepicker-rings, #212121);
+      }
+      :host(.goog-theme) .hour {
+        fill: var(--compound-timepicker-hour, #4c2926);
+      }
+      :host(.goog-theme) .hour-centroid {
+        fill: var(--compound-timepicker-hour-centroid, #da4336);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-centroid, 2);
+      }
+      :host(.goog-theme) .hour-hand {
+        stroke: var(--compound-timepicker-stroke-hour-hand, #da4336);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-hand, 2);
+      }
+      :host(.goog-theme) .minute {
+        fill: var(--compound-timepicker-minute, #da4336);
+      }
+      :host(.goog-theme) .minute-centroid {
+        fill: var(--compound-timepicker-minute-centroid, #fff);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-centroid, 2);
+      }
+      :host(.goog-theme) .minute-hand {
+        stroke: var(--compound-timepicker-stroke-minute-hand, #da4336);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-hand, 2);
+      }
+      :host(.goog-theme) .centroid {
+        fill: var(--compound-timepicker-centroid, #da4336);
+        stroke: var(--compound-timepicker-stroke-centroid, #da4336);
+        stroke-width: var(--compound-timepicker-strokewidth-centroid, 2);
+      }
+      :host(.goog-theme) .minute.number-selected,
+      :host(.goog-theme) .minute.number-selected+.minute-centroid {
+        fill: var(--compound-timepicker-minute-selected, #da4336);
+      }
+      :host(.goog-theme) .text-selected {
+        fill: var(--compound-timepicker-text-selected, #fff);
+      }
+      :host(.goog-theme) div.clock > ::content > .buttons {
+        color: var(--compound-timepicker-button-color, #da4336);
+        --paper-button-ink-color: var(--compound-timepicker-button-ink-color, #9e9e9e);
       }
     </style>
 
@@ -275,14 +404,14 @@ Custom property | Description | Default
 
             <g id="hourGroup" transform="rotate(0, 100, 100)" class="dragging">
               <circle id="hour" cx="100" cy="51" r="15" class="hour"/>
-              <circle id="hourCentroid" cx="100" cy="51" r="4" class="hour-centroid"/>
+              <circle id="hourCentroid" cx="100" cy="51" r="2" class="hour-centroid"/>
               <line id="hourHand" x1="100" y1="100" x2="100" y2="51" class="hour-hand"/>
             </g>
 
             <g id="minuteGroup" transform="rotate(0, 100, 100)" class="dragging">
               <circle id="minute" cx="100" cy="17" r="15" class="minute compound-timepicker"/>
-              <circle id="minuteCentroid" cx="100" cy="17" r="4" class="minute-centroid"/>
-              <line id="minuteHand" x1="100" y1="100" x2="100" y2="17" class="minute-hand"/>
+              <circle id="minuteCentroid" cx="100" cy="17" r="2" class="minute-centroid"/>
+              <line id="minuteHand" x1="100" y1="100" x2="100" y2="19" class="minute-hand"/>
             </g>
 
             <circle id="centroid" cx="100" cy="100" r="2" class="centroid"/>
@@ -319,12 +448,15 @@ Custom property | Description | Default
 
       properties: {
         /**
-         * Describes the author of the element, but is really just an excuse to
-         * show off JSDoc annotations.
-         *
-         * @type {{name: string, image: string}}
+         * In which orientation the timepicker should be displayed.
+         * View available: `vertical`, `horizontal`.
          */
-
+        view: String,
+        /**
+         * Set theme for the timepicker.
+         * Theme available: `light-theme`, `dark-theme`, `goog-theme`.
+         */
+        theme: String,
         /**
          * 12/ 24 hours time format. It can be either 12 or 24.
          */
@@ -436,7 +568,9 @@ Custom property | Description | Default
         '_initClock(hours, minutes, _dragStep)',
         '_validateHours(hours)',
         '_validateMinutes(minutes)',
-        '_validateStep(step)'
+        '_validateStep(step)',
+        '_updateThemeColor(theme)',
+        '_updateDatepickerView(view)',
       ],
 
       // Element Lifecycle
@@ -477,6 +611,9 @@ Custom property | Description | Default
               _paperButtons[i].addEventListener('tap', this._confirmSelectedTime.bind(this));
               _paperButtons[i].addEventListener('transitionend', this.updateBindTime.bind(this));
             }
+            // Polymer's polyfill for custom properties does not apply to distributed children.
+            // https://www.polymer-project.org/1.0/docs/devguide/styling.html
+            this._updateDistributedButtonInkColorCustomProp(_paperButtons[i], this.theme);
           }
         }
       },
@@ -1037,6 +1174,44 @@ Custom property | Description | Default
             _node.classList.remove(_cls);
           }
         }
+      },
+
+      // Update theme color.
+      _updateThemeColor: function(_theme) {
+        var _themes = ['dark-theme', 'light-theme', 'goog-theme'];
+        var _themeIdx = _themes.indexOf(_theme);
+        var _colorCode = ['#bcbcbc', '#737373', '#616161'][_themeIdx];
+        var _distributedButtons = Polymer.dom(this).querySelectorAll('paper-button');
+        var _distributedButtonsLen = _distributedButtons.length;
+        if (_themeIdx >= 0) {
+          _themes.splice(_themeIdx, 1);
+          this.toggleClass(_themes[0], !1, this);
+          this.toggleClass(_themes[1], !1, this);
+          this.toggleClass(_theme, !0, this);
+        }else {
+          this.toggleClass('dark-theme', !1, this);
+          this.toggleClass('light-theme', !1, this);
+          this.toggleClass('goog-theme', !1, this);
+        }
+        // workaround to update custom property of distributed buttons.
+        for (var i = 0; i < _distributedButtonsLen; i++) {
+          this._updateDistributedButtonInkColorCustomProp(_distributedButtons[i], _colorCode);
+        }
+        // Update styles of the whole datepicker.
+        this.updateStyles();
+      },
+      // Forcefully update the view of the datepicker.
+      _updateDatepickerView: function(_view) {
+        this.toggleClass('horizontal-view', _view === 'horizontal', this);
+        this.toggleClass('vertical-view', _view === 'vertical', this);
+      },
+      // workaround to update custom property of distributed children until Polymer supports Native custom properties.
+      _updateDistributedButtonInkColorCustomProp: function(_node, _theme) {
+        console.log(_theme);
+        var _themeIdx = ['dark-theme', 'light-theme', 'goog-theme'].indexOf(_theme);
+        var _colorCode = _theme && _theme.indexOf('#') >= 0 ? _theme : ['#bcbcbc', '#737373', '#616161'][_themeIdx];
+        _node.customStyle['--paper-button-ink-color'] = _colorCode || '#737373';
+        _node.updateStyles();
       },
 
     });

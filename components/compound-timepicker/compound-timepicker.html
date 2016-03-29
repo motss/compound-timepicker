@@ -1,0 +1,1220 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<link rel="import" href="../paper-ripple/paper-ripple.html">
+<!--
+Compound is composed of two or more separate elements and `compound-timepicker` happens to be under this category.
+
+`compound-timepicker` is a timepicker. It is used to select a single time (hours: minutes) on both mobile and desktop web applications.
+The selected time is indicated by the filled circle at the end of each clock hand.
+
+Example:
+
+    <compound-timepicker></compound-timepicker>
+    <compound-timepicker theme="dark-theme"></compound-timepicker>
+    <compound-timepicker view="horizontal"></compound-timepicker>
+    <compound-timepicker hours="23"></compound-timepicker>
+    <compound-timepicker minutes="59"></compound-timepicker>
+    <compound-timepicker step="5"></compound-timepicker>
+    <compound-timepicker time-format="24"></compound-timepicker>
+
+On mobile, pickers are best suited for display in a confirmation dialog. The timepicker can be wrapped inside a `paper-dialog`. `compound-timepicker-dialog` is created alongside `compound-timepicker` to provide a easy-to-use dialog timepicker.
+
+Example:
+
+    <compound-timepicker-dialog></compound-timepicker-dialog>
+    <compound-timepicker-dialog theme="dark-theme"></compound-timepicker-dialog>
+    <compound-timepicker-dialog view="horizontal"></compound-timepicker-dialog>
+    <compound-timepicker-dialog hours="23"></compound-timepicker-dialog>
+    <compound-timepicker-dialog minutes="59"></compound-timepicker-dialog>
+    <compound-timepicker-dialog step="5"></compound-timepicker-dialog>
+    <compound-timepicker-dialog time-format="24"></compound-timepicker-dialog>
+
+### Generating your own boilerplate code of the compounds
+
+At the end of the demo, there is a section where user can play around with to generate your own boilerplate code with the attributes provided. Let's go and check out the demo!`
+
+### Styling
+
+Style the timepicker with CSS as you would a normal DOM element.
+
+The following custom properties and mixins are also available for styling:
+
+Custom property | Description | Default
+----------------|-------------|----------
+`--compound-timepicker` | Mixin applied to the timepicker | `{}`
+`--compound-timepicker-numbers` | Fill color of the clock numbers | `--paper-black`
+`--compound-timepicker-clock-bg` | Background color of the clock face | `--paper-grey-100`
+||
+`--compound-timepicker-rings` | Background color of the all rings | `#eee`
+`--compound-timepicker-minute-ring` | Background color of the minute ring | `#eee`
+`--compound-timepicker-hour-ring` | Background color of the hour ring | `#eee`
+`--compound-timepicker-center` | Background color of the center ring | `#e0e0e0`
+||
+`--compound-timepicker-hour` | Fill color of the hour selector | `#c8e6c9`
+`--compound-timepicker-hour-centroid` | Fill color of the centroid of hour selector | `#4caf50`
+`--compound-timepicker-strokewidth-hour-centroid` | Stroke width of the centroid of hour selector | `4`
+`--compound-timepicker-hour-hand` | Fill color of the hour hand | `#4caf50`
+`--compound-timepicker-strokewidth-hour-hand` | Stroke width of the hour hand | `2`
+||
+`--compound-timepicker-minute` | Fill color of the minute selector | `#b2dfdb`
+`--compound-timepicker-minute-centroid` | Fill color of the centroid of minute selector | `#009688`
+`--compound-timepicker-strokewidth-minute-centroid` | Stroke width of the centroid of minute selector | `4`
+`--compound-timepicker-minute-hand` | Fill color of the minute hand | `#009688`
+`--compound-timepicker-strokewidth-minute-hand` | Stroke width of the minute hand | `2`
+||
+`--compound-timepicker-stroke-centroid` | Stroke color of the centroid of clock face | `#009688`
+`--compound-timepicker-strokewidth-centroid` | Stroke width of the centroid of clock face | `2`
+`--compound-timepicker-centroid` | Fill color of the centroid of clock face | `#009688`
+||
+`--compound-timepicker-minute-selected` | Fill color of the minute selector on clock number | `#009688`
+`--compound-timepicker-text-selected` | Fill color of the clock number when selected | `--paper-white
+||
+--compound-timepicker-button-color | Button color in dialog | #009688
+--compound-timepicker-button-ink-color | Button ink color in dialog | #737373
+
+@compound compound-timepicker
+@demo demo/index.html
+-->
+<dom-module id="compound-timepicker">
+  <template strip-whitespace>
+    <style>
+      :root {
+        --minute-hand-strokewidth: 1;
+        --hour-hand-strokewidth: 1;
+        --minute-centroid-strokweidth: 2;
+        --hour-centroid-strokewidth: 2;
+        --centroid-strokewidth: 1;
+      }
+
+      :host {
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+
+        display: block;
+      }
+
+      * {
+        box-sizing: inherit;
+      }
+
+      div.timepicker {
+  			width: 248px;
+        max-width: 248px;
+        max-height: calc(248px + 84px + 32px + 57px);
+        @apply(--layout-vertical);
+      }
+
+      /* clock time related */
+      .day-night {
+        background-color: #fff;
+        position: relative;
+        width: 100%;
+        max-width: 248px;
+        max-height: calc(84px + 32px);
+        padding: 16px 24px;
+        background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%22640%22%20viewBox%3D%220%200%20360%20640%22%20width%3D%22360%22%20version%3D%221.1%22%3E%3Crect%20height%3D%22440%22%20width%3D%22360%22%20y%3D%220%22%20x%3D%220%22%20fill%3D%22%23a4f0fe%22%2F%3E%3Cpath%20d%3D%22m0%20445v195h360v-195h-360z%22%20fill%3D%22%230fb4d0%22%2F%3E%3Crect%20height%3D%225%22%20width%3D%22360%22%20y%3D%22440%22%20x%3D%220%22%20fill%3D%22%2363e5ff%22%2F%3E%3Cpath%20fill%3D%22%2397c73d%22%20d%3D%22m337.4%20571.2-31.2%204.5%204%202.5h23.3l3.9-7zM325.8%20560.4%22%2F%3E%3Cpath%20fill-opacity%3D%220.9%22%20fill%3D%22%23fafafa%22%20d%3D%22m325.8%20560.4c-0.2-0.1-14.4%2013.7-14.5%2013.9%202-0.3%209.4-3.5%2014.6-1.3l0.1%200c0-4.5-0.1-12.4-0.2-12.5z%22%2F%3E%3Cg%20transform%3D%22translate%280%20-412.36%29%22%3E%3Cpath%20stroke%3D%22%23fcc930%22%20fill-rule%3D%22evenodd%22%20fill%3D%22%23ffeb3b%22%20d%3D%22m95%20470.4a34.6%2034.6%200%200%201-34.6%2034.6%2034.6%2034.6%200%200%201-34.6-34.6%2034.6%2034.6%200%200%201%2034.6-34.6%2034.6%2034.6%200%200%201%2034.6%2034.6z%22%2F%3E%3C%2Fg%3E%3Cpath%20fill%3D%22%23061736%22%20d%3D%22m303.7%20229.3-29.1%2045.1%2042.3%2051.9%2028.3-37.8-41.5-59.1zm-174.1%2027.9-16.7%2025.5%2051.4%2069.5%2016-21.3-50.7-73.6zM72.3%20227.8l-72.3%20106.3%22%2F%3E%3Cpath%20fill%3D%22%231c6b89%22%20d%3D%22m72.3%20227.8-72.3%20106.3v106h360v-171.4l-43.1%2057.6-69.4-85.3-83.2%20111.2-92-124.4z%22%2F%3E%3Cpath%20d%3D%22m45.8%20580.4c-0.2-0.1-14.4%2013.7-14.5%2013.9%202-0.3%209.4-3.5%2014.6-1.3l0.1%200c0-4.5-0.1-12.4-0.2-12.5z%22%20fill%3D%22%23fafafa%22%20fill-opacity%3D%220.9%22%2F%3E%3Cpath%20fill%3D%22%23fbc02d%22%20d%3D%22m57.4%20591.2-31.2%204.5%204%202.5h23.3l3.9-7z%22%2F%3E%3Cpath%20fill%3D%22%23e53935%22%20d%3D%22m112.4%20551.2-31.2%204.5%204%202.5h23.3l3.9-7zM100.8%20540.4%22%2F%3E%3Cpath%20d%3D%22m100.8%20540.4c-0.2-0.1-14.4%2013.7-14.5%2013.9%202-0.3%209.4-3.5%2014.6-1.3l0.1%200c0-4.5-0.1-12.4-0.2-12.5z%22%20fill%3D%22%23fafafa%22%20fill-opacity%3D%220.9%22%2F%3E%3Cpath%20d%3D%22m82%2077.2a15%2014.7%200%200%200-15%2013.9%2015%2014.7%200%200%200-0.2%200%2015%2014.7%200%200%200-15%2014.1h75.4a15%2014.7%200%200%200-15-14%2015%2014.7%200%200%200-2%200.1%2015%2014.7%200%200%200-12.2-6.2%2015%2014.7%200%200%200-2.6%200.2%2015%2014.7%200%200%200-13.4-8.1zM235.8%20105.3%22%20fill-opacity%3D%220.9%22%20fill%3D%22%23fff%22%2F%3E%3Cpath%20d%3D%22m235.8%20105.3a15%2014.7%200%200%200-15%2013.9%2015%2014.7%200%200%200-0.2%200%2015%2014.7%200%200%200-15%2014.1h75.4a15%2014.7%200%200%200-15-14%2015%2014.7%200%200%200-2%200.1%2015%2014.7%200%200%200-12.2-6.2%2015%2014.7%200%200%200-2.6%200.2%2015%2014.7%200%200%200-13.4-8.1z%22%20fill-opacity%3D%220.9%22%20fill%3D%22%23fff%22%2F%3E%3Cpath%20d%3D%22m89.7%20158.6a15%2014.7%200%200%200-15%2013.9%2015%2014.7%200%200%200-0.2%200%2015%2014.7%200%200%200-15%2014.1h75.4a15%2014.7%200%200%200-15-14%2015%2014.7%200%200%200-2%200.1%2015%2014.7%200%200%200-12.2-6.2%2015%2014.7%200%200%200-2.6%200.2%2015%2014.7%200%200%200-13.4-8.1z%22%20fill-opacity%3D%220.9%22%20fill%3D%22%23fff%22%2F%3E%3Cpath%20d%3D%22m352.6%20121.3a15%2014.7%200%200%200-15%2013.9%2015%2014.7%200%200%200-0.2%200%2015%2014.7%200%200%200-15%2014.1h38.1v-25.7a15%2014.7%200%200%200-8-2.3z%22%20fill-opacity%3D%220.9%22%20fill%3D%22%23fff%22%2F%3E%3C%2Fsvg%3E);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-origin: border-box;
+        font-size: 56px;
+        text-align: right;
+        cursor: pointer;
+      }
+      .night-day {
+        background-color: #000;
+        color: #1E88E5;
+        background-image: url(data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20height%3D%22640%22%20viewBox%3D%220%200%20360%20640%22%20width%3D%22360%22%20version%3D%221.1%22%3E%3Crect%20fill-opacity%3D%220.94%22%20height%3D%22440%22%20width%3D%22360%22%20y%3D%220%22%20x%3D%220%22%20fill%3D%22%231e2d3f%22%2F%3E%3Cpath%20fill-rule%3D%22evenodd%22%20fill%3D%22%23f3eb66%22%20d%3D%22m53.85%2023.77a35%2035%200%200%200-28.6%2034.39%2035%2035%200%200%200%2035%2035%2035%2035%200%200%200%2034.38-28.58%2029%2029%200%200%201-22.37%2010.57%2029%2029%200%200%201-29-29%2029%2029%200%200%201%2010.59-22.38zM303.7%20229.27l-29.06%2045.07%2042.26%2051.92%2028.31-37.84-41.5-59.15M303.7%20229.27l-29.06%2045.07%2042.26%2051.92%2028.31-37.84-41.5-59.15%22%2F%3E%3Cpath%20d%3D%22m303.7%20229.27-29.06%2045.07%2042.26%2051.92%2028.31-37.84-41.5-59.15zm-174.08%2027.88-16.75%2025.46%2051.44%2069.51%2015.97-21.35-50.67-73.62z%22%20fill%3D%22%23061736%22%2F%3E%3Cpath%20d%3D%22m72.27%20227.76-72.27%20106.26v105.99h360v-171.37l-43.11%2057.62-69.42-85.29-83.16%20111.15-92.03-124.36z%22%20fill%3D%22%23252a5a%22%2F%3E%3Cpath%20d%3D%22m0%20445v195h360v-195h-360z%22%20fill%3D%22%233f477d%22%2F%3E%3Crect%20fill-opacity%3D%220.72%22%20height%3D%225%22%20width%3D%22360%22%20y%3D%22440%22%20x%3D%220%22%20fill%3D%22%23707baa%22%2F%3E%3Cpath%20fill-opacity%3D%220.94%22%20fill%3D%22%23bdbdbd%22%20d%3D%22m82.02%2077.16a15%2014.66%200%200%200-14.96%2013.86%2015%2014.66%200%200%200-0.22-0.01%2015%2014.66%200%200%200-14.98%2014.08h75.36a15%2014.66%200%200%200-14.97-14.03%2015%2014.66%200%200%200-1.99%200.15%2015%2014.66%200%200%200-12.25-6.23%2015%2014.66%200%200%200-2.61%200.23%2015%2014.66%200%200%200-13.39-8.05zM235.8%20105.27%20235.8%20105.27%22%2F%3E%3Cpath%20fill-opacity%3D%220.94%22%20fill%3D%22%23bdbdbd%22%20d%3D%22m235.8%20105.27a15%2014.66%200%200%200-14.96%2013.86%2015%2014.66%200%200%200-0.22-0.01%2015%2014.66%200%200%200-14.98%2014.08h75.36a15%2014.66%200%200%200-14.97-14.03%2015%2014.66%200%200%200-1.99%200.15%2015%2014.66%200%200%200-12.25-6.23%2015%2014.66%200%200%200-2.61%200.23%2015%2014.66%200%200%200-13.39-8.05z%22%2F%3E%3Cpath%20fill-opacity%3D%220.94%22%20fill%3D%22%23bdbdbd%22%20d%3D%22m89.7%20158.64a15%2014.66%200%200%200-14.96%2013.86%2015%2014.66%200%200%200-0.22-0.01%2015%2014.66%200%200%200-14.98%2014.08h75.36a15%2014.66%200%200%200-14.97-14.03%2015%2014.66%200%200%200-1.99%200.15%2015%2014.66%200%200%200-12.25-6.23%2015%2014.66%200%200%200-2.61%200.23%2015%2014.66%200%200%200-13.39-8.05z%22%2F%3E%3Cpath%20fill-opacity%3D%220.94%22%20fill%3D%22%23bdbdbd%22%20d%3D%22m352.62%20121.29a15%2014.66%200%200%200-14.96%2013.86%2015%2014.66%200%200%200-0.22-0.01%2015%2014.66%200%200%200-14.98%2014.08h38.13v-25.66a15%2014.66%200%200%200-7.98-2.27z%22%2F%3E%3Cpath%20fill-opacity%3D%220.56%22%20fill-rule%3D%22evenodd%22%20fill%3D%22%23f3eb66%22%20d%3D%22m58.38%20559.39a35%2035%200%200%201-28.6-34.39%2035%2035%200%200%201%2035-35%2035%2035%200%200%201%2034.38%2028.58%2029%2029%200%200%200-22.37-10.57%2029%2029%200%200%200-29%2029%2029%2029%200%200%200%2010.59%2022.38z%22%2F%3E%3C%2Fsvg%3E);
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-origin: border-box;
+      }
+      .clock-time {
+        padding-right: 24px;
+        font-weight: 500;
+      }
+      .clock-time span:nth-of-type(1) {
+        margin-right: -14px;
+      }
+      .clock-time span:nth-of-type(3) {
+        margin-left: -14px;
+      }
+
+      /* clock related */
+      .clock {
+        height: 100%;
+        background: var(--compound-timepicker-clock-bg, #fff);
+        @apply(--layout-vertical);
+      }
+      .fullclock {
+        height: 248px;
+        width: 248px;
+        margin-left: auto;
+        margin-right: auto;
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+      }
+      .number {
+        fill: var(--compound-timepicker-numbers, #000);
+        pointer-events: none;
+        dominant-baseline: central;
+        text-anchor: middle;
+      }
+
+      /* rings-related */
+      .rings {
+        fill: var(--compound-timepicker-rings, #eee);
+      }
+      .minute-ring {
+        fill: var(--compound-timepicker-minute-ring, #eee);
+        cursor: pointer;
+      }
+      .hour-ring {
+        fill: var(--compound-timepicker-hour-ring, #eee);
+        cursor: pointer;
+      }
+      .center {
+        fill: var(--compound-timepicker-center, #e0e0e0);
+        pointer-events: none;
+      }
+
+      /* hour-related */
+      .hour {
+        fill: var(--compound-timepicker-hour, #c8e6c9);
+        cursor: pointer;
+      }
+      .hour-centroid {
+        fill: var(--compound-timepicker-hour-centroid, #4caf50);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-centroid, --hour-centroid-strokewidth);
+        cursor: pointer;
+        pointer-events: none;
+      }
+      .hour-hand {
+        stroke: var(--compound-timepicker-stroke-hour-hand, #4caf50);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-hand, --hour-hand-strokewidth);
+        pointer-events: none;
+      }
+
+      /* minute-related */
+      .minute {
+        fill: var(--compound-timepicker-minute, #009688);
+        cursor: pointer;
+      }
+      .minute-centroid {
+        fill: var(--compound-timepicker-minute-centroid, #fff);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-centroid, --minute-centroid-strokewidth);
+        pointer-events: none;
+      }
+      .minute-hand {
+        stroke: var(--compound-timepicker-stroke-minute-hand, #009688);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-hand, --minute-hand-strokewidth);
+        pointer-events: none;
+      }
+
+      /* misc related */
+      .centroid {
+        fill: var(--compound-timepicker-centroid, #009688);
+        stroke: var(--compound-timepicker-stroke-centroid, #009688);
+        stroke-width: var(--compound-timepicker-strokewidth-centroid, --centroid-strokewidth);
+        pointer-events:none;
+      }
+      .minute.number-selected,
+      .minute.number-selected+.minute-centroid {
+        fill: var(--compound-timepicker-minute-selected, #009688);
+      }
+      .text-selected {
+        fill: var(--compound-timepicker-text-selected, #fff);
+      }
+
+      /* buttons inside content tag */
+      div.clock > ::content > .buttons {
+        color: var(--compound-timepicker-button-color, #009688);
+        --paper-button-ink-color: var(--compound-timepicker-button-ink-color: #737373);
+        font-size: 12px;
+        font-weight: 500;
+        padding: 8px 8px 8px 24px;
+        position: relative;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-end-justified);
+      }
+
+      /* landscape mode */
+      @media all and (orientation: landscape) {
+        :host(:not(.horizontal-view)) div.timepicker {
+  				width: auto;
+          max-width: 512px;
+          max-height: 288px;
+          @apply(--layout-horizontal);
+        }
+
+        :host(:not(.horizontal-view)) div.day-night {
+  				width: 224px;
+  				padding: 12px 16px 0 0;
+          max-width: 248px;
+          max-height: 512px;
+        }
+
+        :host(:not(.horizontal-view)) div.fullclock {
+          height: 216px;
+          width: 272px;
+        }
+      }
+
+      /* horizontal-view */
+      :host(.horizontal-view) div.timepicker {
+        width: auto;
+        max-width: 512px;
+        max-height: 288px;
+        @apply(--layout-horizontal);
+      }
+      :host(.horizontal-view) div.day-night {
+        width: 224px;
+        padding: 12px 16px 0 0;
+        max-width: 248px;
+        max-height: 512px;
+      }
+      :host(.horizontal-view) div.fullclock {
+        height: 216px;
+        width: 272px;
+      }
+
+      /* dark theme */
+      :host(.dark-theme) .clock {
+        background: var(--compound-timepicker-clock-bg, #424242);
+      }
+      :host(.dark-theme) .number {
+        fill: var(--compound-timepicker-numbers, #d4d4d4);
+      }
+      :host(.dark-theme) .rings,
+      :host(.dark-theme) .minute-ring,
+      :host(.dark-theme) .hour-ring,
+      :host(.dark-theme) .center {
+        fill: var(--compound-timepicker-rings, #555);
+      }
+      :host(.dark-theme) .hour {
+        fill: var(--compound-timepicker-hour, #009688);
+      }
+      :host(.dark-theme) .hour-centroid {
+        fill: var(--compound-timepicker-hour-centroid, #80cbc4);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-centroid, 2);
+      }
+      :host(.dark-theme) .hour-hand {
+        stroke: var(--compound-timepicker-stroke-hour-hand, #80cbc4);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-hand, 2);
+      }
+      :host(.dark-theme) .minute {
+        fill: var(--compound-timepicker-minute, #80cbc4);
+      }
+      :host(.dark-theme) .minute-centroid {
+        fill: var(--compound-timepicker-minute-centroid, #fff);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-centroid, 2);
+      }
+      :host(.dark-theme) .minute-hand {
+        stroke: var(--compound-timepicker-stroke-minute-hand, #80cbc4);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-hand, 2);
+      }
+      :host(.dark-theme) .centroid {
+        fill: var(--compound-timepicker-centroid, #80cbc4);
+        stroke: var(--compound-timepicker-stroke-centroid, #80cbc4);
+        stroke-width: var(--compound-timepicker-strokewidth-centroid, 2);
+      }
+      :host(.dark-theme) .minute.number-selected,
+      :host(.dark-theme) .minute.number-selected+.minute-centroid {
+        fill: var(--compound-timepicker-minute-selected, #80cbc4);
+      }
+      :host(.dark-theme) .text-selected {
+        fill: var(--compound-timepicker-text-selected, #555);
+      }
+      :host(.dark-theme) div.clock > ::content > .buttons {
+        color: var(--compound-timepicker-button-color, #80cbc4);
+        --paper-button-ink-color: var(--compound-timepicker-button-ink-color, #bcbcbc);
+      }
+
+      /* goog theme */
+      :host(.goog-theme) .clock {
+        background: var(--compound-timepicker-clock-bg, #212121);
+      }
+      :host(.goog-theme) .number {
+        fill: var(--compound-timepicker-numbers, #fff);
+      }
+      :host(.goog-theme) .rings,
+      :host(.goog-theme) .minute-ring,
+      :host(.goog-theme) .hour-ring,
+      :host(.goog-theme) .center {
+        fill: var(--compound-timepicker-rings, #212121);
+      }
+      :host(.goog-theme) .hour {
+        fill: var(--compound-timepicker-hour, #4c2926);
+      }
+      :host(.goog-theme) .hour-centroid {
+        fill: var(--compound-timepicker-hour-centroid, #da4336);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-centroid, 2);
+      }
+      :host(.goog-theme) .hour-hand {
+        stroke: var(--compound-timepicker-stroke-hour-hand, #da4336);
+        stroke-width: var(--compound-timepicker-strokewidth-hour-hand, 2);
+      }
+      :host(.goog-theme) .minute {
+        fill: var(--compound-timepicker-minute, #da4336);
+      }
+      :host(.goog-theme) .minute-centroid {
+        fill: var(--compound-timepicker-minute-centroid, #fff);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-centroid, 2);
+      }
+      :host(.goog-theme) .minute-hand {
+        stroke: var(--compound-timepicker-stroke-minute-hand, #da4336);
+        stroke-width: var(--compound-timepicker-strokewidth-minute-hand, 2);
+      }
+      :host(.goog-theme) .centroid {
+        fill: var(--compound-timepicker-centroid, #da4336);
+        stroke: var(--compound-timepicker-stroke-centroid, #da4336);
+        stroke-width: var(--compound-timepicker-strokewidth-centroid, 2);
+      }
+      :host(.goog-theme) .minute.number-selected,
+      :host(.goog-theme) .minute.number-selected+.minute-centroid {
+        fill: var(--compound-timepicker-minute-selected, #da4336);
+      }
+      :host(.goog-theme) .text-selected {
+        fill: var(--compound-timepicker-text-selected, #fff);
+      }
+      :host(.goog-theme) div.clock > ::content > .buttons {
+        color: var(--compound-timepicker-button-color, #da4336);
+        --paper-button-ink-color: var(--compound-timepicker-button-ink-color, #9e9e9e);
+      }
+    </style>
+
+    <div class="timepicker">
+      <div id="ampm" class="day-night" on-tap="_toggleDayNight">
+        [[_hours]]<span>&#58;</span>[[_minutes]]
+        <paper-ripple on-transitionend="_switchDay"></paper-ripple>
+      </div>
+
+      <div class="clock">
+        <div class="fullclock">
+          <svg width="200" height="200" on-down="_selectHand" on-up="_releaseHand" on-track="_dragHand">
+            <g class="rings">
+              <circle id="minuteRing" cx="100" cy="100" r="100" class="minute-ring"/>
+              <circle id="hourRing" cx="100" cy="100" r="66" class="hour-ring"/>
+              <circle id="center" cx="100" cy="100" r="32" class="center"/>
+            </g>
+
+            <g id="hourGroup" transform="rotate(0, 100, 100)" class="dragging">
+              <circle id="hour" cx="100" cy="51" r="15" class="hour"/>
+              <circle id="hourCentroid" cx="100" cy="51" r="2" class="hour-centroid"/>
+              <line id="hourHand" x1="100" y1="100" x2="100" y2="51" class="hour-hand"/>
+            </g>
+
+            <g id="minuteGroup" transform="rotate(0, 100, 100)" class="dragging">
+              <circle id="minute" cx="100" cy="17" r="15" class="minute compound-timepicker"/>
+              <circle id="minuteCentroid" cx="100" cy="17" r="2" class="minute-centroid"/>
+              <line id="minuteHand" x1="100" y1="100" x2="100" y2="19" class="minute-hand"/>
+            </g>
+
+            <circle id="centroid" cx="100" cy="100" r="2" class="centroid"/>
+            <g id="numbers"></g>
+          </svg>
+        </div>
+
+        <content select=".buttons"></content>
+      </div>
+    </div>
+  </template>
+
+	<script>
+    /**
+     * CONSTANTS needed for rendering clock.
+     */
+    var HOUR_OUTER_RADIUS = 66,
+        HOUR_INNER_RADIUS = 32,
+        MINUTE_OUTER_RADIUS = 100,
+        MINUTE_INNER_RADIUS = 66,
+        CENTER_OF_CIRCLE_X = 100,
+        CENTER_OF_CIRCLE_Y = 100,
+        STARTING_POS_OF_FIRST_NUMBER_X = 100,
+        STARTING_POS_OF_FIRST_NUMBER_Y = 17,
+        MINUTE_CIRCLE_X = 100,
+        MINUTE_CIRCLE_Y = 17,
+        HOUR_CIRCLE_X = 100,
+        HOUR_CIRCLE_Y = 51,
+        THETA_BETWEEN_HOURS = 30;
+
+    Polymer({
+
+      is: 'compound-timepicker',
+
+      properties: {
+        /**
+         * In which orientation the timepicker should be displayed.
+         * View available: `vertical`, `horizontal`.
+         */
+        view: String,
+        /**
+         * Set theme for the timepicker.
+         * Theme available: `light-theme`, `dark-theme`, `goog-theme`.
+         */
+        theme: String,
+        /**
+         * 12/ 24 hours time format. It can be either 12 or 24.
+         */
+        timeFormat: {
+          type: Number,
+          value: 12
+        },
+        /**
+         * Clock hours, any number between 0 and 23.
+         */
+        hours: {
+          type: Number,
+          value: function() {
+            return new Date().getHours();
+          }
+        },
+        /**
+         * Clock minutes, any number between 0 and 59.
+         */
+        minutes: {
+          type: Number,
+          value: function() {
+            return new Date().getMinutes();
+          }
+        },
+        /**
+         * Clock step, any number between 1 and 60.
+         * Default is 1 which means that each minute is selectable.
+         */
+        step: {
+          type: Number,
+          value: 1
+        },
+        /**
+         * Returns selected time.
+         */
+        time : {
+          type: String,
+          notify: true
+        },
+        // multiple step by 6 for minute hand tracking.
+        _dragStep: {
+          type: Number,
+          computed: '_dragStepAngleify(step)'
+        },
+        // Set true to enable tracking.
+        _tracking: {
+          type: Boolean,
+          value: false
+        },
+        // Set true if touchstart/ mousedown.
+        _down: {
+          type: Boolean,
+          value: false
+        },
+        // Stores selected ring's ID from touch or mouse.
+        _startRing: String,
+        // Stores last value of touch/ mouse position when _tracking sets true.
+        _lastTrackingPos: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        },
+        // Previously styled clock number when selected.
+        _textStyled: {
+          type: Number,
+          value: 0
+        },
+        // Being used to display selected hours.
+        _hours: {
+          type: String,
+          computed: '_textify(hours, _isHours)'
+        },
+        // Being used to display selected minutes.
+        _minutes: {
+          type: String,
+          computed: '_textify(minutes)'
+        },
+        // Sets true for day else it's night.
+        _dayNight: {
+          type: Boolean,
+          value: function() {
+            return new Date().getHours() < 12;
+          }
+        },
+        // hours check flag
+        _isHours: {
+          type: Boolean,
+          value: true
+        },
+        // clock numbers ready check flag
+        _hasClockNumbersReady: {
+          type: Boolean,
+          value: false
+        },
+
+        _selectedTimeConfirmed: {
+          type: Boolean,
+          value: false
+        },
+
+        _isIE: Boolean,
+
+      },
+
+      // init clock whenever [hours, minutes, _dragStep] encounters value change.
+      observers: [
+        '_initClock(hours, minutes, _dragStep)',
+        '_validateHours(hours)',
+        '_validateMinutes(minutes)',
+        '_validateStep(step)',
+        '_updateThemeColor(theme)',
+        '_updateDatepickerView(view)',
+      ],
+
+      // Element Lifecycle
+
+      ready: function() {
+        // workaround to get classList to work on IEs...
+        var ie = (function (){
+            if (window.ActiveXObject === undefined) return null;
+            if (!document.querySelector) return 7;
+            if (!document.addEventListener) return 8;
+            if (!window.atob) return 9;
+            if (!document.__proto__) return 10;
+            return 11;
+        })();
+        this.set('_isIE', !!ie);
+
+        // generate all clock numbers on the clock face.
+        this._clockNumberify();
+        // init clock with current time by adjusting angle of all clock hands.
+        this._initClock(this.hours, this.minutes, this._dragStep);
+        // set initial time just in case no time is beng selected.
+        this.set('time', this._selectedTime(this._hours, this._minutes,
+          this._dayNight, this.timeFormat));
+      },
+
+      attached: function() {
+        // `attached` fires once the element and its parents have been inserted
+        // into a document.
+        //
+        // This is a good place to perform any work related to your element's
+        // visual state or active behavior (measuring sizes, beginning animations,
+        // loading resources, etc).
+        var _content = this.getEffectiveChildren();
+        var _paperButtons = Polymer.dom(_content[0]).querySelectorAll('paper-button');
+        if (_content[0] && _paperButtons.length > 0) {
+          for (var i = 0; i < _paperButtons.length; i++) {
+            if (_paperButtons[i].hasAttribute('dialog-confirm')) {
+              _paperButtons[i].addEventListener('tap', this._confirmSelectedTime.bind(this));
+              _paperButtons[i].addEventListener('transitionend', this.updateBindTime.bind(this));
+            }
+            // Polymer's polyfill for custom properties does not apply to distributed children.
+            // https://www.polymer-project.org/1.0/docs/devguide/styling.html
+            this._updateDistributedButtonInkColorCustomProp(_paperButtons[i], this.theme);
+          }
+        }
+      },
+
+      detached: function() {
+        // The analog to `attached`, `detached` fires when the element has been
+        // removed from a document.
+        //
+        // Use this to clean up anything you did in `attached`.
+      },
+
+      // Element Behavior
+
+      // Populate clock numbers.
+      _clockNumberify: function() {
+        var _x = STARTING_POS_OF_FIRST_NUMBER_X, // 100
+            _y = STARTING_POS_OF_FIRST_NUMBER_Y, // 17
+            _cx = CENTER_OF_CIRCLE_X, // 100
+            _cy = CENTER_OF_CIRCLE_Y, // 100
+            _theta = THETA_BETWEEN_HOURS; // 30
+
+        for(var i = 0; i < 12; i++) {
+          var _i = i == 0 ? 12: i,
+              __theta = _theta * i,
+              _temp = document.createElementNS('http://www.w3.org/2000/svg', 'text'),
+              __xy = this._textNumberClockwisify(__theta, _y, _x, _cy, _cx);
+
+          this.$.numbers.appendChild(this._textNumberify(_temp, _i, __xy.x, __xy.y, this._isIE));
+        }
+        this.set('_hasClockNumbersReady', true);
+      },
+
+      // Convert clock number into text.
+      _textNumberify: function(_svg, _number, _x, _y, _isIE) {
+        var _text = _svg;
+        _text.textContent = _number.toString();
+        _text.setAttribute('x', _x);
+        _text.setAttribute('y', _y);
+        // _text.classList.add('number');
+        this._classListPolyfill(_text, 'add', 'number', _isIE);
+
+        // if (!Polymer.Settings.useNativeShadow) {
+          // _text.classList.add('style-scope');
+          // _text.classList.add('compound-timepicker');
+          this._classListPolyfill(_text, 'add', 'style-scope', _isIE);
+          this._classListPolyfill(_text, 'add', 'compound-timepicker', _isIE);
+        // }
+
+        return _text;
+      },
+
+      // Return rotated params for each clock text.
+      _textNumberClockwisify: function(_theta, _y, _x, _cy, _cx) {
+        var rotXY = {}, __theta;
+
+        function toRad(_theta) {
+          return _theta / 180 * Math.PI;
+        }
+
+        function sin(_theta, _xy, _cxy) {
+          return Math.sin(_theta) * (_xy - _cxy);
+        }
+
+        function cos(_theta, _xy, _cxy) {
+          return Math.cos(_theta) * (_xy - _cxy);
+        }
+
+        function rotatedX(_theta, _x, _y, _cx, cy) {
+          return (cos(_theta, _x, _cx) - sin(_theta, _y, _cy)) + _cx;
+        }
+
+        function rotatedY(_theta, _x, _y, _cx, _cy) {
+          return (cos(_theta, _y, _cy) + sin(_theta, _x, _cx)) + _cy;
+        }
+
+        __theta = toRad(_theta);
+        rotXY.x = rotatedX(__theta, _x, _y, _cx, _cy).toFixed(1);
+        rotXY.y = rotatedY(__theta, _x, _y, _cx, _cy).toFixed(1);
+
+        return rotXY;
+      },
+
+      // Rotate minute/ hand clock hand during tracking.
+      _rotatify: function(_angle) {
+        this.transform.baseVal.getItem(0).setRotate(_angle, 100, 100);
+      },
+
+      // Initialize the clock with predefined config.
+      _initClock: function(_hr, _min, _dragStep) {
+        // Always check inputs to see if they are of type String or less than an integer that it should be.
+        if (typeof _hr === 'string' || _hr < 0 || _hr > 23) {
+          _hr = new Date().getHours();
+          this.set('hours', _hr);
+        }
+        _min = this._validateMinutes(_min, !0);
+
+        /**
+         * - init clock when and only when there are clock numbers.
+         * - init clock won't trigger to mouse/ touch.
+         * - problem (1510280120) when minutes was being set on-the-fly.
+         * - problem (1510280159) when hours changes with mouse/ touch.
+         */
+        if (this._hasClockNumbersReady && !this._down) {
+          var _h = (_hr%12) * 30,
+              _m = (_min%60) * 6,
+              _m2 = _m%30 === 0;
+          var _numberNode = this.$.numbers.childNodes[this._textStyled];
+          var _minuteNode = this.$.minute;
+
+          // style selected minute at start.
+          if (_m2) {
+            // clear previously styled clock number.
+            // problem 1510290439: caused by setting attributes imperatively.
+            if (this._textStyled) {
+              this._classListPolyfill(_numberNode, 'remove', 'text-selected', this._isIE);
+              this._classListPolyfill(_minuteNode, 'remove', 'number-selected', this._isIE);
+            }
+
+            var _child = _m/30;
+            _numberNode = this.$.numbers.childNodes[_child];
+            this._classListPolyfill(_numberNode, 'add', 'text-selected', this._isIE);
+            this._classListPolyfill(_minuteNode, 'add', 'number-selected', this._isIE);
+            this.set('_textStyled', _child);
+          }else {
+            // to tacle problem 1510280120: remove all selected class.
+            this._classListPolyfill(_numberNode, 'remove', 'text-selected', this._isIE);
+            this._classListPolyfill(_minuteNode, 'remove', 'number-selected', this._isIE);
+          }
+
+          // hours will determine _dayNight and here update the class.
+          // this._dayNight ? this.$.ampm.classList.remove('night-day') :
+          //   this.$.ampm.classList.add('night-day')
+          var _ampmNode = this.$.ampm;
+          this._dayNight ?
+            this._classListPolyfill(_ampmNode, 'remove', 'night-day', this._isIE) :
+            this._classListPolyfill(_ampmNode, 'add', 'night-day', this._isIE);
+
+          // rotate whatever needs to be rotated.
+          this._rotatify.call(this.$.hourGroup, _h);
+          this._rotatify.call(this.$.minuteGroup, _m);
+        }
+      },
+
+      // Update tracking position and rotate clock hand.
+      _updateTracking: function() {
+        if (!this._tracking) {
+          requestAnimationFrame(this._draggingClockHand.bind(this, this._lastTrackingPos));
+          this.set('_tracking', true);
+        }
+      },
+
+      // What need to be done for touchstart/ mousedown.
+      _selectHand: function(ev) {
+        var _id = ev.target.id, _xy = {};
+        ev.preventDefault();
+        /**
+         * - 400 times faster using switch compared to multi if statements.
+         * - switch case up to ~10ms.
+         * - multi if statements up to ~4000ms.
+         */
+        switch (_id) {
+          case 'hour':
+          case 'minute':
+          case 'hourRing':
+          case 'minuteRing':
+            this.set('_startRing', _id);
+            _xy.y = ev.detail.y;
+            _xy.x = ev.detail.x;
+            this._lastTrackingPos = _xy;
+            this.set('_down', true);
+            this._updateTracking();
+            break;
+          default:
+            // console.log('not-inside-ring');
+        }
+      },
+
+      // What need to be done for touchmove/ mousemove.
+      _dragHand: function(ev) {
+        switch (ev.detail.state) {
+          case 'start':
+            if (!this._down) {
+              this.set('_down', true);
+            }
+            break;
+          case 'track':
+            var _xy = {};
+            // keep updating last tracking position before rAF.
+            _xy.y = ev.detail.y; _xy.x = ev.detail.x;
+            this._lastTrackingPos = _xy;
+
+            this._updateTracking();
+            break;
+          case 'end':
+            break;
+        }
+      },
+
+      // Update time and clear things up when touchend/ mouseup.
+      _releaseHand: function(ev) {
+        cancelAnimationFrame(this._updateTracking);
+        this.set('_startRing', null);
+        this.set('_down', false);
+        // once release touch/ mouse, fire output.
+        // this.set('time', this._selectedTime(this._hours, this._minutes,
+        //   this._dayNight, this.timeFormat));
+      },
+
+      // Update touch/ mouse tracking position and convert it to angle for rotation.
+      _draggingClockHand: function(_xy) {
+        var _translatedXY = {},
+            _rotatedXY = {},
+            _angle,
+            _minuteRingParam = this.$.minuteRing.getBoundingClientRect(),
+            _ctr = this.$.centroid.getBoundingClientRect();
+
+        // 4 times faster after heavy optimization of codes.
+        switch (this._startRing) {
+          case 'hourRing':
+          case 'hour':
+          case 'hourHand':
+          case 'hourCentroid':
+            if (this._isInner(_xy, _ctr, HOUR_INNER_RADIUS) &&
+                this._isOuter(_xy, _ctr, HOUR_OUTER_RADIUS)) {
+              _translatedXY = this._translateToOrigin(_minuteRingParam, _xy,
+                CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+              _angle = this._angleify(_translatedXY.y, _translatedXY.x,
+                THETA_BETWEEN_HOURS);
+              if (_angle >= 0) {
+                _rotatedXY = this._textNumberClockwisify(_angle, HOUR_CIRCLE_Y,
+                  HOUR_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+
+                // rotate everything.
+                this._rotatify.call(this.$.hourGroup, _angle);
+                // update hours.
+                this.set('hours', _angle === 0 ? 12 : _angle / 30);
+              }
+            }
+            break;
+          case 'minuteRing':
+          case 'minute':
+          case 'minuteHand':
+          case 'minuteCentroid':
+            if (this._isInner(_xy, _ctr, MINUTE_INNER_RADIUS) &&
+                this._isOuter(_xy, _ctr, MINUTE_OUTER_RADIUS)) {
+              _translatedXY = this._translateToOrigin(_minuteRingParam, _xy,
+                CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+              _angle = this._angleify(_translatedXY.y, _translatedXY.x, this._dragStep);
+
+              if (_angle >= 0) {
+                var _numbers = this.$.numbers,
+                    _minute = this.$.minute,
+                    _minuteCentroid = this.$.minuteCentroid,
+                    _minuteHand = this.$.minuteHand;
+                if (_angle%30 === 0) {
+                  // remove previous selected clock number.
+                  this._classListPolyfill(_numbers.childNodes[this._textStyled], 'remove', 'text-selected', this._isIE);
+                  // assign new value to _textStyled.
+                  this.set('_textStyled', Math.floor(_angle/30));
+
+                  // add class to minute circle.
+                  // _minute.classList.add('number-selected');
+                  this._classListPolyfill(_minute, 'add', 'number-selected', this._isIE);
+                  // add class to selecte clock number.
+                  // _numbers.children[this._textStyled].classList.add('text-selected');
+                  this._classListPolyfill(_numbers.childNodes[this._textStyled], 'add', 'text-selected', this._isIE);
+                } else {
+                  // for everything just remove all previously added classes.
+                  if (this._classListPolyfill(_numbers.childNodes[this._textStyled], 'contains', 'text-selected', this._isIE) ||
+                      this._classListPolyfill(_minute, 'contains', 'number-selected', this._isIE)) {
+                    this._classListPolyfill(_minute, 'remove', 'number-selected', this._isIE);
+                    this._classListPolyfill(_numbers.childNodes[this._textStyled], 'remove', 'text-selected', this._isIE);
+                  }
+                }
+
+                _rotatedXY = this._textNumberClockwisify(_angle, MINUTE_CIRCLE_Y,
+                  MINUTE_CIRCLE_X, CENTER_OF_CIRCLE_Y, CENTER_OF_CIRCLE_X);
+
+                // rotate everything.
+                this._rotatify.call(this.$.minuteGroup, _angle);
+                // update minutes.
+                this.set('minutes', _angle / 6);
+              }
+            }
+            break;
+          default:
+            // console.log('outside-HOUR-ring');
+        }
+        // release _tracking for next frame.
+        this.set('_tracking', false);
+      },
+
+      // Convert passed in positions into angle.
+      _angleify: function(_y, _x, _step) {
+        /**
+         * Normal: Math.atan2(y, x) - angle from +ve X axis;
+         * Here: Math.atan2(x, -y) - angle from +ve Y axis;
+         */
+        var _degree = Math.round(Math.atan2(_x, -_y)/Math.PI*180);
+
+        function _factorise(_degree, _step) {
+          var _factor = _degree / _step,
+              _max = Math.ceil(_factor) / (1/ _step),
+              _th = _max - 3,
+              _min = Math.floor(_factor) / (1/ _step);
+
+          // when clock step !== 6, reset to 0 instead of modulus by 360.
+          _max = _max > 359 ? 0 : _max;
+          _min = _min > 359 ? 0 : _min;
+
+          // negate negative values.
+          _th = _th < 0 ? 360 + _th : _th;
+
+          /**
+           * - check if computed value >= threshold value.
+           * - if true, return max angle; else return min one.
+           */
+          return _degree >= _th ? _max : _min;
+        }
+
+        /**
+         * - atan2 returns value from -pi to +pi;
+         * - convert the return value to value in between 0 and 2pi;
+         */
+        function _convertFullPie(_degree) {
+          /**
+           * - Fallback to zero instead of to the 1st value
+           * which is 1*this.step*6;
+           * - If so, zero (00 @ 360 degree) can never be selected.
+           * - To avoid this from happening, 00 must be selectable.
+           *
+           */
+          return _degree <= 0? (360 + _degree): _degree;
+        }
+
+        return _factorise(_convertFullPie(_degree), _step);
+      },
+
+      // Calculate the radius based on passed in position.
+      _radiusify: function(_y, _x, _cy, _cx) {
+        function deltaXY(_xy, _cxy) {
+          return Math.pow((_xy - _cxy), 2);
+        }
+
+        return Math.sqrt(deltaXY(_y, _cy) + deltaXY(_x, _cx));
+      },
+
+      // Check if current position is inside the inner selectable area.
+      _isInner: function(_xy, _ctr, _radius) {
+        return this._radiusify(_xy.y, _xy.x, _ctr.top, _ctr.left) > _radius;
+      },
+
+      // Check if current position is inside the outer seleectable area.
+      _isOuter: function(_xy, _ctr, _radius) {
+        return this._radiusify(_xy.y, _xy.x, _ctr.top, _ctr.left) < _radius;
+      },
+
+      // Translation needed to make everything based from origin.
+      _translateToOrigin: function(_clockPos, _xy, _cy, _cx) {
+        var __xy = {};
+
+        function _translateToOriginy(_clockPos, _xy, _cy) {
+          return (_xy.y - _clockPos.top) - _cy;
+        }
+
+        function _translateToOriginx(_clockPos, _xy, _cx) {
+          return (_xy.x - _clockPos.left) - _cx;
+        }
+
+        __xy.y = _translateToOriginy(_clockPos, _xy, _cy);
+        __xy.x = _translateToOriginx(_clockPos, _xy, _cx);
+
+        return __xy;
+      },
+
+      // Check if passed in value is valid.
+      _validateStep: function(_step) {
+        // Polymer seemed to have changed the way observer works.
+        if (_step < 1 && _step > 60) {
+          this.set('step', 1);
+        }
+      },
+
+      // Check if passed in value is valid and update when needed.
+      _validateHours: function(_hours, _isReturn) {
+        // always get new hours since you don't need more than an hour to get hours.
+        var _hr = new Date().getHours();
+        // always make sure timeFormat is properly set.
+        // timeFormat has the highest priority.
+        switch (this.timeFormat) {
+          case 12:
+            // to ensure that valid newVal.
+            if (_hours >= 0 && _hours <= 23) {
+              // for first time init, set _dayNight and hours.
+              if (!this._down) {
+                this.set('hours', this._computeHours(_hours));
+                /**
+                 * due to minor race, only set _dayNight here,
+                 * as long as there is change of value in newVal all will be
+                 * redirected to here eventually.
+                 */
+                this.set('_dayNight', _hours < 12);
+              }
+            }else {
+              // invalid hours goes here.
+              this.set('hours', this._computeHours(_hr));
+            }
+            break;
+          case 24:
+            // making sure that newVal is valid.
+            if (_hours >= 0 && _hours  <= 23) {
+              // before clock show and no interaction from the user.
+              if (!this._down) {
+                this.set('_dayNight', _hours < 12);
+              }
+            }else {
+              // invalid hours goes here.
+              this.set('hours', _hr);
+            }
+            break;
+          default:
+            // if timeFormat is not properly set.
+            this.set('timeFormat', 12);
+            _hr = this._computeHours(_hr);
+            this.set('hours', _hr);
+            this.set('_dayNight', _hr < 12);
+        }
+
+        if (_isReturn) {
+          return _hr;
+        }
+      },
+
+      // Check if passed in value is valid.
+      _validateMinutes: function (_minutes, _isReturn) {
+        // Polymer seemed to have changed the way observer works.
+        var _min = _minutes;
+        if (_minutes < 0 || _minutes > 59 || typeof _minutes === 'string') {
+          _min = new Date().getMinutes();
+          this.set('minutes', _min);
+        }
+
+        if (_isReturn) {
+          return _min;
+        }
+      },
+
+      // Convert step into angle.
+      _dragStepAngleify: function(step) {
+        return step * 6;
+      },
+
+      // Convert everything into string.
+      _textify: function(_number, _hours) {
+        // hours check flag
+        _number = typeof _number === 'string' ? new Date().getMinutes() : _number;
+        return ('0' + (_hours ? this._computeHours(_number) : _number)).slice(-2);
+      },
+
+      // Update AM/ PM value.
+      _toggleDayNight: function() {
+        this.set('_dayNight', !this._dayNight);
+      },
+
+      // Update background SVG based on AM/ PM value.
+      _switchDay: function() {
+        // this._dayNight ? this.$.ampm.classList.remove('night-day') :
+        //   this.$.ampm.classList.add('night-day');
+        this._dayNight ?
+          this._classListPolyfill(this.$.ampm, 'remove', 'night-day', this._isIE) :
+          this._classListPolyfill(this.$.ampm, 'add', 'night-day', this._isIE);
+      },
+
+      // Return selected hours and minutes.
+      _selectedTime: function(_h, _m, _d, _f) {
+        if (_f === 12) {
+          // no leading zero in hours.
+          return this.hours + ':' + _m + ' ' + (_d ? 'AM' : 'PM');
+        } else if (_f === 24) {
+          // convert 12- to 24- when it's night.
+          if (!_d) {
+            // 1pm until 11pm goes here.
+            if (_h < 12) {
+              return ((parseInt(_h) + 12) % 24) + ':' + _m;
+            }
+          }else {
+            // 12 is always 00 at midnight.
+            if (_h == 12) {
+              return '00:' + _m;
+            }
+          }
+          // return all daytime except 12am but not 12pm.
+          return _h + ':' + _m;
+        }
+      },
+
+      // Return shifted hours.
+      _computeHours: function (_hours) {
+        var _h = _hours % 12;
+        return _h === 0 ? 12 : _h;
+      },
+
+      // Update selected time.
+      _confirmSelectedTime: function() {
+        if (!this._selectedTimeConfirmed) {
+          this.set('_selectedTimeConfirmed', true);
+        }
+      },
+      updateBindTime: function() {
+        if (this._selectedTimeConfirmed) {
+          this.set('time', this._selectedTime(this._hours, this._minutes,
+            this._dayNight, this.timeFormat));
+        }
+      },
+
+      // Force update selected time.
+      notifyTimeUpdate: function() {
+        this.set('time', this._selectedTime(this._hours, this._minutes,
+          this._dayNight, this.timeFormat));
+      },
+
+      // As IEs does not support Element.classList, here's my version of polyfill.
+      _classListPolyfill: function(_node, _action, _cls, _isIE) {
+        var _classList;
+        if (_isIE) {
+          // Use polyfill for IEs.
+          _classList = _node.getAttribute('class');
+          if (_classList) {
+            _classList = _classList.split(/\s/);
+            if (_action === 'contains') {
+              return _classList.indexOf(_cls) >= 0;
+            }else if (_action === 'add') {
+              _classList.push(_cls);
+              _node.setAttribute('class', _classList.join(' '));
+            }else if (_action === 'remove') {
+              var _clsIdx = _classList.indexOf(_cls);
+              // Only remove if class is found.
+              if (_clsIdx >= 0) {
+                _classList.splice(_clsIdx, 1);
+                _node.setAttribute('class', _classList.join(' '));
+              }
+            }
+          }else {
+            // If class is empty...
+            if (_action === 'add') {
+              _node.setAttribute('class', _cls);
+            }else if (_action === 'action') {
+              return !1;
+            }
+          }
+        }else {
+          // Else use Native's JS.
+          if (_action === 'contains') {
+            return _node.classList.contains(_cls);
+          }else if (_action === 'add') {
+            _node.classList.add(_cls);
+          }else if (_action = 'remove') {
+            _node.classList.remove(_cls);
+          }
+        }
+      },
+
+      // Update theme color.
+      _updateThemeColor: function(_theme) {
+        var _themes = ['dark-theme', 'light-theme', 'goog-theme'];
+        var _themeIdx = _themes.indexOf(_theme);
+        var _colorCode = ['#bcbcbc', '#737373', '#616161'][_themeIdx];
+        var _distributedButtons = Polymer.dom(this).querySelectorAll('paper-button');
+        var _distributedButtonsLen = _distributedButtons.length;
+        if (_themeIdx >= 0) {
+          _themes.splice(_themeIdx, 1);
+          this.toggleClass(_themes[0], !1, this);
+          this.toggleClass(_themes[1], !1, this);
+          this.toggleClass(_theme, !0, this);
+        }else {
+          this.toggleClass('dark-theme', !1, this);
+          this.toggleClass('light-theme', !1, this);
+          this.toggleClass('goog-theme', !1, this);
+        }
+        // workaround to update custom property of distributed buttons.
+        for (var i = 0; i < _distributedButtonsLen; i++) {
+          this._updateDistributedButtonInkColorCustomProp(_distributedButtons[i], _colorCode);
+        }
+        // Update styles of the whole datepicker.
+        this.updateStyles();
+      },
+      // Forcefully update the view of the datepicker.
+      _updateDatepickerView: function(_view) {
+        this.toggleClass('horizontal-view', _view === 'horizontal', this);
+        this.toggleClass('vertical-view', _view === 'vertical', this);
+      },
+      // workaround to update custom property of distributed children until Polymer supports Native custom properties.
+      _updateDistributedButtonInkColorCustomProp: function(_node, _theme) {
+        console.log(_theme);
+        var _themeIdx = ['dark-theme', 'light-theme', 'goog-theme'].indexOf(_theme);
+        var _colorCode = _theme && _theme.indexOf('#') >= 0 ? _theme : ['#bcbcbc', '#737373', '#616161'][_themeIdx];
+        _node.customStyle['--paper-button-ink-color'] = _colorCode || '#737373';
+        _node.updateStyles();
+      },
+
+    });
+
+  </script>
+</dom-module>

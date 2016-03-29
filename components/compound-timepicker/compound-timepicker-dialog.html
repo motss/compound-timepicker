@@ -1,0 +1,138 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="compound-timepicker.html">
+
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-dialog-behavior/paper-dialog-behavior.html">
+
+<link rel="import" href="../neon-animation/neon-animation-runner-behavior.html">
+<!--
+Wrapper for <compound-timepicker>.
+
+Example:
+
+    <compound-timepicker-dialog></compound-timepicker-dialog>
+
+@element compound-timepicker-dialog
+@demo demo/index.html
+@hero hero.svg
+-->
+<dom-module id="compound-timepicker-dialog">
+  <template strip-whitespace>
+    <style>
+      :host {
+        -webkit-user-select: none;
+           -moz-user-select: none;
+            -ms-user-select: none;
+                user-select: none;
+
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+
+        display: block;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+    </style>
+
+    <compound-timepicker hours="{{hours}}" minutes="{{minutes}}" step="{{step}}" time-format="{{timeFormat}}" time="{{time}}" view="[[view]]" theme="[[theme]]">
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </compound-timepicker>
+  </template>
+
+</dom-module>
+
+<script>
+
+  Polymer({
+
+    is: 'compound-timepicker-dialog',
+
+    properties: {
+      /**
+       * In which orientation the timepicker should be displayed.
+       * View available: `vertical`, `horizontal`.
+       */
+      view: String,
+      /**
+       * Set theme for the timepicker.
+       * Theme available: `light-theme`, `dark-theme`, `goog-theme`.
+       */
+      theme: String,
+      /**
+       * Set the starting hours of the clock.
+       */
+      hours: Number,
+
+      /**
+       * Set the starting minutes of the clock.
+       */
+      minutes: Number,
+
+      /**
+       * Set the starting clock step.
+       */
+      step: Number,
+
+      /**
+       * Returns the seleced time from either the user's input or
+       * from first init of the component.
+       */
+      time: {
+        type: String,
+        notify: true
+      },
+
+      /**
+       * 12/ 24 hours time format.
+       */
+      timeFormat: Number,
+    },
+
+    behaviors: [
+      Polymer.PaperDialogBehavior,
+      Polymer.NeonAnimationRunnerBehavior
+    ],
+
+    listeners: {
+      'neon-animation-finish': '_onNeonAnimationFinish'
+    },
+
+    observers: [
+      '_updateDatepickerView(view)',
+    ],
+
+    _renderOpened: function() {
+      if (this.withBackdrop) {
+        this.backdropElement.open();
+      }
+      this.playAnimation('entry');
+    },
+
+    _renderClosed: function() {
+      if (this.withBackdrop) {
+        this.backdropElement.close();
+      }
+      this.playAnimation('exit');
+    },
+
+    _onNeonAnimationFinish: function() {
+      if (this.opened) {
+        this._finishRenderOpened();
+      } else {
+        this._finishRenderClosed();
+      }
+    },
+
+    // Resize dialog to re-center the dialog when view is changed.
+    _updateDatepickerView: function() {
+      this.notifyResize();
+    },
+
+  });
+
+</script>

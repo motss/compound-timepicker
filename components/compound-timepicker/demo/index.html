@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>compound-timepicker Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="../compound-timepicker-dialog.html">
+
+    <link rel="import" href="../../paper-styles/demo-pages.html">
+    <link rel="import" href="../../paper-styles/paper-styles.html">
+
+    <link rel="import" href="../../paper-button/paper-button.html">
+    <!-- image prefetch -->
+    <!-- <link rel="prefetch" href="../img/day-compressed.svg">
+    <link rel="prefetch" href="../img/night-compressed.svg"> -->
+
+    <!-- Don't forget to set is=custom-style -->
+    <style is="custom-style">
+      body {
+        box-sizing: border-box;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        box-sizing: border-box;
+
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+			div.vertical-section {
+				margin-left: 0;
+				margin-right: 0;
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+			}
+			div.time-picker {
+        margin: 16px;
+				@apply(--layout-horizontal);
+				@apply(--layout-center-center);
+			}
+
+      .dark-theme {
+        background: #424242;
+        color: #80CBC4;
+      }
+      .goog-clk {
+        background: #212121;
+        color: #DA4336;
+      }
+
+    </style>
+  </head>
+  <body>
+    <template is="dom-bind" strip-whitespace>
+			<!-- 32 el clean -->
+			<!-- 54 el timepicker -->
+			<!-- 59 el timepicker dialog -->
+
+			<div class="vertical-section">
+				<h2>Time picker</h2>
+				<compound-timepicker></compound-timepicker>
+			</div>
+
+			<div class="vertical-section">
+				<div class="time-picker">
+					<paper-button raised on-tap="_chooseTime" name="timePicker">Choose Time</paper-button>
+					<paper-button disabled>[[time]]</paper-button>
+				</div>
+
+				<div class="time-picker">
+					<paper-button raised on-tap="_chooseTime" name="darker" class="dark-theme">Choose Time</paper-button>
+					<paper-button disabled class="dark-theme">[[time1]]</paper-button>
+				</div>
+
+				<div class="time-picker">
+					<paper-button raised on-tap="_chooseTime" name="goog" class="goog-clk">Choose Time</paper-button>
+					<paper-button disabled class="goog-clk">[[time2]]</paper-button>
+				</div>
+			</div>
+
+			<compound-timepicker-dialog id="timePicker" time="{{time}}" with-backdrop></compound-timepicker-dialog>
+			<compound-timepicker-dialog id="darker" theme="dark-theme" time="{{time1}}" with-backdrop></compound-timepicker-dialog>
+			<compound-timepicker-dialog id="goog" theme="goog-theme" time="{{time2}}" with-backdrop></compound-timepicker-dialog>
+    </template>
+
+    <script>
+      var demo = document.querySelector('template[is=dom-bind]');
+
+			demo._chooseTime = function(ev) {
+				var _target = ev.target;
+
+				while (_target && _target.tagName !== 'PAPER-BUTTON') {
+					_target = _target.parentElement;
+				}
+
+				if (_target && _target.hasAttribute('name')) {
+					var _name = _target.getAttribute('name');
+					this.$[_name].open();
+				}
+				// this.$.timePicker.open();
+			};
+    </script>
+
+  </body>
+</html>

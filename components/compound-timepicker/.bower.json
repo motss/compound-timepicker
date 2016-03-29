@@ -1,0 +1,48 @@
+{
+  "name": "compound-timepicker",
+  "authors": [
+    "motss <wes_ngrongsen@hotmail.com>"
+  ],
+  "description": "Compound is composed of two or more separate elements and compound-timepicker happens to be one. It provides solution for single time selection (hours: minutes) on both mobile and web application.",
+  "keywords": [
+    "webcomponents",
+    "polymer",
+    "seed",
+    "timepicker",
+    "time",
+    "compound",
+    "motss"
+  ],
+  "main": "compound-timepicker.html",
+  "license": "MIT",
+  "homepage": "https://github.com/motss/compound-timepicker",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "LICENSE",
+    "README"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.4.0",
+    "paper-ripple": "PolymerElements/paper-ripple#^1.0.5",
+    "paper-dialog-behavior": "PolymerElements/paper-dialog-behavior#^1.1.0",
+    "neon-animation": "PolymerElements/neon-animation#^1.0.6"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "^4.1.0",
+    "test-fixture": "polymerelements/test-fixture#^1.1.1",
+    "iron-test-helpers": "polymerelements/iron-test-helpers#^1.1.3",
+    "paper-button": "PolymerElements/paper-button#^1.0.11"
+  },
+  "_release": "6848661c34",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "6848661c34f228d66c98ec29a1be9ab642b38915"
+  },
+  "_source": "git://github.com/motss/compound-timepicker.git",
+  "_target": "master",
+  "_originalSource": "motss/compound-timepicker",
+  "_direct": true
+}

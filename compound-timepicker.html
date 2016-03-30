@@ -1207,7 +1207,6 @@ Custom property | Description | Default
       },
       // workaround to update custom property of distributed children until Polymer supports Native custom properties.
       _updateDistributedButtonInkColorCustomProp: function(_node, _theme) {
-        console.log(_theme);
         var _themeIdx = ['dark-theme', 'light-theme', 'goog-theme'].indexOf(_theme);
         var _colorCode = _theme && _theme.indexOf('#') >= 0 ? _theme : ['#bcbcbc', '#737373', '#616161'][_themeIdx];
         _node.customStyle['--paper-button-ink-color'] = _colorCode || '#737373';
